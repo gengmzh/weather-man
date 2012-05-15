@@ -19,8 +19,8 @@ public class WeatherDataProvider extends ContentProvider {
 	public static final int URI_CODE_REALTIME = 1, URI_CODE_FORECAST = 2;
 	static {
 		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.REALTIME_PATH, URI_CODE_REALTIME);
-		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.FORECAST_PATH, URI_CODE_FORECAST);
+		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.REALTIME_PATH + "/#", URI_CODE_REALTIME);
+		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.FORECAST_PATH + "/#", URI_CODE_FORECAST);
 	}
 
 	private RealtimeWeatherClient realtimeWeatherClient;
@@ -36,6 +36,7 @@ public class WeatherDataProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		String citycode = uri.getLastPathSegment();
+		Log.i(WeatherDataProvider.class.getSimpleName(), "citycode: " + citycode);
 		switch (URI_MATCHER.match(uri)) {
 		case URI_CODE_REALTIME:
 			MatrixCursor rtc = new MatrixCursor(new String[] { Weather.RealtimeWeather.ID,
@@ -44,6 +45,7 @@ public class WeatherDataProvider extends ContentProvider {
 					Weather.RealtimeWeather.WINDFORCE });
 			try {
 				RealtimeWeather weather = realtimeWeatherClient.getWeather(citycode);
+				Log.i(WeatherDataProvider.class.getSimpleName(), "RealtimeWeather: " + weather);
 				rtc.addRow(new Object[] { weather.getCityId(), weather.getCityName(), weather.getTime(),
 						weather.getTemperature(), weather.getHumidity(), weather.getWindDirection(),
 						weather.getWindForce() });
@@ -58,11 +60,12 @@ public class WeatherDataProvider extends ContentProvider {
 					Weather.ForecastWeather.WINDFORCE });
 			try {
 				ForecastWeather weather = forecastWeatherClient.getWeather(citycode);
+				Log.i(WeatherDataProvider.class.getSimpleName(), "ForecastWeather: " + weather);
 				fcc.addRow(new Object[] { weather.getCityId(), weather.getCityName(), weather.getTime(),
 						weather.getWeather(), weather.getTemperature(), weather.getImage(), weather.getWind(),
 						weather.getWindForce() });
 			} catch (Exception e) {
-				Log.e(WeatherDataProvider.class.getName(), "get forecast weather failed", e);
+				Log.e(WeatherDataProvider.class.getSimpleName(), "get forecast weather failed", e);
 			}
 			return fcc;
 		default:
