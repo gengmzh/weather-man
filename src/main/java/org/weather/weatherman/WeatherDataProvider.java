@@ -1,9 +1,12 @@
 package org.weather.weatherman;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.weather.api.cn.forecast.ForecastWeather;
-import org.weather.api.cn.forecast.ForecastWeatherClient;
+import org.weather.api.cn.forecast.LivingIndex;
 import org.weather.api.cn.realtime.RealtimeWeather;
-import org.weather.api.cn.realtime.RealtimeWeatherClient;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -23,13 +26,11 @@ public class WeatherDataProvider extends ContentProvider {
 		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.FORECAST_PATH + "/#", URI_CODE_FORECAST);
 	}
 
-	private RealtimeWeatherClient realtimeWeatherClient;
-	private ForecastWeatherClient forecastWeatherClient;
+	private CachedWeatherClient weatherClient;
 
 	@Override
 	public boolean onCreate() {
-		realtimeWeatherClient = new RealtimeWeatherClient();
-		forecastWeatherClient = new ForecastWeatherClient();
+		weatherClient = new CachedWeatherClient();
 		return true;
 	}
 
@@ -39,35 +40,68 @@ public class WeatherDataProvider extends ContentProvider {
 		Log.i(WeatherDataProvider.class.getSimpleName(), "citycode: " + citycode);
 		switch (URI_MATCHER.match(uri)) {
 		case URI_CODE_REALTIME:
-			MatrixCursor rtc = new MatrixCursor(new String[] { Weather.RealtimeWeather.ID,
+			MatrixCursor realtimeCursor = new MatrixCursor(new String[] { Weather.RealtimeWeather.ID,
 					Weather.RealtimeWeather.NAME, Weather.RealtimeWeather.TIME, Weather.RealtimeWeather.TEMPERATURE,
 					Weather.RealtimeWeather.HUMIDITY, Weather.RealtimeWeather.WINDDIRECTION,
-					Weather.RealtimeWeather.WINDFORCE });
-			try {
-				RealtimeWeather weather = realtimeWeatherClient.getWeather(citycode);
-				Log.i(WeatherDataProvider.class.getSimpleName(), "RealtimeWeather: " + weather);
-				rtc.addRow(new Object[] { weather.getCityId(), weather.getCityName(), weather.getTime(),
-						weather.getTemperature(), weather.getHumidity(), weather.getWindDirection(),
-						weather.getWindForce() });
-			} catch (Exception e) {
-				Log.e(WeatherDataProvider.class.getName(), "get realtime weather failed", e);
+					Weather.RealtimeWeather.WINDFORCE, Weather.RealtimeWeather.DRESS,
+					Weather.RealtimeWeather.ULTRAVIOLET, Weather.RealtimeWeather.CLEANCAR,
+					Weather.RealtimeWeather.TRAVEL, Weather.RealtimeWeather.COMFORT,
+					Weather.RealtimeWeather.MORNINGEXERCISE, Weather.RealtimeWeather.SUNDRY,
+					Weather.RealtimeWeather.IRRITABILITY });
+			List<Object> row = new ArrayList<Object>();
+			RealtimeWeather realtime = weatherClient.getRealtimeWeather(citycode);
+			if (realtime != null) {
+				Collections.addAll(row, realtime.getCityId(), realtime.getCityName(), realtime.getTime(),
+						realtime.getTemperature(), realtime.getHumidity(), realtime.getWindDirection(),
+						realtime.getWindForce());
 			}
-			return rtc;
+			ForecastWeather forecast = weatherClient.getForecastWeather(citycode);
+			if (forecast != null) {
+				row.set(2, forecast.getTime());
+				LivingIndex li = forecast.getDressIndex();
+				row.add(li != null ? li.getIndex() : null);
+				li = forecast.getUltravioletIndex();
+				row.add(li != null ? li.getIndex() : null);
+				li = forecast.getCleanCarIndex();
+				row.add(li != null ? li.getIndex() : null);
+				li = forecast.getTravelIndex();
+				row.add(li != null ? li.getIndex() : null);
+				li = forecast.getComfortIndex();
+				row.add(li != null ? li.getIndex() : null);
+				li = forecast.getMorningExerciseIndex();
+				row.add(li != null ? li.getIndex() : null);
+				li = forecast.getSunDryIndex();
+				row.add(li != null ? li.getIndex() : null);
+				li = forecast.getIrritabilityIndex();
+				row.add(li != null ? li.getIndex() : null);
+			}
+			if (row.size() > 0) {
+				realtimeCursor.addRow(row);
+			} else {
+				Log.e(WeatherDataProvider.class.getName(), "get realtime weather failed");
+			}
+			return realtimeCursor;
 		case URI_CODE_FORECAST:
-			MatrixCursor fcc = new MatrixCursor(new String[] { Weather.ForecastWeather.ID,
+			MatrixCursor forecastCusor = new MatrixCursor(new String[] { Weather.ForecastWeather.ID,
 					Weather.ForecastWeather.NAME, Weather.ForecastWeather.TIME, Weather.ForecastWeather.WEATHER,
 					Weather.ForecastWeather.TEMPERATURE, Weather.ForecastWeather.IMAGE, Weather.ForecastWeather.WIND,
 					Weather.ForecastWeather.WINDFORCE });
-			try {
-				ForecastWeather weather = forecastWeatherClient.getWeather(citycode);
-				Log.i(WeatherDataProvider.class.getSimpleName(), "ForecastWeather: " + weather);
-				fcc.addRow(new Object[] { weather.getCityId(), weather.getCityName(), weather.getTime(),
-						weather.getWeather(), weather.getTemperature(), weather.getImage(), weather.getWind(),
-						weather.getWindForce() });
-			} catch (Exception e) {
-				Log.e(WeatherDataProvider.class.getSimpleName(), "get forecast weather failed", e);
+			ForecastWeather fw = weatherClient.getForecastWeather(citycode);
+			if (fw != null) {
+				List<String> wl = fw.getWeather(), tl = fw.getTemperature(), il = fw.getImage(), wdl = fw.getWind(), wfl = fw
+						.getWindForce();
+				int length = Math.min(wl.size(),
+						Math.min(tl.size(), Math.min(il.size(), Math.min(wdl.size(), wfl.size()))));
+				for (int i = 0; i < length; i++) {
+					forecastCusor.addRow(new Object[] { fw.getCityId(), fw.getCityName(), fw.getTime(),
+							wl.size() > i ? wl.get(i) : null, tl.size() > i ? tl.get(i) : null,
+							il.size() > i ? il.get(i) : null, wdl.size() > i ? wdl.get(i) : null,
+							wfl.size() > i ? wfl.get(i) : null });
+				}
+			} else {
+				Log.e(WeatherDataProvider.class.getSimpleName(), "get forecast weather failed");
 			}
-			return fcc;
+			return forecastCusor;
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
 		}

@@ -3,5 +3,8 @@
 
     <string name="hello">Hello World, WeathermanActivity!</string>
     <string name="app_name">Weatherman</string>
+    <string name="realtime">今日指数</string>
+    <string name="forecast">未来预报</string>
+    <string name="setting">设置</string>
 
 </resources>

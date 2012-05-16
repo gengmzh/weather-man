@@ -1,148 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/tabhost"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:stretchColumns="2" >
-
-    <!-- realtime -->
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/city"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="20dip"
-            android:textStyle="bold" />
-
-        <!--
-             <TextView
-            android:id="@+id/time"
-            android:text="@string/hello"
-            android:textSize="10dip" />
-        -->
-
-        <TextView
-            android:id="@+id/cityList"
-            android:padding="20dip"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/temperatue"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/wind"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/humidity"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <!--
-         <View
-        android:layout_height="2dip"
-        android:background="#FF909090" />
-    -->
-    <!-- living index -->
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/dress"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/ultraviolet"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/cleancar"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/travel"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/comfort"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/morningexercise"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/sundry"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/irritability"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <!-- forecast -->
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/updateTime"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-</TableLayout>
+    android:layout_height="fill_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="5dp">
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="5dp" />
+    </LinearLayout>
+</TabHost>

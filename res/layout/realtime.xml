@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="1" >
+
+    <!-- realtime -->
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/city"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="20dip"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/cityList"
+            android:padding="20dip"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/temperatue"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/wind"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/humidity"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/updateTime"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <!-- living index -->
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/comfort"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/dress"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/ultraviolet"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/cleancar"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/travel"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/morningexercise"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/sundry"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/irritability"
+            android:padding="3dip"
+            android:text="@string/hello"
+            android:textSize="14dip" />
+    </TableRow>
+
+</TableLayout>

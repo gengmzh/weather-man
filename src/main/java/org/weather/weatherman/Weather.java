@@ -8,6 +8,9 @@ public final class Weather {
 	public static final String AUTHORITY = "org.weather.weatherman.provider";
 	public static final String REALTIME_PATH = "realtime", FORECAST_PATH = "forecast";
 
+	private Weather() {
+	}
+
 	public static final class RealtimeWeather implements BaseColumns {
 		private RealtimeWeather() {
 		}
@@ -22,6 +25,15 @@ public final class Weather {
 		public static final String HUMIDITY = "humidity";
 		public static final String WINDDIRECTION = "winddirection";
 		public static final String WINDFORCE = "windforce";
+		
+		public static final String DRESS = "dress";
+		public static final String ULTRAVIOLET = "ultraviolet";
+		public static final String CLEANCAR = "cleancar";
+		public static final String TRAVEL = "travel";
+		public static final String COMFORT = "comfort";
+		public static final String MORNINGEXERCISE = "morningexercise";
+		public static final String SUNDRY = "sundry";
+		public static final String IRRITABILITY = "irritability";
 	}
 
 	public static final class ForecastWeather implements BaseColumns {
@@ -39,14 +51,6 @@ public final class Weather {
 		public static final String IMAGE = "image";
 		public static final String WIND = "wind";
 		public static final String WINDFORCE = "windforce";
-		public static final String DRESS = "dress";
-		public static final String ULTRAVIOLET = "ultraviolet";
-		public static final String CLEANCAR = "cleancar";
-		public static final String TRAVEL = "travel";
-		public static final String COMFORT = "comfort";
-		public static final String MORNINGEXERCISE = "morningexercise";
-		public static final String SUNDRY = "sundry";
-		public static final String IRRITABILITY = "irritability";
 
 	}
 
