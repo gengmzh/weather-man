@@ -2,20 +2,47 @@
 <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/tabhost"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent" >
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:padding="5dp">
+        android:orientation="vertical"
+        android:padding="3dp" >
+
         <TabWidget
             android:id="@android:id/tabs"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1" >
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/city"
+                    android:padding="3dip"
+                    android:text="@string/hello"
+                    android:textSize="20dip"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/cityList"
+                    android:padding="20dip"
+                    android:textSize="14dip" />
+            </TableRow>
+        </TableLayout>
+
         <FrameLayout
             android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:padding="5dp" />
+            android:padding="0dp" />
     </LinearLayout>
+
 </TabHost>

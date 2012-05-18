@@ -2,25 +2,17 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:stretchColumns="1" >
-
-    <!-- realtime -->
+    android:stretchColumns="0" >
 
     <TableRow>
 
         <TextView
-            android:id="@+id/city"
+            android:id="@+id/updateTime"
             android:padding="3dip"
             android:text="@string/hello"
-            android:textSize="20dip"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/cityList"
-            android:padding="20dip"
             android:textSize="14dip" />
     </TableRow>
-
+    
     <TableRow>
 
         <TextView
@@ -43,15 +35,6 @@
 
         <TextView
             android:id="@+id/humidity"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>
-
-    <TableRow>
-
-        <TextView
-            android:id="@+id/updateTime"
             android:padding="3dip"
             android:text="@string/hello"
             android:textSize="14dip" />
