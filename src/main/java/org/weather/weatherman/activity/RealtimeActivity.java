@@ -1,4 +1,8 @@
-package org.weather.weatherman;
+package org.weather.weatherman.activity;
+
+import org.weather.weatherman.R;
+import org.weather.weatherman.WeatherApplication;
+import org.weather.weatherman.content.Weather;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -7,7 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-public class RealtimeWeatherActivity extends Activity {
+public class RealtimeActivity extends Activity {
 
 	/** Called when the activity is first created. */
 	@Override
@@ -78,7 +82,7 @@ public class RealtimeWeatherActivity extends Activity {
 				view = (TextView) findViewById(R.id.irritability);
 				view.setText("过敏指数：" + text);
 			} else {
-				Log.e(RealtimeWeatherActivity.class.getName(), "can't get realtime weather");
+				Log.e(RealtimeActivity.class.getName(), "can't get realtime weather");
 			}
 		}
 	}

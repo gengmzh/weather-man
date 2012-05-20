@@ -1,4 +1,7 @@
-package org.weather.weatherman;
+package org.weather.weatherman.activity;
+
+import org.weather.weatherman.R;
+import org.weather.weatherman.WeatherApplication;
 
 import android.app.TabActivity;
 import android.content.Context;
@@ -40,7 +43,7 @@ public class WeathermanActivity extends TabActivity {
 		SpannableStringBuilder builder = new SpannableStringBuilder(spannable);
 		builder.clearSpans();
 		for (URLSpan span : urlSpans) {
-			Log.i(RealtimeWeatherActivity.class.getSimpleName(), "URLSpan: " + span.getURL());
+			Log.i(RealtimeActivity.class.getSimpleName(), "URLSpan: " + span.getURL());
 			CitySpan mySpan = new CitySpan(span.getURL());
 			builder.setSpan(mySpan, spannable.getSpanStart(span), spannable.getSpanEnd(span),
 					Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -50,13 +53,13 @@ public class WeathermanActivity extends TabActivity {
 		tabHost = getTabHost();
 		Resources res = getResources();
 		TabHost.TabSpec tabSpec = tabHost.newTabSpec("realtime").setIndicator(res.getString(R.string.realtime))
-				.setContent(new Intent().setClass(this, RealtimeWeatherActivity.class));
+				.setContent(new Intent().setClass(this, RealtimeActivity.class));
 		tabHost.addTab(tabSpec);
 		tabSpec = tabHost.newTabSpec("forecast").setIndicator(res.getString(R.string.forecast))
-				.setContent(new Intent().setClass(this, ForecastWeatherActivity.class));
+				.setContent(new Intent().setClass(this, ForecastActivity.class));
 		tabHost.addTab(tabSpec);
 		tabSpec = tabHost.newTabSpec("setting").setIndicator(res.getString(R.string.setting))
-				.setContent(new Intent().setClass(this, RealtimeWeatherActivity.class));
+				.setContent(new Intent().setClass(this, SettingActivity.class));
 		tabHost.addTab(tabSpec);
 		tabHost.setCurrentTab(0);
 	}
@@ -77,11 +80,11 @@ public class WeathermanActivity extends TabActivity {
 			app.setCitycode(citycode);
 			// refresh
 			Context context = tabHost.getCurrentView().getContext();
-			if (context instanceof RealtimeWeatherActivity) {
-				RealtimeWeatherActivity realtime = (RealtimeWeatherActivity) context;
+			if (context instanceof RealtimeActivity) {
+				RealtimeActivity realtime = (RealtimeActivity) context;
 				realtime.refresh();
-			} else if (context instanceof ForecastWeatherActivity) {
-				ForecastWeatherActivity forecast = (ForecastWeatherActivity) context;
+			} else if (context instanceof ForecastActivity) {
+				ForecastActivity forecast = (ForecastActivity) context;
 				forecast.refresh();
 			} else {
 				Log.i(WeathermanActivity.class.getSimpleName(), "context " + context + " is illegal");

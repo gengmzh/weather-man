@@ -1,15 +1,18 @@
-package org.weather.weatherman;
+package org.weather.weatherman.activity;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import org.weather.weatherman.R;
+import org.weather.weatherman.WeatherApplication;
+import org.weather.weatherman.content.Weather;
 
 import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -19,7 +22,7 @@ import android.widget.TextView;
  * @author gmz
  * 
  */
-public class ForecastWeatherActivity extends Activity {
+public class ForecastActivity extends Activity {
 
 	private static final DateFormat DF_1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	private static final DateFormat DF_2 = new SimpleDateFormat("MM.dd a");
@@ -47,7 +50,7 @@ public class ForecastWeatherActivity extends Activity {
 				try {
 					cal.setTime(DF_1.parse(text));
 				} catch (Exception e) {
-					Log.e(ForecastWeatherActivity.class.getSimpleName(), "parse update time failed", e);
+					Log.e(ForecastActivity.class.getSimpleName(), "parse update time failed", e);
 				}
 				cal.add(Calendar.HOUR_OF_DAY, -12);
 				do {
@@ -86,7 +89,7 @@ public class ForecastWeatherActivity extends Activity {
 					layout.addView(row);
 				} while (cursor.moveToNext());
 			} else {
-				Log.e(RealtimeWeatherActivity.class.getName(), "can't get realtime weather");
+				Log.e(RealtimeActivity.class.getName(), "can't get realtime weather");
 			}
 		}
 	}

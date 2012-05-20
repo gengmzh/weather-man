@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.weather.weatherman;
+package org.weather.weatherman.content;
 
 import org.weather.api.cn.WeatherClient;
 import org.weather.api.cn.forecast.ForecastWeather;

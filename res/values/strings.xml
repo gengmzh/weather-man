@@ -3,8 +3,19 @@
 
     <string name="hello">Hello World, WeathermanActivity!</string>
     <string name="app_name">Weatherman</string>
-    <string name="realtime">今日指数</string>
-    <string name="forecast">未来预报</string>
+    <string name="realtime">当前实况</string>
+    <string name="forecast">天气预报</string>
     <string name="setting">设置</string>
+
+    <string-array name="updateTime">
+        <item>2</item>
+        <item>4</item>
+        <item>6</item>
+        <item>8</item>
+        <item>10</item>
+        <item>12</item>
+    </string-array>
+    <string name="city_prompt">请选择所在城市</string>
+    <string name="updatetime_prompt">请选择更新间隔时长</string>
 
 </resources>
