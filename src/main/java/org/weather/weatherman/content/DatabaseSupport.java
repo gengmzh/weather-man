@@ -26,10 +26,9 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase arg0) {
-		String sql = "create table if not exists " + TABLE_NAME + "( "
-				+ BaseColumns._ID + " integer primary key, " + COL_ID
-				+ " integer, " + COL_TYPE + " integer, " + COL_VALUE
-				+ " text, " + COL_UPDATETIME + " integer " + "); ";
+		String sql = "create table if not exists " + TABLE_NAME + "( " + BaseColumns._ID + " integer primary key, "
+				+ COL_ID + " integer, " + COL_TYPE + " integer, " + COL_VALUE + " text, " + COL_UPDATETIME
+				+ " integer " + "); ";
 		arg0.execSQL(sql);
 	}
 
@@ -53,8 +52,7 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 		values.put(COL_UPDATETIME, new Date().getTime() / 1000);
 		SQLiteDatabase db = getWritableDatabase();
 		if (rowId > 0) {
-			db.update(TABLE_NAME, values, BaseColumns._ID + "=?",
-					new String[] { String.valueOf(rowId) });
+			db.update(TABLE_NAME, values, BaseColumns._ID + "=?", new String[] { String.valueOf(rowId) });
 		} else {
 			rowId = db.insert(TABLE_NAME, null, values);
 		}

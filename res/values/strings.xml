@@ -15,7 +15,7 @@
         <item>10</item>
         <item>12</item>
     </string-array>
-    <string name="city_prompt">请选择所在城市</string>
+    <string name="city_prompt">请选择所在城市</string>
     <string name="updatetime_prompt">请选择更新间隔时长</string>
 
 </resources>

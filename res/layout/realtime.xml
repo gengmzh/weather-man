@@ -12,7 +12,7 @@
             android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
-    
+
     <TableRow>
 
         <TextView

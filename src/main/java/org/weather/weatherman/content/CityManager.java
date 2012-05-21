@@ -26,8 +26,7 @@ public class CityManager {
 	}
 
 	public CityTree readCityFile() {
-		InputStream ins = CityManager.class.getClassLoader()
-				.getResourceAsStream("city.properties");
+		InputStream ins = CityManager.class.getClassLoader().getResourceAsStream("city.properties");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
 		CityTree tree = new CityTree();
 		City c1 = null, c2 = null, c3 = null, tmp = null;
@@ -49,11 +48,13 @@ public class CityManager {
 	City readLine(BufferedReader reader) {
 		try {
 			String line = reader.readLine();
+			if (line == null) {
+				return null;
+			}
 			String[] ls = line.split("\t");
 			return new CityItem(ls[0], ls[1]);
 		} catch (Exception e) {
-			Log.e(SettingActivity.class.getSimpleName(),
-					"read city file failed", e);
+			Log.e(SettingActivity.class.getSimpleName(), "read city file failed", e);
 			return null;
 		}
 	}
