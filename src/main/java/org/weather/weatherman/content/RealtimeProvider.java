@@ -103,9 +103,12 @@ public class RealtimeProvider {
 	}
 
 	public void update(ContentValues values) {
-		long rowId = -1;
 		String city = values.getAsString(Weather.RealtimeWeather.ID);
+		if (city == null || city.length() == 0) {
+			return;
+		}
 		// old
+		long rowId = -1;
 		Cursor cursor = databaseSupport.find(DatabaseSupport.COL_TYPE + "=? and " + DatabaseSupport.COL_CODE + "=?",
 				new Object[] { Weather.RealtimeWeather.TYPE, city });
 		if (cursor.moveToFirst()) {

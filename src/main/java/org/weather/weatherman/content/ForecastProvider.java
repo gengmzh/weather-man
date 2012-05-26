@@ -78,9 +78,12 @@ public class ForecastProvider {
 	}
 
 	public void update(List<ContentValues> values) {
-		long rowId = -1;
 		String city = values.get(0).getAsString(Weather.ForecastWeather.ID);
+		if (city == null || city.length() == 0) {
+			return;
+		}
 		// old
+		long rowId = -1;
 		Cursor cursor = databaseSupport.find(DatabaseSupport.COL_TYPE + "=? and " + DatabaseSupport.COL_CODE + "=?",
 				new Object[] { Weather.ForecastWeather.TYPE, city });
 		if (cursor.moveToFirst()) {

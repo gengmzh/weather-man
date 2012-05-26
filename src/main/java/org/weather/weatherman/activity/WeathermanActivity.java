@@ -60,32 +60,7 @@ public class WeathermanActivity extends TabActivity {
 		if (citycode != null && citycode.length() > 0) {
 			return tree.findCity(citycode);
 		}
-		return tree.getProvince().get(0).getChildren().get(0);
+		return tree.getProvince().get(0).getChildren().get(0).getChildren().get(0);
 	}
-
-//	class CitySpan extends URLSpan {
-//
-//		public CitySpan(String url) {
-//			super(url);
-//		}
-//
-//		@Override
-//		public void onClick(View widget) {
-//			String citycode = getURL();
-//			app.setCitycode(citycode);
-//			// refresh
-//			Context context = tabHost.getCurrentView().getContext();
-//			if (context instanceof RealtimeActivity) {
-//				RealtimeActivity realtime = (RealtimeActivity) context;
-//				realtime.refresh();
-//			} else if (context instanceof ForecastActivity) {
-//				ForecastActivity forecast = (ForecastActivity) context;
-//				forecast.refresh();
-//			} else {
-//				Log.i(WeathermanActivity.class.getSimpleName(), "context " + context + " is illegal");
-//			}
-//		}
-//
-//	}
 
 }

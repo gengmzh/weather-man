@@ -22,6 +22,11 @@ public class RealtimeActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 		this.refresh();
 	}
 
