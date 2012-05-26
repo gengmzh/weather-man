@@ -8,14 +8,10 @@ import org.weather.weatherman.content.CityManager;
 import org.weather.weatherman.content.Weather;
 
 import android.app.TabActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.text.style.URLSpan;
-import android.util.Log;
-import android.view.View;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -67,29 +63,29 @@ public class WeathermanActivity extends TabActivity {
 		return tree.getProvince().get(0).getChildren().get(0);
 	}
 
-	class CitySpan extends URLSpan {
-
-		public CitySpan(String url) {
-			super(url);
-		}
-
-		@Override
-		public void onClick(View widget) {
-			String citycode = getURL();
-			app.setCitycode(citycode);
-			// refresh
-			Context context = tabHost.getCurrentView().getContext();
-			if (context instanceof RealtimeActivity) {
-				RealtimeActivity realtime = (RealtimeActivity) context;
-				realtime.refresh();
-			} else if (context instanceof ForecastActivity) {
-				ForecastActivity forecast = (ForecastActivity) context;
-				forecast.refresh();
-			} else {
-				Log.i(WeathermanActivity.class.getSimpleName(), "context " + context + " is illegal");
-			}
-		}
-
-	}
+//	class CitySpan extends URLSpan {
+//
+//		public CitySpan(String url) {
+//			super(url);
+//		}
+//
+//		@Override
+//		public void onClick(View widget) {
+//			String citycode = getURL();
+//			app.setCitycode(citycode);
+//			// refresh
+//			Context context = tabHost.getCurrentView().getContext();
+//			if (context instanceof RealtimeActivity) {
+//				RealtimeActivity realtime = (RealtimeActivity) context;
+//				realtime.refresh();
+//			} else if (context instanceof ForecastActivity) {
+//				ForecastActivity forecast = (ForecastActivity) context;
+//				forecast.refresh();
+//			} else {
+//				Log.i(WeathermanActivity.class.getSimpleName(), "context " + context + " is illegal");
+//			}
+//		}
+//
+//	}
 
 }
