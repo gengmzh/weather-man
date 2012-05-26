@@ -73,11 +73,11 @@ public class ForecastActivity extends Activity {
 					view.setText(DF_2.format(cal.getTime()));
 					row.addView(view);
 					// image
-					view = new TextView(this);
-					view.setPadding(3, 3, 3, 3);
-					view.setTextSize(14);
-					view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.IMAGE)));
-					row.addView(view);
+//					view = new TextView(this);
+//					view.setPadding(3, 3, 3, 3);
+//					view.setTextSize(14);
+//					view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.IMAGE)));
+//					row.addView(view);
 					// weather
 					view = new TextView(this);
 					view.setPadding(3, 3, 3, 3);
