@@ -15,7 +15,8 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 	public static final int DBVERSION = 2;
 
 	public static final String TABLE_NAME = "content";
-	public static final String COL_ID = "id";
+	public static final String COL_ID = BaseColumns._ID;
+	public static final String COL_CODE = "code";
 	public static final String COL_TYPE = "type";
 	public static final String COL_VALUE = "value";
 	public static final String COL_UPDATETIME = "ut";
@@ -26,9 +27,8 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase arg0) {
-		String sql = "create table if not exists " + TABLE_NAME + "( " + BaseColumns._ID + " integer primary key, "
-				+ COL_ID + " integer, " + COL_TYPE + " integer, " + COL_VALUE + " text, " + COL_UPDATETIME
-				+ " integer " + "); ";
+		String sql = "create table if not exists " + TABLE_NAME + "( " + COL_ID + " integer primary key, " + COL_CODE
+				+ " text, " + COL_TYPE + " integer, " + COL_VALUE + " text, " + COL_UPDATETIME + " integer " + "); ";
 		arg0.execSQL(sql);
 	}
 
@@ -49,7 +49,7 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 	}
 
 	public long save(long rowId, ContentValues values) {
-		values.put(COL_UPDATETIME, new Date().getTime() / 1000);
+		values.put(COL_UPDATETIME, new Date().getTime());
 		SQLiteDatabase db = getWritableDatabase();
 		if (rowId > 0) {
 			db.update(TABLE_NAME, values, BaseColumns._ID + "=?", new String[] { String.valueOf(rowId) });

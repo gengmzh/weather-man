@@ -14,11 +14,11 @@ import android.util.Log;
  * @author gmz
  * 
  */
-public class CachedWeatherClient {
+public class WeatherService {
 
 	private WeatherClient weatherClient;
 
-	public CachedWeatherClient() {
+	public WeatherService() {
 		weatherClient = new WeatherClient(5000, 10000, 5);
 	}
 
@@ -26,7 +26,7 @@ public class CachedWeatherClient {
 		try {
 			return weatherClient.getRealWeather(citycode);
 		} catch (Exception e) {
-			Log.e(CachedWeatherClient.class.getSimpleName(), "get weather failed", e);
+			Log.e(WeatherService.class.getSimpleName(), "get weather failed", e);
 			return null;
 		}
 	}
@@ -35,7 +35,7 @@ public class CachedWeatherClient {
 		try {
 			return weatherClient.getForecastWeather(citycode);
 		} catch (Exception e) {
-			Log.e(CachedWeatherClient.class.getSimpleName(), "get weather failed", e);
+			Log.e(WeatherService.class.getSimpleName(), "get weather failed", e);
 			return null;
 		}
 	}

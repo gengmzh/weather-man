@@ -1,21 +1,10 @@
 package org.weather.weatherman.content;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.weather.api.cn.forecast.ForecastWeather;
-import org.weather.api.cn.forecast.LivingIndex;
-import org.weather.api.cn.realtime.RealtimeWeather;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
-import android.util.Log;
 
 public class WeatherDataProvider extends ContentProvider {
 
@@ -28,13 +17,17 @@ public class WeatherDataProvider extends ContentProvider {
 		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.FORECAST_PATH + "/#", Weather.ForecastWeather.TYPE);
 	}
 
-	private DatabaseSupport databaseSupport;
-	private CachedWeatherClient weatherClient;
+	private SettingProvider settingProvider;
+	private RealtimeProvider realtimeProvider;
+	private ForecastProvider forecastProvider;
 
 	@Override
 	public boolean onCreate() {
-		databaseSupport = new DatabaseSupport(getContext());
-		weatherClient = new CachedWeatherClient();
+		DatabaseSupport databaseSupport = new DatabaseSupport(getContext());
+		WeatherService weatherService = new WeatherService();
+		settingProvider = new SettingProvider(databaseSupport);
+		realtimeProvider = new RealtimeProvider(databaseSupport, weatherService, settingProvider);
+		forecastProvider = new ForecastProvider(databaseSupport, weatherService, settingProvider);
 		return true;
 	}
 
@@ -42,101 +35,16 @@ public class WeatherDataProvider extends ContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		switch (URI_MATCHER.match(uri)) {
 		case Weather.Setting.TYPE:
-			return findSetting(uri);
+			return settingProvider.find();
 		case Weather.RealtimeWeather.TYPE:
-			return findRealtime(uri);
+			String citycode = uri.getLastPathSegment();
+			return realtimeProvider.find(citycode);
 		case Weather.ForecastWeather.TYPE:
-			return findForecast(uri);
+			citycode = uri.getLastPathSegment();
+			return forecastProvider.find(citycode);
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
 		}
-	}
-
-	private Cursor findSetting(Uri uri) {
-		MatrixCursor result = new MatrixCursor(new String[] { Weather.Setting.CITY1, Weather.Setting.CITY2,
-				Weather.Setting.CITY3, Weather.Setting.UPDATETIME });
-		Cursor cursor = databaseSupport.find(DatabaseSupport.COL_TYPE + "=?", new Object[] { Weather.Setting.TYPE });
-		if (cursor != null) {
-			if (cursor.moveToFirst()) {
-				String value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
-				if (value != null && value.length() > 0) {
-					result.addRow(value.split(";"));
-				}
-			}
-			cursor.close();
-		}
-		return result;
-	}
-
-	private Cursor findRealtime(Uri uri) {
-		String citycode = uri.getLastPathSegment();
-		Log.i(WeatherDataProvider.class.getSimpleName(), "citycode: " + citycode);
-		MatrixCursor realtimeCursor = new MatrixCursor(new String[] { Weather.RealtimeWeather.ID,
-				Weather.RealtimeWeather.NAME, Weather.RealtimeWeather.TIME, Weather.RealtimeWeather.TEMPERATURE,
-				Weather.RealtimeWeather.HUMIDITY, Weather.RealtimeWeather.WINDDIRECTION,
-				Weather.RealtimeWeather.WINDFORCE, Weather.RealtimeWeather.DRESS, Weather.RealtimeWeather.ULTRAVIOLET,
-				Weather.RealtimeWeather.CLEANCAR, Weather.RealtimeWeather.TRAVEL, Weather.RealtimeWeather.COMFORT,
-				Weather.RealtimeWeather.MORNINGEXERCISE, Weather.RealtimeWeather.SUNDRY,
-				Weather.RealtimeWeather.IRRITABILITY });
-
-		List<Object> row = new ArrayList<Object>();
-		RealtimeWeather realtime = weatherClient.getRealtimeWeather(citycode);
-		if (realtime != null) {
-			Collections.addAll(row, realtime.getCityId(), realtime.getCityName(), realtime.getTime(),
-					realtime.getTemperature(), realtime.getHumidity(), realtime.getWindDirection(),
-					realtime.getWindForce());
-		}
-		ForecastWeather forecast = weatherClient.getForecastWeather(citycode);
-		if (forecast != null) {
-			row.set(2, forecast.getTime());
-			LivingIndex li = forecast.getDressIndex();
-			row.add(li != null ? li.getIndex() : null);
-			li = forecast.getUltravioletIndex();
-			row.add(li != null ? li.getIndex() : null);
-			li = forecast.getCleanCarIndex();
-			row.add(li != null ? li.getIndex() : null);
-			li = forecast.getTravelIndex();
-			row.add(li != null ? li.getIndex() : null);
-			li = forecast.getComfortIndex();
-			row.add(li != null ? li.getIndex() : null);
-			li = forecast.getMorningExerciseIndex();
-			row.add(li != null ? li.getIndex() : null);
-			li = forecast.getSunDryIndex();
-			row.add(li != null ? li.getIndex() : null);
-			li = forecast.getIrritabilityIndex();
-			row.add(li != null ? li.getIndex() : null);
-		}
-		if (row.size() > 0) {
-			realtimeCursor.addRow(row);
-		} else {
-			Log.e(WeatherDataProvider.class.getName(), "get realtime weather failed");
-		}
-		return realtimeCursor;
-	}
-
-	private Cursor findForecast(Uri uri) {
-		String citycode = uri.getLastPathSegment();
-		Log.i(WeatherDataProvider.class.getSimpleName(), "citycode: " + citycode);
-		MatrixCursor forecastCusor = new MatrixCursor(new String[] { Weather.ForecastWeather.ID,
-				Weather.ForecastWeather.NAME, Weather.ForecastWeather.TIME, Weather.ForecastWeather.WEATHER,
-				Weather.ForecastWeather.TEMPERATURE, Weather.ForecastWeather.IMAGE, Weather.ForecastWeather.WIND,
-				Weather.ForecastWeather.WINDFORCE });
-		ForecastWeather fw = weatherClient.getForecastWeather(citycode);
-		if (fw != null) {
-			List<String> wl = fw.getWeather(), tl = fw.getTemperature(), il = fw.getImage(), wdl = fw.getWind(), wfl = fw
-					.getWindForce();
-			int length = Math
-					.min(wl.size(), Math.min(tl.size(), Math.min(il.size(), Math.min(wdl.size(), wfl.size()))));
-			for (int i = 0; i < length; i++) {
-				forecastCusor.addRow(new Object[] { fw.getCityId(), fw.getCityName(), fw.getTime(),
-						wl.size() > i ? wl.get(i) : null, tl.size() > i ? tl.get(i) : null,
-						il.size() > i ? il.get(i) : null, wdl.size() > i ? wdl.get(i) : null,
-						wfl.size() > i ? wfl.get(i) : null });
-			}
-		} else {
-			Log.e(WeatherDataProvider.class.getSimpleName(), "get forecast weather failed");
-		}
-		return forecastCusor;
 	}
 
 	@Override
@@ -167,50 +75,8 @@ public class WeatherDataProvider extends ContentProvider {
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		if (URI_MATCHER.match(uri) == Weather.Setting.TYPE) {
-			// find
-			long rowId = -1;
-			String city1 = values.getAsString(Weather.Setting.CITY1);
-			String city2 = values.getAsString(Weather.Setting.CITY2);
-			String city3 = values.getAsString(Weather.Setting.CITY3);
-			String updateTime = values.getAsString(Weather.Setting.UPDATETIME);
-			Cursor old = databaseSupport.find(DatabaseSupport.COL_TYPE + "=?", new Object[] { Weather.Setting.TYPE });
-			if (old != null) {
-				if (old.moveToFirst()) {
-					rowId = old.getLong(old.getColumnIndex(BaseColumns._ID));
-					String value = old.getString(old.getColumnIndex(DatabaseSupport.COL_VALUE));
-					String[] sl = (value != null ? value.split(";") : new String[0]);
-					if (city1 == null || city1.length() == 0) {
-						if (sl.length > 0) {
-							city1 = sl[0];
-						}
-					}
-					if (city2 == null || city2.length() == 0) {
-						if (sl.length > 1) {
-							city2 = sl[1];
-						}
-					}
-					if (city3 == null || city3.length() == 0) {
-						if (sl.length > 2) {
-							city3 = sl[2];
-						}
-					}
-					if (updateTime == null || updateTime.length() == 0) {
-						if (sl.length > 3) {
-							updateTime = sl[3];
-						}
-					}
-				}
-				old.close();
-			}
-			// save
-			ContentValues setting = new ContentValues();
-			setting.put(DatabaseSupport.COL_TYPE, Weather.Setting.TYPE);
-			setting.put(DatabaseSupport.COL_VALUE, city1 + ";" + city2 + ";" + city3 + ";" + updateTime);
-			rowId = databaseSupport.save(rowId, setting);
-			if (rowId > 0) {
-				Uri settingUri = Uri.withAppendedPath(uri, String.valueOf(rowId));
-				getContext().getContentResolver().notifyChange(settingUri, null);
-			}
+			settingProvider.update(values);
+			return 1;
 		}
 		return 0;
 	}

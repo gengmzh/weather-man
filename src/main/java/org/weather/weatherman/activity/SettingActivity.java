@@ -35,10 +35,10 @@ public class SettingActivity extends Activity {
 		Spinner city1Spinner = (Spinner) findViewById(R.id.city1);
 		Spinner city2Spinner = (Spinner) findViewById(R.id.city2);
 		Spinner city3Spinner = (Spinner) findViewById(R.id.city3);
-		ArrayAdapter<City> adapter = new ArrayAdapter<City>(this, android.R.layout.simple_spinner_item,
+		ArrayAdapter<City> city1Adapter = new ArrayAdapter<City>(this, android.R.layout.simple_spinner_item,
 				cityTree.getProvince());
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		city1Spinner.setAdapter(adapter);
+		city1Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		city1Spinner.setAdapter(city1Adapter);
 		city1Spinner.setOnItemSelectedListener(new CityCascadingListener(city2Spinner));
 		city2Spinner.setOnItemSelectedListener(new CityCascadingListener(city3Spinner));
 		city3Spinner.setOnItemSelectedListener(new CitySelectionListener());
