@@ -24,15 +24,20 @@ import android.widget.TextView;
  */
 public class ForecastActivity extends Activity {
 
-	private static final DateFormat DF_1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-	private static final DateFormat DF_2 = new SimpleDateFormat("MM.dd a");
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.forecast);
-		refresh();
 	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		this.refresh();
+	}
+
+	private static final DateFormat DF_1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	private static final DateFormat DF_2 = new SimpleDateFormat("MM.dd a");
 
 	void refresh() {
 		WeatherApplication app = (WeatherApplication) getApplication();

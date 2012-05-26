@@ -13,11 +13,15 @@ import android.widget.TextView;
 
 public class RealtimeActivity extends Activity {
 
-	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.realtime);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
 		this.refresh();
 	}
 
@@ -28,10 +32,6 @@ public class RealtimeActivity extends Activity {
 			Uri uri = Uri.withAppendedPath(Weather.RealtimeWeather.CONTENT_URI, citycode);
 			Cursor cursor = getContentResolver().query(uri, null, null, null, null);
 			if (cursor.moveToFirst()) {
-//				// city
-//				String text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.NAME));
-//				TextView view = (TextView) findViewById(R.id.city);
-//				view.setText(text);
 				// temperature
 				String text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.TEMPERATURE));
 				TextView view = (TextView) findViewById(R.id.temperatue);
