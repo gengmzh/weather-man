@@ -1,10 +1,8 @@
 package org.weather.weatherman.activity;
 
 import org.weather.api.cn.city.City;
-import org.weather.api.cn.city.CityTree;
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
-import org.weather.weatherman.content.CityManager;
 import org.weather.weatherman.content.Weather;
 
 import android.app.TabActivity;
@@ -24,17 +22,15 @@ public class WeathermanActivity extends TabActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		// app
 		app = (WeatherApplication) getApplication();
-		CityManager cityManager = CityManager.getInstance();
-		app.setCityTree(cityManager.readCityFile());
-		City city = this.getDefaultCitycode();
-		app.setCitycode(city.getId());
-		// city view
+		// city
 		TextView cityView = (TextView) findViewById(R.id.city);
 		cityView.getPaint().setFakeBoldText(true);
-		cityView.setText(city.getName());
-		app.setCityView(cityView);
+		City city = this.getDefaultCitycode();
+		if (city != null) {
+			app.setCity(city);
+			cityView.setText(city.getName());
+		}
 		// tab widget
 		tabHost = getTabHost();
 		Resources res = getResources();
@@ -47,20 +43,17 @@ public class WeathermanActivity extends TabActivity {
 		tabSpec = tabHost.newTabSpec("setting").setIndicator(res.getString(R.string.setting))
 				.setContent(new Intent().setClass(this, SettingActivity.class));
 		tabHost.addTab(tabSpec);
-		tabHost.setCurrentTab(0);
+		tabHost.setCurrentTab(city != null ? 0 : 2);
 	}
 
 	City getDefaultCitycode() {
-		String citycode = null;
 		Cursor cursor = getContentResolver().query(Weather.Setting.CONTENT_URI, null, null, null, null);
 		if (cursor != null && cursor.moveToFirst()) {
-			citycode = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY3));
+			String id = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY3_CODE));
+			String name = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY3_NAME));
+			return new City(id, name);
 		}
-		CityTree tree = app.getCityTree();
-		if (citycode != null && citycode.length() > 0) {
-			return tree.findCity(citycode);
-		}
-		return tree.getProvince().get(0).getChildren().get(0).getChildren().get(0);
+		return null;
 	}
 
 }

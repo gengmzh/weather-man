@@ -42,6 +42,7 @@ public class ForecastProvider {
 					result.addRow(row.split(";"));
 				}
 				cursor.close();
+				Log.i(ForecastProvider.class.getSimpleName(), "found forecast weather from sqlite");
 				return result;
 			}
 		}
@@ -49,6 +50,7 @@ public class ForecastProvider {
 		// query web server
 		ForecastWeather fw = weatherService.getForecastWeather(citycode);
 		if (fw != null) {
+			Log.i(ForecastProvider.class.getSimpleName(), "found forecast weather from web");
 			List<String> wl = fw.getWeather(), tl = fw.getTemperature(), il = fw.getImage(), wdl = fw.getWind(), wfl = fw
 					.getWindForce();
 			int length = Math
@@ -78,7 +80,8 @@ public class ForecastProvider {
 	}
 
 	public void update(List<ContentValues> values) {
-		String city = values.get(0).getAsString(Weather.ForecastWeather.ID);
+		String city = (values != null && values.size() > 0 ? values.get(0).getAsString(Weather.ForecastWeather.ID)
+				: null);
 		if (city == null || city.length() == 0) {
 			return;
 		}
@@ -106,6 +109,7 @@ public class ForecastProvider {
 		}
 		setting.put(DatabaseSupport.COL_VALUE, value.toString());
 		rowId = databaseSupport.save(rowId, setting);
+		Log.i(ForecastProvider.class.getSimpleName(), "updated forecast weather");
 	}
 
 }

@@ -46,6 +46,7 @@ public class RealtimeProvider {
 				String value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
 				result.addRow(value.split(";"));
 				cursor.close();
+				Log.i(RealtimeProvider.class.getSimpleName(), "found realtime weather from sqlite");
 				return result;
 			}
 		}
@@ -54,6 +55,7 @@ public class RealtimeProvider {
 		List<Object> row = new ArrayList<Object>();
 		RealtimeWeather realtime = weatherService.getRealtimeWeather(citycode);
 		if (realtime != null) {
+			Log.i(RealtimeProvider.class.getSimpleName(), "found realtime weather from web");
 			Collections.addAll(row, realtime.getCityId(), realtime.getCityName(), realtime.getTime(),
 					realtime.getTemperature(), realtime.getHumidity(), realtime.getWindDirection(),
 					realtime.getWindForce());
@@ -103,7 +105,7 @@ public class RealtimeProvider {
 	}
 
 	public void update(ContentValues values) {
-		String city = values.getAsString(Weather.RealtimeWeather.ID);
+		String city = (values != null ? values.getAsString(Weather.RealtimeWeather.ID) : null);
 		if (city == null || city.length() == 0) {
 			return;
 		}
@@ -136,6 +138,7 @@ public class RealtimeProvider {
 		value.append(values.getAsString(Weather.RealtimeWeather.IRRITABILITY)).append(";");
 		setting.put(DatabaseSupport.COL_VALUE, value.toString());
 		rowId = databaseSupport.save(rowId, setting);
+		Log.i(RealtimeProvider.class.getSimpleName(), "updated realtime weather");
 	}
 
 }

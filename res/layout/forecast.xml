@@ -2,15 +2,14 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:stretchColumns="3" >
+    android:stretchColumns="*" >
 
     <TableRow>
 
         <TextView
             android:id="@+id/updateTime"
-            android:layout_span="5"
+            android:layout_span="4"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
     <!--
@@ -45,7 +44,7 @@
             android:padding="3dip"
             android:text="@string/hello"
             android:textSize="14dip" />
-    </TableRow>
+    </TableRow>
     -->
 
 </TableLayout>

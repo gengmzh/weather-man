@@ -14,11 +14,13 @@ import android.test.AndroidTestCase;
 public class CityManagerTest extends AndroidTestCase {
 
 	public void testReadCityFile() throws Exception {
+		long st = System.currentTimeMillis();
 		CityManager mgr = CityManager.getInstance();
 		CityTree tree = mgr.readCityFile();
 
 		Assert.assertNotNull(tree);
-		System.out.println(tree);
+		long et = System.currentTimeMillis();
+		System.out.println((et - st) + "millis: " + tree);
 	}
 
 }

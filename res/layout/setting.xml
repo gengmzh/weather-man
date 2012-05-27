@@ -12,7 +12,7 @@
             android:padding="3dp" >
 
             <TextView
-                android:id="@+id/updateTime"
+                android:id="@+id/cityPrompt"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="3dip"
@@ -52,7 +52,7 @@
             android:padding="3dp" >
 
             <TextView
-                android:id="@+id/updateTime"
+                android:id="@+id/uptimePrompt"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="3dip"

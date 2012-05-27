@@ -2,14 +2,14 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:stretchColumns="0" >
+    android:stretchColumns="1" >
 
     <TableRow>
 
         <TextView
             android:id="@+id/updateTime"
+            android:layout_span="2"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
@@ -17,8 +17,8 @@
 
         <TextView
             android:id="@+id/temperatue"
+            android:layout_span="2"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
@@ -26,8 +26,8 @@
 
         <TextView
             android:id="@+id/wind"
+            android:layout_span="2"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
@@ -36,7 +36,6 @@
         <TextView
             android:id="@+id/humidity"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
@@ -45,72 +44,104 @@
     <TableRow>
 
         <TextView
+            android:padding="3dip"
+            android:text="舒适度："
+            android:textSize="14dip" />
+
+        <TextView
             android:id="@+id/comfort"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
     <TableRow>
+
+        <TextView
+            android:padding="3dip"
+            android:text="穿衣指数："
+            android:textSize="14dip" />
 
         <TextView
             android:id="@+id/dress"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
     <TableRow>
+
+        <TextView
+            android:padding="3dip"
+            android:text="紫外线强度："
+            android:textSize="14dip" />
 
         <TextView
             android:id="@+id/ultraviolet"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
     <TableRow>
+
+        <TextView
+            android:padding="3dip"
+            android:text="洗车指数："
+            android:textSize="14dip" />
 
         <TextView
             android:id="@+id/cleancar"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
     <TableRow>
+
+        <TextView
+            android:padding="3dip"
+            android:text="出游指数："
+            android:textSize="14dip" />
 
         <TextView
             android:id="@+id/travel"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
     <TableRow>
+
+        <TextView
+            android:padding="3dip"
+            android:text="晨练指数："
+            android:textSize="14dip" />
 
         <TextView
             android:id="@+id/morningexercise"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
     <TableRow>
+
+        <TextView
+            android:padding="3dip"
+            android:text="晾晒指数："
+            android:textSize="14dip" />
 
         <TextView
             android:id="@+id/sundry"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 
     <TableRow>
 
         <TextView
+            android:padding="3dip"
+            android:text="过敏指数："
+            android:textSize="14dip" />
+
+        <TextView
             android:id="@+id/irritability"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="14dip" />
     </TableRow>
 

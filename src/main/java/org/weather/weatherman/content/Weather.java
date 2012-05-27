@@ -20,8 +20,9 @@ public final class Weather {
 		public static final String CONTENT_TYPE = "vnd.android.cursor.item/vnd." + AUTHORITY + "." + SETTING_PATH;
 
 		public static final String ID = _ID;
-		public static final String CITY1 = "city1", CITY2 = "city2", CITY3 = "city3";
-		public static final String UPDATETIME = "updatetime";
+		public static final String CITY1_CODE = "c1c", CITY2_CODE = "c2c", CITY3_CODE = "c3c";
+		public static final String CITY1_NAME = "c1n", CITY2_NAME = "c2n", CITY3_NAME = "c3n";
+		public static final String UPTIME = "uptime";
 	}
 
 	public static final class RealtimeWeather implements BaseColumns {

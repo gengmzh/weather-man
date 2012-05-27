@@ -19,8 +19,8 @@
             android:id="@+id/city"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/city_hint"
             android:padding="3dip"
-            android:text="@string/hello"
             android:textSize="20dip"
             android:textStyle="bold" />
 

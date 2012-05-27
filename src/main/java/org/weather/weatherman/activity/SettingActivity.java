@@ -4,6 +4,7 @@ import org.weather.api.cn.city.City;
 import org.weather.api.cn.city.CityTree;
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
+import org.weather.weatherman.content.CityManager;
 import org.weather.weatherman.content.Weather;
 
 import android.app.Activity;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 /**
  * @author gmz
@@ -23,15 +25,17 @@ import android.widget.Spinner;
  */
 public class SettingActivity extends Activity {
 
-	WeatherApplication app;
+	private WeatherApplication app;
+	private TextView cityView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setting);
-		// city
 		app = (WeatherApplication) getApplication();
-		CityTree cityTree = app.getCityTree();
+		cityView = (TextView) getParent().findViewById(R.id.city);
+		// city
+		CityTree cityTree = CityManager.getInstance().readCityFile();
 		Spinner city1Spinner = (Spinner) findViewById(R.id.city1);
 		Spinner city2Spinner = (Spinner) findViewById(R.id.city2);
 		Spinner city3Spinner = (Spinner) findViewById(R.id.city3);
@@ -43,31 +47,31 @@ public class SettingActivity extends Activity {
 		city2Spinner.setOnItemSelectedListener(new CityCascadingListener(city3Spinner));
 		city3Spinner.setOnItemSelectedListener(new CitySelectionListener());
 		// update time
-		Spinner updateSpinner = (Spinner) findViewById(R.id.updateTimeSpinner);
+		Spinner uptimeSpinner = (Spinner) findViewById(R.id.updateTimeSpinner);
 		ArrayAdapter<CharSequence> updateAdapter = ArrayAdapter.createFromResource(this, R.array.updateTime,
 				android.R.layout.simple_spinner_item);
 		updateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		updateSpinner.setAdapter(updateAdapter);
-		updateSpinner.setOnItemSelectedListener(new UpdatetimeSelectionListener());
+		uptimeSpinner.setAdapter(updateAdapter);
+		uptimeSpinner.setOnItemSelectedListener(new UpdatetimeSelectionListener());
 		// reset
 		Cursor cursor = getContentResolver().query(Weather.Setting.CONTENT_URI, null, null, null, null);
 		if (cursor != null && cursor.moveToFirst()) {
-			String c1 = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY1));
+			String c1 = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY1_CODE));
 			Log.i(SettingActivity.class.getSimpleName(), "city1: " + c1);
 			this.selectCity(city1Spinner, c1);
-			String c2 = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY2));
+			String c2 = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY2_CODE));
 			Log.i(SettingActivity.class.getSimpleName(), "city2: " + c2);
 			this.selectCity(city2Spinner, c2);
-			String c3 = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY3));
+			String c3 = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY3_CODE));
 			Log.i(SettingActivity.class.getSimpleName(), "city3: " + c3);
 			this.selectCity(city3Spinner, c3);
-			String updatetime = cursor.getString(cursor.getColumnIndex(Weather.Setting.UPDATETIME));
-			Log.i(SettingActivity.class.getSimpleName(), "updatetime: " + updatetime);
+			String updatetime = cursor.getString(cursor.getColumnIndex(Weather.Setting.UPTIME));
+			Log.i(SettingActivity.class.getSimpleName(), "uptime: " + updatetime);
 			if (updatetime != null && updatetime.length() > 0) {
-				for (int i = 0; i < updateSpinner.getCount(); i++) {
-					String hour = String.valueOf(updateSpinner.getItemAtPosition(i));
+				for (int i = 0; i < uptimeSpinner.getCount(); i++) {
+					String hour = String.valueOf(uptimeSpinner.getItemAtPosition(i));
 					if (hour.equals(updatetime)) {
-						updateSpinner.setSelection(i);
+						uptimeSpinner.setSelection(i);
 					}
 				}
 			}
@@ -124,12 +128,15 @@ public class SettingActivity extends Activity {
 			City c1 = (City) city1.getSelectedItem(), c2 = (City) city2.getSelectedItem();
 			City c3 = (City) city3.getItemAtPosition(arg2);
 			ContentValues values = new ContentValues();
-			values.put(Weather.Setting.CITY1, c1.getId());
-			values.put(Weather.Setting.CITY2, c2.getId());
-			values.put(Weather.Setting.CITY3, c3.getId());
+			values.put(Weather.Setting.CITY1_CODE, c1.getId());
+			values.put(Weather.Setting.CITY1_NAME, c1.getName());
+			values.put(Weather.Setting.CITY2_CODE, c2.getId());
+			values.put(Weather.Setting.CITY2_NAME, c2.getName());
+			values.put(Weather.Setting.CITY3_CODE, c3.getId());
+			values.put(Weather.Setting.CITY3_NAME, c3.getName());
 			getContentResolver().update(Weather.Setting.CONTENT_URI, values, null, null);
-			app.setCitycode(c3.getId());
-			app.getCityView().setText(c3.getName());
+			app.setCity(c3);
+			cityView.setText(c3.getName());
 		}
 
 		@Override
@@ -146,7 +153,7 @@ public class SettingActivity extends Activity {
 		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			String updatetime = String.valueOf(arg0.getItemAtPosition(arg2));
 			ContentValues values = new ContentValues();
-			values.put(Weather.Setting.UPDATETIME, updatetime);
+			values.put(Weather.Setting.UPTIME, updatetime);
 			getContentResolver().update(Weather.Setting.CONTENT_URI, values, null, null);
 		}
 

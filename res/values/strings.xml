@@ -17,5 +17,6 @@
     </string-array>
     <string name="city_prompt">请选择所在城市</string>
     <string name="updatetime_prompt">请选择更新间隔时长</string>
+    <string name="city_hint">请在设置里选择所在城市</string>
 
 </resources>
