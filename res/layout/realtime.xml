@@ -145,4 +145,13 @@
             android:textSize="14dip" />
     </TableRow>
 
+    <TableRow>
+
+        <RelativeLayout
+            android:id="@+id/adContainver"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="2" />
+    </TableRow>
+
 </TableLayout>

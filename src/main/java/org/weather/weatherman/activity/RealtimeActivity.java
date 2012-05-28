@@ -9,7 +9,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import cn.domob.android.ads.DomobAdView;
 
 public class RealtimeActivity extends Activity {
 
@@ -20,6 +22,12 @@ public class RealtimeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.realtime);
 		app = (WeatherApplication) getApplication();
+		// domob
+		RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.adContainver);
+		DomobAdView adView = new DomobAdView(this, WeatherApplication.DOMOB_PUBLISHER_ID,
+				DomobAdView.INLINE_SIZE_320X50);
+		adContainer.addView(adView);
+
 	}
 
 	@Override
