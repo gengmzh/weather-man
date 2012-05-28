@@ -46,10 +46,13 @@ public class RealtimeActivity extends Activity {
 			TextView view = (TextView) findViewById(R.id.temperatue);
 			view.setText(text);
 			// wind
-			text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.WINDDIRECTION))
-					+ cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.WINDFORCE));
 			view = (TextView) findViewById(R.id.wind);
+			text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.WINDDIRECTION));
 			view.setText(text);
+			text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.WINDFORCE));
+			if (text != null && !text.equals(view.getText())) {
+				view.setText(view.getText() + text);
+			}
 			// humidity
 			text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.HUMIDITY));
 			view = (TextView) findViewById(R.id.humidity);

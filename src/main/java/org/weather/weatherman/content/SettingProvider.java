@@ -85,10 +85,12 @@ public class SettingProvider {
 		if (setting.moveToFirst()) {
 			String uptime = setting.getString(setting.getColumnIndex(Weather.Setting.UPTIME));
 			long hour = Long.valueOf(uptime);
-			long diff = (new Date().getTime() - date.getTime()) / (1000 * 60 * 60);
+			Date now = new Date();
+			long diff = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 			return diff > hour;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 }
