@@ -52,7 +52,7 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 		values.put(COL_UPDATETIME, new Date().getTime());
 		SQLiteDatabase db = getWritableDatabase();
 		if (rowId > 0) {
-			db.update(TABLE_NAME, values, BaseColumns._ID + "=?", new String[] { String.valueOf(rowId) });
+			db.update(TABLE_NAME, values, COL_ID + "=?", new String[] { String.valueOf(rowId) });
 		} else {
 			rowId = db.insert(TABLE_NAME, null, values);
 		}

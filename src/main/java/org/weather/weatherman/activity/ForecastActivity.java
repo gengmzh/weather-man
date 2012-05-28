@@ -45,7 +45,6 @@ public class ForecastActivity extends Activity {
 	}
 
 	private static final DateFormat DF_1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-	private static final DateFormat DF_2 = new SimpleDateFormat("MM.dd a");
 
 	void refresh() {
 		String citycode = (app.getCity() != null ? app.getCity().getId() : null);
@@ -59,7 +58,9 @@ public class ForecastActivity extends Activity {
 			String text = cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TIME));
 			TextView view = (TextView) findViewById(R.id.updateTime);
 			view.setText(text + "更新");
+			// add row
 			TableLayout layout = (TableLayout) view.getParent().getParent();
+			layout.removeViews(1, layout.getChildCount() - 1);
 			Calendar cal = Calendar.getInstance();
 			try {
 				cal.setTime(DF_1.parse(text));
@@ -74,7 +75,7 @@ public class ForecastActivity extends Activity {
 				view = new TextView(this);
 				view.setPadding(3, 3, 3, 3);
 				view.setTextSize(14);
-				view.setText(DF_2.format(cal.getTime()));
+				view.setText(format(cal));
 				row.addView(view);
 				// image
 				// view = new TextView(this);
@@ -105,6 +106,12 @@ public class ForecastActivity extends Activity {
 		} else {
 			Log.e(RealtimeActivity.class.getName(), "can't get realtime weather");
 		}
+	}
+
+	String format(Calendar date) {
+		int day = date.get(Calendar.DAY_OF_MONTH);
+		return (date.get(Calendar.MONTH) + 1) + "." + (day < 10 ? "0" : "") + day
+				+ (date.get(Calendar.HOUR_OF_DAY) < 12 ? "白天" : "夜晚");
 	}
 
 }

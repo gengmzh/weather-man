@@ -1,4 +1,4 @@
-package org.weather.weatherman.city;
+package org.weather.weatherman.content;
 
 import junit.framework.Assert;
 
