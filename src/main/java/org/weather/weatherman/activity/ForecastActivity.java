@@ -73,8 +73,6 @@ public class ForecastActivity extends Activity {
 				// date
 				cal.add(Calendar.HOUR_OF_DAY, 12);
 				view = new TextView(this);
-				view.setPadding(3, 3, 3, 3);
-				view.setTextSize(14);
 				view.setText(format(cal));
 				row.addView(view);
 				// image
@@ -85,20 +83,14 @@ public class ForecastActivity extends Activity {
 				// row.addView(view);
 				// weather
 				view = new TextView(this);
-				view.setPadding(3, 3, 3, 3);
-				view.setTextSize(14);
 				view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.WEATHER)));
 				row.addView(view);
 				// temperature
 				view = new TextView(this);
-				view.setPadding(3, 3, 3, 3);
-				view.setTextSize(14);
 				view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TEMPERATURE)));
 				row.addView(view);
 				// wind
 				view = new TextView(this);
-				view.setPadding(3, 3, 3, 3);
-				view.setTextSize(14);
 				view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.WIND)));
 				row.addView(view);
 				layout.addView(row);

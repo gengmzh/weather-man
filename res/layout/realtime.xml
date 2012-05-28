@@ -1,148 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:stretchColumns="1" >
+    android:orientation="vertical" >
 
-    <TableRow>
+    <RelativeLayout
+        android:id="@+id/adContainver"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
-        <TextView
-            android:id="@+id/updateTime"
-            android:layout_span="2"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/adContainver"
+        android:padding="3dp"
+        android:stretchColumns="1"
+        android:textSize="20dp" >
 
-    <TableRow>
+        <TableRow>
 
-        <TextView
-            android:id="@+id/temperatue"
-            android:layout_span="2"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+            <TextView
+                android:id="@+id/updateTime"
+                android:layout_span="2" />
+        </TableRow>
 
-    <TableRow>
+        <TableRow>
 
-        <TextView
-            android:id="@+id/wind"
-            android:layout_span="2"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+            <TextView
+                android:id="@+id/temperatue"
+                android:layout_span="2" />
+        </TableRow>
 
-    <TableRow>
+        <TableRow>
 
-        <TextView
-            android:id="@+id/humidity"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+            <TextView
+                android:id="@+id/wind"
+                android:layout_span="2" />
+        </TableRow>
 
-    <!-- living index -->
+        <TableRow>
 
-    <TableRow>
+            <TextView
+                android:id="@+id/humidity"
+                android:layout_span="2" />
+        </TableRow>
 
-        <TextView
-            android:padding="3dip"
-            android:text="舒适度："
-            android:textSize="14dip" />
+        <!-- living index -->
 
-        <TextView
-            android:id="@+id/comfort"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+        <TableRow>
 
-    <TableRow>
+            <TextView android:text="舒适度：" />
 
-        <TextView
-            android:padding="3dip"
-            android:text="穿衣指数："
-            android:textSize="14dip" />
+            <TextView android:id="@+id/comfort" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/dress"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+        <TableRow>
 
-    <TableRow>
+            <TextView android:text="穿衣指数：" />
 
-        <TextView
-            android:padding="3dip"
-            android:text="紫外线强度："
-            android:textSize="14dip" />
+            <TextView android:id="@+id/dress" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/ultraviolet"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+        <TableRow>
 
-    <TableRow>
+            <TextView android:text="紫外线强度：" />
 
-        <TextView
-            android:padding="3dip"
-            android:text="洗车指数："
-            android:textSize="14dip" />
+            <TextView android:id="@+id/ultraviolet" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/cleancar"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+        <TableRow>
 
-    <TableRow>
+            <TextView android:text="洗车指数：" />
 
-        <TextView
-            android:padding="3dip"
-            android:text="出游指数："
-            android:textSize="14dip" />
+            <TextView android:id="@+id/cleancar" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/travel"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+        <TableRow>
 
-    <TableRow>
+            <TextView android:text="出游指数：" />
 
-        <TextView
-            android:padding="3dip"
-            android:text="晨练指数："
-            android:textSize="14dip" />
+            <TextView android:id="@+id/travel" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/morningexercise"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+        <TableRow>
 
-    <TableRow>
+            <TextView android:text="晨练指数：" />
 
-        <TextView
-            android:padding="3dip"
-            android:text="晾晒指数："
-            android:textSize="14dip" />
+            <TextView android:id="@+id/morningexercise" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/sundry"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+        <TableRow>
 
-    <TableRow>
+            <TextView android:text="晾晒指数：" />
 
-        <TextView
-            android:padding="3dip"
-            android:text="过敏指数："
-            android:textSize="14dip" />
+            <TextView android:id="@+id/sundry" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/irritability"
-            android:padding="3dip"
-            android:textSize="14dip" />
-    </TableRow>
+        <TableRow>
 
-</TableLayout>
+            <TextView android:text="过敏指数：" />
+
+            <TextView android:id="@+id/irritability" />
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>

@@ -14,6 +14,8 @@ import android.app.Application;
  */
 public class WeatherApplication extends Application {
 
+	public static final String DOMOB_PUBLISHER_ID = "56OJz+douM3frcHll+";
+
 	private City city;
 
 	public City getCity() {
