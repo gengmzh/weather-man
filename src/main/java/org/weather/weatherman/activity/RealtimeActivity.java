@@ -1,5 +1,8 @@
 package org.weather.weatherman.activity;
 
+import net.youmi.android.AdManager;
+import net.youmi.android.AdView;
+
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
@@ -11,7 +14,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import cn.domob.android.ads.DomobAdView;
 
 public class RealtimeActivity extends Activity {
 
@@ -22,11 +24,10 @@ public class RealtimeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.realtime);
 		app = (WeatherApplication) getApplication();
-		// domob
+		// youmi
+		AdManager.init(this, "05528dee290fe857", "c947939b49972de0", 30, false);
 		RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.adContainver);
-		DomobAdView adView = new DomobAdView(this, WeatherApplication.DOMOB_PUBLISHER_ID,
-				DomobAdView.INLINE_SIZE_320X50);
-		adContainer.addView(adView);
+		adContainer.addView(new AdView(this));
 
 	}
 
