@@ -27,7 +27,6 @@ public class RealtimeActivity extends Activity {
 		DomobAdView adView = new DomobAdView(this, WeatherApplication.DOMOB_PUBLISHER_ID,
 				DomobAdView.INLINE_SIZE_320X50);
 		adContainer.addView(adView);
-
 	}
 
 	@Override

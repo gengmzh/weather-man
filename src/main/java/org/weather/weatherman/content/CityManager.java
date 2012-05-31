@@ -26,7 +26,8 @@ public class CityManager {
 	}
 
 	public CityTree readCityFile() {
-		InputStream ins = CityManager.class.getClassLoader().getResourceAsStream("city.properties");
+		InputStream ins = CityManager.class.getClassLoader().getResourceAsStream(
+				"org/weather/weatherman/content/city.properties");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
 		CityTree tree = new CityTree();
 		City c1 = null, c2 = null, c3 = null, tmp = null;
