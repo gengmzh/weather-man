@@ -140,6 +140,8 @@ public class WeatherContentProvider extends ContentProvider {
 					String p = values.getAsString(Weather.City.PARENT);
 					if (p != null) {
 						stat.bindString(3, p);
+					} else {
+						stat.bindNull(3);
 					}
 					stat.executeInsert();
 					result++;

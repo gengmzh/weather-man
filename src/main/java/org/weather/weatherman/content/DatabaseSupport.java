@@ -12,7 +12,7 @@ import android.provider.BaseColumns;
 public class DatabaseSupport extends SQLiteOpenHelper {
 
 	public static final String DBNAME = "org.weather.weatherman.db";
-	public static final int DBVERSION = 2;
+	public static final int DBVERSION = 3;
 
 	public static final String TABLE_NAME = "content";
 	public static final String COL_ID = BaseColumns._ID;
@@ -38,8 +38,8 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
-		arg0.execSQL("drop table is exists " + TABLE_NAME);
-		arg0.execSQL("drop table is exists " + Weather.City.TABLE_NAME);
+		arg0.execSQL("drop table if exists " + TABLE_NAME);
+		arg0.execSQL("drop table if exists " + Weather.City.TABLE_NAME);
 		onCreate(arg0);
 	}
 

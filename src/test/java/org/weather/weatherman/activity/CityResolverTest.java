@@ -3,6 +3,9 @@
  */
 package org.weather.weatherman.activity;
 
+import java.util.List;
+
+import org.weather.api.cn.city.City;
 import org.weather.weatherman.content.Weather;
 
 import android.test.AndroidTestCase;
@@ -25,11 +28,16 @@ public class CityResolverTest extends AndroidTestCase {
 
 	public void test_initCity() throws Exception {
 		getContext().getContentResolver().delete(Weather.City.CONTENT_URI, null, null);
-		
+
 		long st = System.currentTimeMillis();
 		cityResolver.initCity();
 		long et = System.currentTimeMillis();
 		Log.i(CityResolverTest.class.getSimpleName(), "initCity spend " + (et - st) + " ms");
+	}
+
+	public void test_findCity() throws Exception {
+		List<City> cl = cityResolver.findCity(null);
+		Log.i(CityResolverTest.class.getSimpleName(), cl.toString());
 	}
 
 }
