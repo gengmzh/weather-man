@@ -4,6 +4,8 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 
 public class WeatherContentProvider extends ContentProvider {
@@ -110,6 +112,43 @@ public class WeatherContentProvider extends ContentProvider {
 			}
 			cursor.close();
 			return Uri.withAppendedPath(Weather.City.CONTENT_URI, rowId);
+		default:
+			throw new IllegalArgumentException("unknown Uri " + uri);
+		}
+	}
+
+	@Override
+	public int bulkInsert(Uri uri, ContentValues[] valuesArray) {
+		switch (URI_MATCHER.match(uri)) {
+		case Weather.Setting.TYPE:
+			return 0;
+		case Weather.RealtimeWeather.TYPE:
+			return 0;
+		case Weather.ForecastWeather.TYPE:
+			return 0;
+		case Weather.City.TYPE:
+			int result = 0;
+			SQLiteDatabase sqlite = databaseSupport.getWritableDatabase();
+			String sql = "insert into " + Weather.City.TABLE_NAME + "(" + Weather.City.CODE + "," + Weather.City.NAME
+					+ "," + Weather.City.PARENT + ") values(?,?,?) ";
+			SQLiteStatement stat = sqlite.compileStatement(sql);
+			sqlite.beginTransaction();
+			try {
+				for (ContentValues values : valuesArray) {
+					stat.bindString(1, values.getAsString(Weather.City.CODE));
+					stat.bindString(2, values.getAsString(Weather.City.NAME));
+					String p = values.getAsString(Weather.City.PARENT);
+					if (p != null) {
+						stat.bindString(3, p);
+					}
+					stat.executeInsert();
+					result++;
+				}
+				sqlite.setTransactionSuccessful();
+			} finally {
+				sqlite.endTransaction();
+			}
+			return result;
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
 		}

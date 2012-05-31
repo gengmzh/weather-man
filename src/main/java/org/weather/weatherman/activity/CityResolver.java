@@ -4,7 +4,6 @@
 package org.weather.weatherman.activity;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -31,30 +30,39 @@ public class CityResolver {
 		this.contentResolver = contentResolver;
 	}
 
-	public void initCity() throws IOException {
-		InputStream ins = WeatherContentProvider.class.getClassLoader().getResourceAsStream(
-				"org/weather/weatherman/activity/city.properties");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
-		City c1 = null, c2 = null;
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			String[] ls = line.split("\t");
-			if (ls.length < 2) {
-				continue;
+	public void initCity() throws Exception {
+		BufferedReader reader = null;
+		try {
+			InputStream ins = WeatherContentProvider.class.getClassLoader().getResourceAsStream(
+					"org/weather/weatherman/activity/city.properties");
+			reader = new BufferedReader(new InputStreamReader(ins));
+			City c1 = null, c2 = null;
+			String line = null;
+			List<ContentValues> cvl = new ArrayList<ContentValues>();
+			while ((line = reader.readLine()) != null) {
+				String[] ls = line.split("\t");
+				if (ls.length < 2) {
+					continue;
+				}
+				City tmp = new City(ls[0], ls[1]);
+				ContentValues values = new ContentValues();
+				values.put(Weather.City.CODE, tmp.getId());
+				values.put(Weather.City.NAME, tmp.getName());
+				if (tmp.getId().length() == 5) {
+					c1 = tmp;
+				} else if (tmp.getId().length() == 7) {
+					c2 = tmp;
+					values.put(Weather.City.PARENT, c1.getId());
+				} else if (tmp.getId().length() == 9) {
+					values.put(Weather.City.PARENT, c2.getId());
+				}
+				cvl.add(values);
 			}
-			City tmp = new City(ls[0], ls[1]);
-			ContentValues values = new ContentValues();
-			values.put(Weather.City.CODE, tmp.getId());
-			values.put(Weather.City.NAME, tmp.getName());
-			if (tmp.getId().length() == 5) {
-				c1 = tmp;
-			} else if (tmp.getId().length() == 7) {
-				c2 = tmp;
-				values.put(Weather.City.PARENT, c1.getId());
-			} else if (tmp.getId().length() == 9) {
-				values.put(Weather.City.PARENT, c2.getId());
+			contentResolver.bulkInsert(Weather.City.CONTENT_URI, cvl.toArray(new ContentValues[cvl.size()]));
+		} finally {
+			if (reader != null) {
+				reader.close();
 			}
-			contentResolver.insert(Weather.City.CONTENT_URI, values);
 		}
 	}
 

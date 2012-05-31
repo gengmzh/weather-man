@@ -1,9 +1,5 @@
 package org.weather.weatherman.activity;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 
 import org.weather.api.cn.city.City;
@@ -11,8 +7,6 @@ import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
 import org.weather.weatherman.content.WeatherContentProvider;
-
-import cn.domob.android.ads.DomobUpdater;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -29,6 +23,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import cn.domob.android.ads.DomobUpdater;
 
 /**
  * @author gmz
@@ -75,7 +70,7 @@ public class SettingActivity extends Activity {
 			city1List = cityResolver.findCity(null);
 			if (city1List == null || city1List.isEmpty()) {
 				try {
-					initCity();
+					cityResolver.initCity();
 				} catch (Exception e) {
 					Log.e(WeatherContentProvider.class.getSimpleName(), "init city failed", e);
 					return null;
@@ -86,33 +81,6 @@ public class SettingActivity extends Activity {
 			Cursor cursor = getContentResolver().query(Weather.Setting.CONTENT_URI, null, null, null, null);
 			onProgressUpdate(60);
 			return cursor;
-		}
-
-		void initCity() throws IOException {
-			InputStream ins = WeatherContentProvider.class.getClassLoader().getResourceAsStream(
-					"org/weather/weatherman/activity/city.properties");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
-			City c1 = null, c2 = null;
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				String[] ls = line.split("\t");
-				if (ls.length < 2) {
-					continue;
-				}
-				City tmp = new City(ls[0], ls[1]);
-				ContentValues values = new ContentValues();
-				values.put(Weather.City.CODE, tmp.getId());
-				values.put(Weather.City.NAME, tmp.getName());
-				if (tmp.getId().length() == 5) {
-					c1 = tmp;
-				} else if (tmp.getId().length() == 7) {
-					c2 = tmp;
-					values.put(Weather.City.PARENT, c1.getId());
-				} else if (tmp.getId().length() == 9) {
-					values.put(Weather.City.PARENT, c2.getId());
-				}
-				getContentResolver().insert(Weather.City.CONTENT_URI, values);
-			}
 		}
 
 		@Override
