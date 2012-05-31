@@ -6,7 +6,8 @@ import android.provider.BaseColumns;
 public final class Weather {
 
 	public static final String AUTHORITY = "org.weather.weatherman.provider";
-	public static final String SETTING_PATH = "setting", REALTIME_PATH = "realtime", FORECAST_PATH = "forecast";
+	public static final String SETTING_PATH = "setting", REALTIME_PATH = "realtime", FORECAST_PATH = "forecast",
+			CITY_PATH = "city";
 
 	private Weather() {
 	}
@@ -67,6 +68,23 @@ public final class Weather {
 		public static final String IMAGE = "image";
 		public static final String WIND = "wind";
 		public static final String WINDFORCE = "windforce";
+
+	}
+
+	public static final class City {
+		private City() {
+		}
+
+		public static final int TYPE = 0;
+		public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + CITY_PATH);
+		public static final String CONTENT_TYPE = "vnd.android.cursor.item/vnd." + AUTHORITY + "." + CITY_PATH;
+
+		public static final String TABLE_NAME = "city";
+
+		public static final String ID = BaseColumns._ID;
+		public static final String CODE = "code";
+		public static final String NAME = "name";
+		public static final String PARENT = "p";
 
 	}
 

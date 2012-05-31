@@ -30,11 +30,16 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 		String sql = "create table if not exists " + TABLE_NAME + "( " + COL_ID + " integer primary key, " + COL_CODE
 				+ " text, " + COL_TYPE + " integer, " + COL_VALUE + " text, " + COL_UPDATETIME + " integer " + "); ";
 		arg0.execSQL(sql);
+		sql = "create table if not exists " + Weather.City.TABLE_NAME + "( " + Weather.City.ID
+				+ " integer primary key, " + Weather.City.CODE + " text, " + Weather.City.NAME + " text, "
+				+ Weather.City.PARENT + " text " + "); ";
+		arg0.execSQL(sql);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
 		arg0.execSQL("drop table is exists " + TABLE_NAME);
+		arg0.execSQL("drop table is exists " + Weather.City.TABLE_NAME);
 		onCreate(arg0);
 	}
 

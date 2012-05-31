@@ -72,7 +72,7 @@
         </activity>
 
         <provider
-            android:name=".content.WeatherDataProvider"
+            android:name=".content.WeatherContentProvider"
             android:authorities="org.weather.weatherman.provider" >
         </provider>
     </application>
