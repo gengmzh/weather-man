@@ -12,6 +12,8 @@ import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
 import org.weather.weatherman.content.WeatherContentProvider;
 
+import cn.domob.android.ads.DomobUpdater;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -19,9 +21,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -52,6 +56,8 @@ public class SettingActivity extends Activity {
 		city3Spinner.setOnItemSelectedListener(new CitySelectedListener(null));
 		Spinner uptimeSpinner = (Spinner) findViewById(R.id.updateTimeSpinner);
 		uptimeSpinner.setOnItemSelectedListener(new UptimeSelectedListener());
+		Button updater = (Button) findViewById(R.id.updater);
+		updater.setOnClickListener(new UpdaterClickListener());
 		// progress
 		ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
 		progressBar.setVisibility(View.VISIBLE);
@@ -244,6 +250,13 @@ public class SettingActivity extends Activity {
 
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
+		}
+	}
+
+	class UpdaterClickListener implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			DomobUpdater.checkUpdate(getApplicationContext(), WeatherApplication.DOMOB_PUBLISHER_ID);
 		}
 	}
 

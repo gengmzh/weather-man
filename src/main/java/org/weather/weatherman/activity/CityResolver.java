@@ -69,6 +69,7 @@ public class CityResolver {
 				cl.add(new SpinnerCity(cursor.getString(codeIndex), cursor.getString(nameIndex)));
 			} while (cursor.moveToNext());
 		}
+		cursor.close();
 		return cl;
 	}
 

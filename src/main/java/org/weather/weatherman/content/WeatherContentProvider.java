@@ -96,18 +96,20 @@ public class WeatherContentProvider extends ContentProvider {
 		case Weather.ForecastWeather.TYPE:
 			return null;
 		case Weather.City.TYPE:
+			String rowId = null;
 			String code = values.getAsString(Weather.City.CODE);
 			Cursor cursor = this.query(Weather.City.CONTENT_URI, null, "code=?", new String[] { code }, null);
 			if (cursor.moveToFirst()) {// update
-				String rowId = cursor.getString(cursor.getColumnIndex(Weather.City.ID));
+				rowId = cursor.getString(cursor.getColumnIndex(Weather.City.ID));
 				String where = Weather.City.ID + "=? ";
 				String[] args = new String[] { rowId };
 				databaseSupport.getWritableDatabase().update(Weather.City.TABLE_NAME, values, where, args);
-				return Uri.withAppendedPath(Weather.City.CONTENT_URI, rowId);
 			} else {// insert
-				long rowId = databaseSupport.getWritableDatabase().insert(Weather.City.TABLE_NAME, null, values);
-				return Uri.withAppendedPath(Weather.City.CONTENT_URI, String.valueOf(rowId));
+				long id = databaseSupport.getWritableDatabase().insert(Weather.City.TABLE_NAME, null, values);
+				rowId = String.valueOf(id);
 			}
+			cursor.close();
+			return Uri.withAppendedPath(Weather.City.CONTENT_URI, rowId);
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
 		}
@@ -124,6 +126,7 @@ public class WeatherContentProvider extends ContentProvider {
 		case Weather.ForecastWeather.TYPE:
 			return 0;
 		case Weather.City.TYPE:
+			int res = 0;
 			String code = values.getAsString(Weather.City.CODE);
 			Cursor cursor = this.query(Weather.City.CONTENT_URI, null, "code=?", new String[] { code }, null);
 			if (cursor.moveToFirst()) {
@@ -137,10 +140,11 @@ public class WeatherContentProvider extends ContentProvider {
 					selectionArgs = args;
 				}
 				selectionArgs[selectionArgs.length - 1] = rowId;
-				return databaseSupport.getWritableDatabase().update(Weather.City.TABLE_NAME, values, selection,
+				res = databaseSupport.getWritableDatabase().update(Weather.City.TABLE_NAME, values, selection,
 						selectionArgs);
 			}
-			return 0;
+			cursor.close();
+			return res;
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
 		}
