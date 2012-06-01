@@ -138,7 +138,7 @@ public class WeatherContentProvider extends ContentProvider {
 					stat.bindString(1, values.getAsString(Weather.City.CODE));
 					stat.bindString(2, values.getAsString(Weather.City.NAME));
 					String p = values.getAsString(Weather.City.PARENT);
-					if (p != null) {
+					if (p != null && p.length() > 0) {
 						stat.bindString(3, p);
 					} else {
 						stat.bindNull(3);

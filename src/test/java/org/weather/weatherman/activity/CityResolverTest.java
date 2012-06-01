@@ -8,6 +8,8 @@ import java.util.List;
 import org.weather.api.cn.city.City;
 import org.weather.weatherman.content.Weather;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
@@ -37,7 +39,23 @@ public class CityResolverTest extends AndroidTestCase {
 
 	public void test_findCity() throws Exception {
 		List<City> cl = cityResolver.findCity(null);
+		Log.i(CityResolverTest.class.getSimpleName(), "province count: " + cl.size());
 		Log.i(CityResolverTest.class.getSimpleName(), cl.toString());
+	}
+
+	public void test_findAllCity() throws Exception {
+		ContentResolver resolver = getContext().getContentResolver();
+		Cursor cursor = resolver.query(Weather.City.CONTENT_URI, null, null, null, null);
+		if (cursor.moveToFirst()) {
+			int ci = cursor.getColumnIndex(Weather.City.CODE), ni = cursor.getColumnIndex(Weather.City.NAME), pi = cursor
+					.getColumnIndex(Weather.City.PARENT);
+			do {
+				String code = cursor.getString(ci), name = cursor.getString(ni), parent = cursor.getString(pi);
+				Log.i(CityResolverTest.class.getSimpleName(), "City{code:" + code + ",name:" + name + ",parent:"
+						+ parent + "}");
+			} while (cursor.moveToNext());
+		}
+		cursor.close();
 	}
 
 }
