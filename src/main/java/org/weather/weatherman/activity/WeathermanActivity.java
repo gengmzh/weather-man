@@ -5,6 +5,8 @@ import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
 
+import cn.domob.android.ads.DomobUpdater;
+
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -23,6 +25,8 @@ public class WeathermanActivity extends TabActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		app = (WeatherApplication) getApplication();
+		// check update
+		DomobUpdater.checkUpdate(this, WeatherApplication.DOMOB_PUBLISHER_ID);
 		// city
 		TextView cityView = (TextView) findViewById(R.id.city);
 		cityView.getPaint().setFakeBoldText(true);
