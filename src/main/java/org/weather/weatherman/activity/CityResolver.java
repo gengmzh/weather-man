@@ -16,6 +16,7 @@ import org.weather.weatherman.content.WeatherContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
 /**
  * @since 2012-5-31
@@ -31,6 +32,7 @@ public class CityResolver {
 	}
 
 	public void initCity() throws Exception {
+		Log.i(CityResolver.class.getSimpleName(), "init city starts");
 		BufferedReader reader = null;
 		try {
 			InputStream ins = WeatherContentProvider.class.getClassLoader().getResourceAsStream(
@@ -64,6 +66,7 @@ public class CityResolver {
 				reader.close();
 			}
 		}
+		Log.i(CityResolver.class.getSimpleName(), "init city done");
 	}
 
 	List<City> findCity(String parent) {

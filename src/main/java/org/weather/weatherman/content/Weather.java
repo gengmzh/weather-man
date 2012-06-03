@@ -6,10 +6,27 @@ import android.provider.BaseColumns;
 public final class Weather {
 
 	public static final String AUTHORITY = "org.weather.weatherman.provider";
-	public static final String SETTING_PATH = "setting", REALTIME_PATH = "realtime", FORECAST_PATH = "forecast",
-			CITY_PATH = "city";
+	public static final String CITY_PATH = "city", SETTING_PATH = "setting";
+	public static final String REALTIME_PATH = "realtime", FORECAST_PATH = "forecast", INDEX_PATH = "index";
 
 	private Weather() {
+	}
+
+	public static final class City {
+		private City() {
+		}
+
+		public static final int TYPE = 0;
+		public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + CITY_PATH);
+		public static final String CONTENT_TYPE = "vnd.android.cursor.item/vnd." + AUTHORITY + "." + CITY_PATH;
+
+		public static final String TABLE_NAME = "city";
+
+		public static final String ID = BaseColumns._ID;
+		public static final String CODE = "code";
+		public static final String NAME = "name";
+		public static final String PARENT = "p";
+
 	}
 
 	public static final class Setting implements BaseColumns {
@@ -41,15 +58,6 @@ public final class Weather {
 		public static final String HUMIDITY = "humidity";
 		public static final String WINDDIRECTION = "winddirection";
 		public static final String WINDFORCE = "windforce";
-
-		public static final String DRESS = "dress";
-		public static final String ULTRAVIOLET = "ultraviolet";
-		public static final String CLEANCAR = "cleancar";
-		public static final String TRAVEL = "travel";
-		public static final String COMFORT = "comfort";
-		public static final String MORNINGEXERCISE = "morningexercise";
-		public static final String SUNDRY = "sundry";
-		public static final String IRRITABILITY = "irritability";
 	}
 
 	public static final class ForecastWeather implements BaseColumns {
@@ -71,21 +79,25 @@ public final class Weather {
 
 	}
 
-	public static final class City {
-		private City() {
+	public static final class LivingIndex implements BaseColumns {
+		private LivingIndex() {
 		}
 
-		public static final int TYPE = 0;
-		public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + CITY_PATH);
-		public static final String CONTENT_TYPE = "vnd.android.cursor.item/vnd." + AUTHORITY + "." + CITY_PATH;
+		public static final int TYPE = 4;
+		public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + INDEX_PATH);
+		public static final String CONTENT_TYPE = "vnd.android.cursor.item/vnd." + AUTHORITY + "." + INDEX_PATH;
 
-		public static final String TABLE_NAME = "city";
-
-		public static final String ID = BaseColumns._ID;
-		public static final String CODE = "code";
-		public static final String NAME = "name";
-		public static final String PARENT = "p";
-
+		public static final String ID = _ID;
+		public static final String NAME = "city";
+		public static final String TIME = "time";
+		public static final String DRESS = "dress";
+		public static final String ULTRAVIOLET = "ultraviolet";
+		public static final String CLEANCAR = "cleancar";
+		public static final String TRAVEL = "travel";
+		public static final String COMFORT = "comfort";
+		public static final String MORNINGEXERCISE = "morningexercise";
+		public static final String SUNDRY = "sundry";
+		public static final String IRRITABILITY = "irritability";
 	}
 
 }
