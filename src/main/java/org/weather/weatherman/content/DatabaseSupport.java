@@ -12,7 +12,7 @@ import android.provider.BaseColumns;
 public class DatabaseSupport extends SQLiteOpenHelper {
 
 	public static final String DBNAME = "org.weather.weatherman.db";
-	public static final int DBVERSION = 3;
+	public static final int DBVERSION = 4;
 
 	public static final String TABLE_NAME = "content";
 	public static final String COL_ID = BaseColumns._ID;

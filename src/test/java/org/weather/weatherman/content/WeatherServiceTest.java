@@ -12,21 +12,20 @@ import android.test.AndroidTestCase;
  * @author gmz
  * 
  */
-public class RealtimeProviderTest extends AndroidTestCase {
+public class WeatherServiceTest extends AndroidTestCase {
 
 	private DatabaseSupport databaseSupport;
-	private RealtimeProvider realtimeProvider;
+	private WeatherService weatherService;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		databaseSupport = new DatabaseSupport(getContext());
-		realtimeProvider = new RealtimeProvider(databaseSupport, new WeatherService(), new SettingProvider(
-				databaseSupport));
+		weatherService = new WeatherService(databaseSupport, new SettingService(databaseSupport));
 	}
 
 	public void test_find() throws Exception {
-		Cursor cursor = realtimeProvider.find("101010700");
+		Cursor cursor = weatherService.findRealtime("101010700");
 
 		Assert.assertNotNull(cursor);
 	}
@@ -36,7 +35,7 @@ public class RealtimeProviderTest extends AndroidTestCase {
 		super.tearDown();
 		databaseSupport.close();
 		databaseSupport = null;
-		realtimeProvider = null;
+		weatherService = null;
 	}
 
 }

@@ -1,5 +1,9 @@
 package org.weather.weatherman.activity;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
@@ -48,8 +52,8 @@ public class RealtimeActivity extends Activity {
 
 	class RealtimeTask extends AsyncTask<String, Integer, Cursor> {
 
-		public RealtimeTask() {
-		}
+		private DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+		private Cursor index;
 
 		@Override
 		protected Cursor doInBackground(String... params) {
@@ -60,10 +64,12 @@ public class RealtimeActivity extends Activity {
 			}
 			onProgressUpdate(20);
 			Uri uri = Uri.withAppendedPath(Weather.RealtimeWeather.CONTENT_URI, city);
+			Cursor realtime = getContentResolver().query(uri, null, null, null, null);
 			onProgressUpdate(40);
-			Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+			uri = Uri.withAppendedPath(Weather.LivingIndex.CONTENT_URI, city);
+			index = getContentResolver().query(uri, null, null, null, null);
 			onProgressUpdate(60);
-			return cursor;
+			return realtime;
 		}
 
 		@Override
@@ -81,64 +87,66 @@ public class RealtimeActivity extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(Cursor cursor) {
-			super.onPostExecute(cursor);
+		protected void onPostExecute(Cursor realtime) {
+			super.onPostExecute(realtime);
 			onProgressUpdate(80);
-			if (cursor != null && cursor.moveToFirst()) {
+			if (realtime != null && realtime.moveToFirst()) {
 				// temperature
-				String text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.TEMPERATURE));
+				String text = realtime.getString(realtime.getColumnIndex(Weather.RealtimeWeather.TEMPERATURE));
 				TextView view = (TextView) findViewById(R.id.temperatue);
 				view.setText(text);
 				// wind
 				view = (TextView) findViewById(R.id.wind);
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.WINDDIRECTION));
+				text = realtime.getString(realtime.getColumnIndex(Weather.RealtimeWeather.WINDDIRECTION));
 				view.setText(text);
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.WINDFORCE));
+				text = realtime.getString(realtime.getColumnIndex(Weather.RealtimeWeather.WINDFORCE));
 				if (text != null && !text.equals(view.getText())) {
 					view.setText(view.getText() + text);
 				}
 				// humidity
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.HUMIDITY));
+				text = realtime.getString(realtime.getColumnIndex(Weather.RealtimeWeather.HUMIDITY));
 				view = (TextView) findViewById(R.id.humidity);
 				view.setText("湿度" + text);
 				// updateTime
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.TIME));
+				text = realtime.getString(realtime.getColumnIndex(Weather.RealtimeWeather.TIME));
 				view = (TextView) findViewById(R.id.updateTime);
-				view.setText(text + "更新");
+				view.setText(DATE_FORMAT.format(new Date()) + " " + text + "更新");
+			} else {
+				Log.e(RealtimeActivity.class.getName(), "can't get realtime weather");
+			}
+			if (index != null && index.moveToFirst()) {
 				// comfort
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.COMFORT));
-				view = (TextView) findViewById(R.id.comfort);
+				String text = index.getString(index.getColumnIndex(Weather.LivingIndex.COMFORT));
+				TextView view = (TextView) findViewById(R.id.comfort);
 				view.setText(text);
 				// dress
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.DRESS));
+				text = index.getString(index.getColumnIndex(Weather.LivingIndex.DRESS));
 				view = (TextView) findViewById(R.id.dress);
 				view.setText(text);
 				// ultraviolet
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.ULTRAVIOLET));
+				text = index.getString(index.getColumnIndex(Weather.LivingIndex.ULTRAVIOLET));
 				view = (TextView) findViewById(R.id.ultraviolet);
 				view.setText(text);
 				// cleancar
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.CLEANCAR));
+				text = index.getString(index.getColumnIndex(Weather.LivingIndex.CLEANCAR));
 				view = (TextView) findViewById(R.id.cleancar);
 				view.setText(text);
 				// travel
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.TRAVEL));
+				text = index.getString(index.getColumnIndex(Weather.LivingIndex.TRAVEL));
 				view = (TextView) findViewById(R.id.travel);
 				view.setText(text);
 				// morningexercise
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.MORNINGEXERCISE));
+				text = index.getString(index.getColumnIndex(Weather.LivingIndex.MORNINGEXERCISE));
 				view = (TextView) findViewById(R.id.morningexercise);
 				view.setText(text);
 				// sundry
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.SUNDRY));
+				text = index.getString(index.getColumnIndex(Weather.LivingIndex.SUNDRY));
 				view = (TextView) findViewById(R.id.sundry);
 				view.setText(text);
 				// irritability
-				text = cursor.getString(cursor.getColumnIndex(Weather.RealtimeWeather.IRRITABILITY));
+				text = index.getString(index.getColumnIndex(Weather.LivingIndex.IRRITABILITY));
 				view = (TextView) findViewById(R.id.irritability);
 				view.setText(text);
-			} else {
-				Log.e(RealtimeActivity.class.getName(), "can't get realtime weather");
 			}
 			onProgressUpdate(100);
 		}

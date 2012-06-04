@@ -72,6 +72,7 @@ public class SettingActivity extends Activity {
 				}
 				city1List = cityResolver.findCity(null);
 			}
+			onProgressUpdate(40);
 			// reset
 			Cursor cursor = getContentResolver().query(Weather.Setting.CONTENT_URI, null, null, null, null);
 			onProgressUpdate(60);
