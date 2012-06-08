@@ -94,13 +94,13 @@ public class ForecastActivity extends Activity {
 			onProgressUpdate(80);
 			boolean isOk = true;
 			// clear old
-			TableLayout layout = (TableLayout) findViewById(R.id.updateTime).getParent().getParent();
+			TextView uptimeView = (TextView) findViewById(R.id.updateTime);
+			TableLayout layout = (TableLayout) uptimeView.getParent().getParent();
 			layout.removeViews(1, layout.getChildCount() - 1);
 			if (cursor != null && cursor.moveToFirst()) {
 				// update time
 				String text = cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TIME));
-				TextView view = (TextView) findViewById(R.id.updateTime);
-				view.setText(text + "更新");
+				uptimeView.setText(text + "更新");
 				// add row
 				Calendar cal = Calendar.getInstance();
 				try {
@@ -113,7 +113,7 @@ public class ForecastActivity extends Activity {
 					TableRow row = new TableRow(getApplicationContext());
 					// date
 					cal.add(Calendar.HOUR_OF_DAY, 12);
-					view = new TextView(getApplicationContext());
+					TextView view = new TextView(getApplicationContext());
 					view.setText(format(cal));
 					row.addView(view);
 					// image
@@ -138,6 +138,7 @@ public class ForecastActivity extends Activity {
 				} while (cursor.moveToNext());
 			} else {
 				isOk = false;
+				uptimeView.setText("--");
 				Log.e(ForecastActivity.class.getName(), "can't get forecast weather");
 			}
 			TextView msg = (TextView) getParent().findViewById(R.id.msg);
