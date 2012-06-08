@@ -30,7 +30,7 @@ public class WeatherService {
 	private SettingService settingProvider;
 
 	public WeatherService(DatabaseSupport databaseSupport, SettingService settingProvider) {
-		weatherClient = new WeatherClient(5000, 10000, 5);
+		weatherClient = new WeatherClient(3000, 5000, 3);
 		this.databaseSupport = databaseSupport;
 		this.settingProvider = settingProvider;
 	}
@@ -56,7 +56,7 @@ public class WeatherService {
 		cursor.close();
 		// web
 		RealtimeWeather realtime = this.fetchRealtime(citycode);
-		if (realtime != null) {
+		if (realtime != null && realtime.getCityId() != null && realtime.getCityId().length() > 0) {
 			Log.i(WeatherService.class.getSimpleName(), "found realtime weather from web");
 			result.addRow(new Object[] { realtime.getCityId(), realtime.getCityName(), realtime.getTime(),
 					realtime.getTemperature(), realtime.getHumidity(), realtime.getWindDirection(),
@@ -130,7 +130,7 @@ public class WeatherService {
 		cursor.close();
 		// query web server
 		ForecastWeather forecast = this.fetchForecast(citycode);
-		if (forecast != null) {
+		if (forecast != null && forecast.getCityId() != null && forecast.getCityId().length() > 0) {
 			Log.i(WeatherService.class.getSimpleName(), "found forecast weather from web");
 			List<String> wl = forecast.getWeather(), tl = forecast.getTemperature(), il = forecast.getImage(), wdl = forecast
 					.getWind(), wfl = forecast.getWindForce();
@@ -180,7 +180,7 @@ public class WeatherService {
 		cursor.close();
 		// web
 		ForecastWeather forecast = this.fetchForecast(citycode);
-		if (forecast != null) {
+		if (forecast != null && forecast.getCityId() != null && forecast.getCityId().length() > 0) {
 			Log.i(WeatherService.class.getSimpleName(), "found living index from web");
 			List<Object> row = new ArrayList<Object>();
 			Collections.addAll(row, forecast.getCityId(), forecast.getCityName(), forecast.getTime());

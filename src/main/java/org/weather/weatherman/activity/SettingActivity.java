@@ -54,6 +54,13 @@ public class SettingActivity extends Activity {
 		new SettingTask().execute();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		TextView msg = (TextView) getParent().findViewById(R.id.msg);
+		msg.setVisibility(View.GONE);
+	}
+
 	class SettingTask extends AsyncTask<String, Integer, Cursor> {
 
 		private List<City> city1List;

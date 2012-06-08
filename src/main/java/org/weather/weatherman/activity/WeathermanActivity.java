@@ -5,15 +5,17 @@ import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
 
-import cn.domob.android.ads.DomobUpdater;
-
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo.State;
 import android.os.Bundle;
 import android.widget.TabHost;
 import android.widget.TextView;
+import cn.domob.android.ads.DomobUpdater;
 
 public class WeathermanActivity extends TabActivity {
 
@@ -35,6 +37,9 @@ public class WeathermanActivity extends TabActivity {
 			app.setCity(city);
 			cityView.setText(city.getName());
 		}
+		// network
+//		TextView netView = (TextView) findViewById(R.id.msg);
+//		netView.setText(checkNetwork() ? "网络连接正常" : "网络未连接");
 		// tab widget
 		tabHost = getTabHost();
 		Resources res = getResources();
@@ -58,6 +63,19 @@ public class WeathermanActivity extends TabActivity {
 			return new City(id, name);
 		}
 		return null;
+	}
+
+	boolean checkNetwork() {
+		ConnectivityManager conn = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		State state = conn.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
+		if (state != null && (state == State.CONNECTED || state == State.CONNECTING)) {
+			return true;
+		}
+		state = conn.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
+		if (state != null && (state == State.CONNECTED || state == State.CONNECTING)) {
+			return true;
+		}
+		return false;
 	}
 
 }

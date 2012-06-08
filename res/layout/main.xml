@@ -21,7 +21,6 @@
             android:layout_height="50dp"
             android:orientation="horizontal"
             android:padding="3dp" >
-
             <TextView
                 android:id="@+id/city"
                 android:layout_width="wrap_content"
@@ -29,14 +28,19 @@
                 android:hint="@string/city_hint"
                 android:textSize="28dp"
                 android:textStyle="bold" />
-
+            <TextView
+                android:id="@+id/msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp" android:textColor="#FF0000"
+                android:layout_centerInParent="true"/>
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_alignTop="@id/city"
+                android:layout_centerVertical="true"
                 android:max="100" />
         </RelativeLayout>
 

@@ -46,6 +46,8 @@ public class RealtimeActivity extends Activity {
 		super.onResume();
 		ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
 		progressBar.setVisibility(View.VISIBLE);
+		TextView msg = (TextView) getParent().findViewById(R.id.msg);
+		msg.setVisibility(View.VISIBLE);
 		String city = (app.getCity() != null ? app.getCity().getId() : null);
 		new RealtimeTask().execute(city);
 	}
@@ -90,6 +92,7 @@ public class RealtimeActivity extends Activity {
 		protected void onPostExecute(Cursor realtime) {
 			super.onPostExecute(realtime);
 			onProgressUpdate(80);
+			boolean isOk = true;
 			if (realtime != null && realtime.moveToFirst()) {
 				// temperature
 				String text = realtime.getString(realtime.getColumnIndex(Weather.RealtimeWeather.TEMPERATURE));
@@ -112,6 +115,19 @@ public class RealtimeActivity extends Activity {
 				view = (TextView) findViewById(R.id.updateTime);
 				view.setText(DATE_FORMAT.format(new Date()) + " " + text + "更新");
 			} else {
+				isOk = false;
+				// temperature
+				TextView view = (TextView) findViewById(R.id.temperatue);
+				view.setText("--");
+				// wind
+				view = (TextView) findViewById(R.id.wind);
+				view.setText("--");
+				// humidity
+				view = (TextView) findViewById(R.id.humidity);
+				view.setText("--");
+				// updateTime
+				view = (TextView) findViewById(R.id.updateTime);
+				view.setText("--");
 				Log.e(RealtimeActivity.class.getName(), "can't get realtime weather");
 			}
 			if (index != null && index.moveToFirst()) {
@@ -147,7 +163,36 @@ public class RealtimeActivity extends Activity {
 				text = index.getString(index.getColumnIndex(Weather.LivingIndex.IRRITABILITY));
 				view = (TextView) findViewById(R.id.irritability);
 				view.setText(text);
+			} else {
+				isOk = false;
+				// comfort
+				TextView view = (TextView) findViewById(R.id.comfort);
+				view.setText("--");
+				// dress
+				view = (TextView) findViewById(R.id.dress);
+				view.setText("--");
+				// ultraviolet
+				view = (TextView) findViewById(R.id.ultraviolet);
+				view.setText("--");
+				// cleancar
+				view = (TextView) findViewById(R.id.cleancar);
+				view.setText("--");
+				// travel
+				view = (TextView) findViewById(R.id.travel);
+				view.setText("--");
+				// morningexercise
+				view = (TextView) findViewById(R.id.morningexercise);
+				view.setText("--");
+				// sundry
+				view = (TextView) findViewById(R.id.sundry);
+				view.setText("--");
+				// irritability
+				view = (TextView) findViewById(R.id.irritability);
+				view.setText("--");
+				Log.e(RealtimeActivity.class.getName(), "can't get weather index");
 			}
+			TextView msg = (TextView) getParent().findViewById(R.id.msg);
+			msg.setText(isOk ? "" : "网络连接失败");
 			onProgressUpdate(100);
 		}
 	}

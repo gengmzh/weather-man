@@ -46,6 +46,8 @@ public class ForecastActivity extends Activity {
 		super.onResume();
 		ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
 		progressBar.setVisibility(View.VISIBLE);
+		TextView msg = (TextView) getParent().findViewById(R.id.msg);
+		msg.setVisibility(View.VISIBLE);
 		String city = (app.getCity() != null ? app.getCity().getId() : null);
 		new ForecastTask().execute(city);
 	}
@@ -90,14 +92,16 @@ public class ForecastActivity extends Activity {
 		protected void onPostExecute(Cursor cursor) {
 			super.onPostExecute(cursor);
 			onProgressUpdate(80);
+			boolean isOk = true;
+			// clear old
+			TableLayout layout = (TableLayout) findViewById(R.id.updateTime).getParent().getParent();
+			layout.removeViews(1, layout.getChildCount() - 1);
 			if (cursor != null && cursor.moveToFirst()) {
 				// update time
 				String text = cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TIME));
 				TextView view = (TextView) findViewById(R.id.updateTime);
 				view.setText(text + "更新");
 				// add row
-				TableLayout layout = (TableLayout) view.getParent().getParent();
-				layout.removeViews(1, layout.getChildCount() - 1);
 				Calendar cal = Calendar.getInstance();
 				try {
 					cal.setTime(DF_1.parse(text));
@@ -133,8 +137,11 @@ public class ForecastActivity extends Activity {
 					layout.addView(row);
 				} while (cursor.moveToNext());
 			} else {
-				Log.e(RealtimeActivity.class.getName(), "can't get realtime weather");
+				isOk = false;
+				Log.e(ForecastActivity.class.getName(), "can't get forecast weather");
 			}
+			TextView msg = (TextView) getParent().findViewById(R.id.msg);
+			msg.setText(isOk ? "" : "网络连接失败");
 			onProgressUpdate(100);
 		}
 
