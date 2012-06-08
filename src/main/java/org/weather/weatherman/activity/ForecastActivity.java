@@ -90,6 +90,8 @@ public class ForecastActivity extends Activity {
 		protected void onPostExecute(Cursor cursor) {
 			super.onPostExecute(cursor);
 			onProgressUpdate(80);
+			TextView msg = (TextView) getParent().findViewById(R.id.msg);
+			msg.setText("");
 			if (cursor != null && cursor.moveToFirst()) {
 				// update time
 				String text = cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TIME));
@@ -133,6 +135,7 @@ public class ForecastActivity extends Activity {
 					layout.addView(row);
 				} while (cursor.moveToNext());
 			} else {
+				msg.setText("网络连接失败");
 				Log.e(RealtimeActivity.class.getName(), "can't get realtime weather");
 			}
 			onProgressUpdate(100);

@@ -90,6 +90,8 @@ public class RealtimeActivity extends Activity {
 		protected void onPostExecute(Cursor realtime) {
 			super.onPostExecute(realtime);
 			onProgressUpdate(80);
+			TextView msg = (TextView) getParent().findViewById(R.id.msg);
+			msg.setText("");
 			if (realtime != null && realtime.moveToFirst()) {
 				// temperature
 				String text = realtime.getString(realtime.getColumnIndex(Weather.RealtimeWeather.TEMPERATURE));
@@ -112,6 +114,7 @@ public class RealtimeActivity extends Activity {
 				view = (TextView) findViewById(R.id.updateTime);
 				view.setText(DATE_FORMAT.format(new Date()) + " " + text + "更新");
 			} else {
+				msg.setText("网络连接失败");
 				Log.e(RealtimeActivity.class.getName(), "can't get realtime weather");
 			}
 			if (index != null && index.moveToFirst()) {
@@ -147,6 +150,9 @@ public class RealtimeActivity extends Activity {
 				text = index.getString(index.getColumnIndex(Weather.LivingIndex.IRRITABILITY));
 				view = (TextView) findViewById(R.id.irritability);
 				view.setText(text);
+			} else {
+				msg.setText("网络连接失败");
+				Log.e(RealtimeActivity.class.getName(), "can't get weather index");
 			}
 			onProgressUpdate(100);
 		}
