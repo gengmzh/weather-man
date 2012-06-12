@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * @since 2012-5-18
@@ -46,8 +47,6 @@ public class ForecastActivity extends Activity {
 		super.onResume();
 		ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
 		progressBar.setVisibility(View.VISIBLE);
-		TextView msg = (TextView) getParent().findViewById(R.id.msg);
-		msg.setVisibility(View.VISIBLE);
 		String city = (app.getCity() != null ? app.getCity().getId() : null);
 		new ForecastTask().execute(city);
 	}
@@ -92,7 +91,6 @@ public class ForecastActivity extends Activity {
 		protected void onPostExecute(Cursor cursor) {
 			super.onPostExecute(cursor);
 			onProgressUpdate(80);
-			boolean isOk = true;
 			// clear old
 			TextView uptimeView = (TextView) findViewById(R.id.updateTime);
 			TableLayout layout = (TableLayout) uptimeView.getParent().getParent();
@@ -137,12 +135,11 @@ public class ForecastActivity extends Activity {
 					layout.addView(row);
 				} while (cursor.moveToNext());
 			} else {
-				isOk = false;
 				uptimeView.setText("--");
+				Toast.makeText(getApplicationContext(), getResources().getText(R.string.connect_failed),
+						Toast.LENGTH_LONG).show();
 				Log.e(ForecastActivity.class.getName(), "can't get forecast weather");
 			}
-			TextView msg = (TextView) getParent().findViewById(R.id.msg);
-			msg.setText(isOk ? "" : "网络连接失败");
 			onProgressUpdate(100);
 		}
 

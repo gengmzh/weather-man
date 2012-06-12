@@ -57,8 +57,6 @@ public class SettingActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		TextView msg = (TextView) getParent().findViewById(R.id.msg);
-		msg.setVisibility(View.GONE);
 	}
 
 	class SettingTask extends AsyncTask<String, Integer, Cursor> {
@@ -103,8 +101,6 @@ public class SettingActivity extends Activity {
 		@Override
 		protected void onPostExecute(Cursor cursor) {
 			super.onPostExecute(cursor);
-			TextView msg = (TextView) getParent().findViewById(R.id.msg);
-			msg.setText("");
 			// city
 			Spinner city1Spinner = (Spinner) findViewById(R.id.city1);
 			ArrayAdapter<City> city1Adapter = new ArrayAdapter<City>(getApplicationContext(),

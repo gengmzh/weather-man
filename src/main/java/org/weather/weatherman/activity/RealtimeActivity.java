@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import cn.domob.android.ads.DomobAdView;
 
 public class RealtimeActivity extends Activity {
@@ -46,8 +47,6 @@ public class RealtimeActivity extends Activity {
 		super.onResume();
 		ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
 		progressBar.setVisibility(View.VISIBLE);
-		TextView msg = (TextView) getParent().findViewById(R.id.msg);
-		msg.setVisibility(View.VISIBLE);
 		String city = (app.getCity() != null ? app.getCity().getId() : null);
 		new RealtimeTask().execute(city);
 	}
@@ -68,8 +67,10 @@ public class RealtimeActivity extends Activity {
 			Uri uri = Uri.withAppendedPath(Weather.RealtimeWeather.CONTENT_URI, city);
 			Cursor realtime = getContentResolver().query(uri, null, null, null, null);
 			onProgressUpdate(40);
-			uri = Uri.withAppendedPath(Weather.LivingIndex.CONTENT_URI, city);
-			index = getContentResolver().query(uri, null, null, null, null);
+			if (realtime != null && realtime.moveToFirst()) {
+				uri = Uri.withAppendedPath(Weather.LivingIndex.CONTENT_URI, city);
+				index = getContentResolver().query(uri, null, null, null, null);
+			}
 			onProgressUpdate(60);
 			return realtime;
 		}
@@ -191,8 +192,10 @@ public class RealtimeActivity extends Activity {
 				view.setText("--");
 				Log.e(RealtimeActivity.class.getName(), "can't get weather index");
 			}
-			TextView msg = (TextView) getParent().findViewById(R.id.msg);
-			msg.setText(isOk ? "" : "网络连接失败");
+			if (!isOk) {
+				Toast.makeText(getApplicationContext(), getResources().getText(R.string.connect_failed),
+						Toast.LENGTH_LONG).show();
+			}
 			onProgressUpdate(100);
 		}
 	}

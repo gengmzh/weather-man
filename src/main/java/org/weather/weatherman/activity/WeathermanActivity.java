@@ -38,8 +38,11 @@ public class WeathermanActivity extends TabActivity {
 			cityView.setText(city.getName());
 		}
 		// network
-//		TextView netView = (TextView) findViewById(R.id.msg);
-//		netView.setText(checkNetwork() ? "网络连接正常" : "网络未连接");
+//		if (!checkNetwork()) {
+//			Log.i(WeathermanActivity.class.getSimpleName(), "network not found");
+//			Toast.makeText(getApplicationContext(), getResources().getText(R.string.network_disconnected),
+//					Toast.LENGTH_LONG).show();
+//		}
 		// tab widget
 		tabHost = getTabHost();
 		Resources res = getResources();
