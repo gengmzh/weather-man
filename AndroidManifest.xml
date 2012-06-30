@@ -1,81 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.weather.weatherman"
-    android:versionCode="3"
-    android:versionName="1.2" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.weather.weatherman"
+	android:versionCode="3" android:versionName="1.2">
 
-    <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="7" />
+	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
 
-    <instrumentation
-        android:name="android.test.InstrumentationTestRunner"
-        android:label="Test for my app"
-        android:targetPackage="org.weather.weatherman" />
+	<instrumentation android:name="android.test.InstrumentationTestRunner" android:label="Test for my app"
+		android:targetPackage="org.weather.weatherman" />
 
-    <application
-        android:name=".WeatherApplication"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
-        <uses-library android:name="android.test.runner" />
+	<application android:name=".WeatherApplication" android:icon="@drawable/icon" android:label="@string/app_name">
+		<uses-library android:name="android.test.runner" />
 
-        <activity
-            android:name="cn.domob.android.ads.DomobActivity"
-            android:theme="@android:style/Theme.Translucent" />
-        <activity
-            android:name=".activity.WeathermanActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+		<activity android:name="cn.domob.android.ads.DomobActivity" android:theme="@android:style/Theme.Translucent" />
+		
+		<activity android:name=".activity.WeathermanActivity" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.RealtimeActivity" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.item/vnd.org.weather.weatherman.provider.realtime" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.TrendActivity" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.item/vnd.org.weather.weatherman.provider.forecast" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.ForecastActivity" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.item/vnd.org.weather.weatherman.provider.forecast" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.SettingActivity" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		
+		<activity android:name="org.achartengine.GraphicalActivity" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.RealtimeActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.item/vnd.org.weather.weatherman.provider.realtime" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.ForecastActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="vnd.android.cursor.item/vnd.org.weather.weatherman.provider.forecast" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.SettingActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <provider
-            android:name=".content.WeatherContentProvider"
-            android:authorities="org.weather.weatherman.provider" >
-        </provider>
-    </application>
+		<provider android:name=".content.WeatherContentProvider" android:authorities="org.weather.weatherman.provider">
+		</provider>
+	</application>
 
 </manifest>

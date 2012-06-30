@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/city_hint"
                 android:textSize="28dp"
-                android:textStyle="bold" />
+                android:textStyle="bold" android:textColor="#99CC33" />
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleSmall"

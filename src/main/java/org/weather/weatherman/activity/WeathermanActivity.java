@@ -38,24 +38,32 @@ public class WeathermanActivity extends TabActivity {
 			cityView.setText(city.getName());
 		}
 		// network
-//		if (!checkNetwork()) {
-//			Log.i(WeathermanActivity.class.getSimpleName(), "network not found");
-//			Toast.makeText(getApplicationContext(), getResources().getText(R.string.network_disconnected),
-//					Toast.LENGTH_LONG).show();
-//		}
+		// if (!checkNetwork()) {
+		// Log.i(WeathermanActivity.class.getSimpleName(), "network not found");
+		// Toast.makeText(getApplicationContext(),
+		// getResources().getText(R.string.network_disconnected),
+		// Toast.LENGTH_LONG).show();
+		// }
 		// tab widget
 		tabHost = getTabHost();
 		Resources res = getResources();
-		TabHost.TabSpec tabSpec = tabHost.newTabSpec("realtime").setIndicator(res.getString(R.string.realtime))
+		TabHost.TabSpec tabSpec = tabHost.newTabSpec("realtime")
+				.setIndicator(res.getString(R.string.realtime), res.getDrawable(R.drawable.icon_realtime))
 				.setContent(new Intent().setClass(this, RealtimeActivity.class));
 		tabHost.addTab(tabSpec);
-		tabSpec = tabHost.newTabSpec("forecast").setIndicator(res.getString(R.string.forecast))
+		tabSpec = tabHost.newTabSpec("trend")
+				.setIndicator(res.getString(R.string.trend), res.getDrawable(R.drawable.icon_trend))
+				.setContent(new Intent().setClass(this, TrendActivity.class));
+		tabHost.addTab(tabSpec);
+		tabSpec = tabHost.newTabSpec("forecast")
+				.setIndicator(res.getString(R.string.forecast), res.getDrawable(R.drawable.icon_forecast))
 				.setContent(new Intent().setClass(this, ForecastActivity.class));
 		tabHost.addTab(tabSpec);
-		tabSpec = tabHost.newTabSpec("setting").setIndicator(res.getString(R.string.setting))
+		tabSpec = tabHost.newTabSpec("setting")
+				.setIndicator(res.getString(R.string.setting), res.getDrawable(R.drawable.icon_setting))
 				.setContent(new Intent().setClass(this, SettingActivity.class));
 		tabHost.addTab(tabSpec);
-		tabHost.setCurrentTab(city != null ? 0 : 2);
+		tabHost.setCurrentTab(city != null ? 0 : 3);
 	}
 
 	City getDefaultCitycode() {
