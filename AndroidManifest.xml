@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.weather.weatherman"
-	android:versionCode="3" android:versionName="1.2">
+	android:versionCode="4" android:versionName="1.4">
 
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
 
@@ -20,7 +20,8 @@
 
 		<activity android:name="cn.domob.android.ads.DomobActivity" android:theme="@android:style/Theme.Translucent" />
 		
-		<activity android:name=".activity.WeathermanActivity" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
+		<activity android:name=".activity.WeathermanActivity" android:label="@string/app_name" 
+		    android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
