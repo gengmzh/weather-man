@@ -9,14 +9,15 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.achartengine.ChartFactory;
+import org.achartengine.GraphicalView;
 import org.achartengine.chart.PointStyle;
 import org.achartengine.model.XYMultipleSeriesDataset;
-import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
+import org.weather.weatherman.achartengine.LineChartFactory;
+import org.weather.weatherman.achartengine.MyXYSeries;
 import org.weather.weatherman.content.Weather;
 
 import android.app.Activity;
@@ -106,7 +107,8 @@ public class TrendActivity extends Activity {
 			onProgressUpdate(70);
 			// dataSet
 			XYMultipleSeriesDataset dataSet = new XYMultipleSeriesDataset();
-			XYSeries tempSeries = new XYSeries(res.getString(R.string.trend_temperature));
+			MyXYSeries daySeries = new MyXYSeries(res.getString(R.string.trend_temperature_day));
+			MyXYSeries nightSeries = new MyXYSeries(res.getString(R.string.trend_temperature_night));
 			Map<Double, String> xlabels = new HashMap<Double, String>();
 			if (cursor != null && cursor.moveToFirst()) {
 				double i = 0;
@@ -119,53 +121,76 @@ public class TrendActivity extends Activity {
 					Log.e(ForecastActivity.class.getSimpleName(), "parse update time failed", e);
 				}
 				cal.add(Calendar.HOUR_OF_DAY, -12);
-				String prevDate = null;
 				do {
-					i++;
 					// date
 					cal.add(Calendar.HOUR_OF_DAY, 12);
 					String date = (cal.get(Calendar.MONTH) + 1) + "." + cal.get(Calendar.DAY_OF_MONTH);
-					xlabels.put(i, (prevDate != null && prevDate.equals(date)) ? "" : date);
-					prevDate = date;
+					if (!xlabels.containsValue(date)) {
+						xlabels.put(++i, date);
+					}
 					// temperature
 					String tp = cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TEMPERATURE));
 					Double temp = Double.valueOf(tp.substring(0, tp.length() - 1));
-					tempSeries.add(i, temp);
+					boolean isNight = (cal.get(Calendar.HOUR_OF_DAY) >= 12);
+					if (isNight) {
+						nightSeries.add(i, temp, tp);
+					} else {
+						daySeries.add(i, temp, tp);
+					}
 				} while (cursor.moveToNext());
-				xlabels.put(++i, "");
 			} else {
 				Toast.makeText(getApplicationContext(), getResources().getText(R.string.connect_failed),
 						Toast.LENGTH_LONG).show();
 				Log.e(ForecastActivity.class.getName(), "can't get forecast weather");
 			}
-			dataSet.addSeries(tempSeries);
+			dataSet.addSeries(daySeries);
+			dataSet.addSeries(nightSeries);
 			onProgressUpdate(80);
 			// render
-			XYMultipleSeriesRenderer render = new XYMultipleSeriesRenderer();
-			render.setChartTitle(res.getString(R.string.trend_title));
-			render.setMargins(new int[] { 20, 10, 0, 10 });
-			render.setShowGrid(true);
+			XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+			// renderer.setChartTitle(res.getString(R.string.trend_title));
+			// renderer.setAxisTitleTextSize(16);
+			// renderer.setChartTitleTextSize(20);
+			// renderer.setLabelsTextSize(15);
+			// renderer.setLegendTextSize(15);
+			renderer.setPointSize(4f);
+			renderer.setAxesColor(Color.LTGRAY);
+			renderer.setMargins(new int[] { 20, 10, 0, 10 });
+			// renderer.setShowGrid(true);
+			// renderer.setGridColor(Color.LTGRAY);
 			for (Double x : xlabels.keySet()) {
-				render.addXTextLabel(x, xlabels.get(x));
+				renderer.addXTextLabel(x, xlabels.get(x));
 			}
-			render.setXLabels(0);
-			for (int t = 0; t <= tempSeries.getMaxY() + 5; t += 5) {
-				render.addYTextLabel(t, t + "℃");
+			renderer.setXAxisMin(Math.min(daySeries.getMinX(), nightSeries.getMinX()) - 0.5);
+			renderer.setXAxisMax(Math.max(daySeries.getMaxX(), nightSeries.getMaxX()) + 0.5);
+			renderer.setXLabels(0);
+			double ymax = Math.max(daySeries.getMaxY(), nightSeries.getMaxY());
+			for (int t = 0; t <= ymax + 2; t += 2) {
+				renderer.addYTextLabel(t, t + "℃");
 			}
-			render.setYLabels(0);
-			render.setXTitle(res.getString(R.string.trend_x_title));
-			XYSeriesRenderer tempRender = new XYSeriesRenderer();
-			tempRender.setColor(Color.YELLOW);
-			tempRender.setDisplayChartValues(true);
-			tempRender.setPointStyle(PointStyle.DIAMOND);
-			render.addSeriesRenderer(tempRender);
-			render.setZoomButtonsVisible(true);
-			render.setPanLimits(new double[] { -10, 20, -10, 40 });
-			render.setZoomLimits(new double[] { -10, 20, -10, 40 });
-			render.setZoomRate(1.05f);
+			renderer.setYAxisMax(ymax + 2);
+			renderer.setYAxisMin(Math.min(daySeries.getMinY(), nightSeries.getMinY()) - 2);
+			renderer.setYLabels(0);
+			// renderer.setXTitle(res.getString(R.string.trend_x_title));
+			renderer.setZoomButtonsVisible(true);
+			renderer.setPanLimits(new double[] { -10, 20, -10, 40 });
+			renderer.setZoomLimits(new double[] { -10, 20, -10, 40 });
+			renderer.setZoomRate(1.05f);
+			XYSeriesRenderer dayRender = new XYSeriesRenderer();
+			dayRender.setColor(Color.BLUE);
+			dayRender.setDisplayChartValues(true);
+			dayRender.setPointStyle(PointStyle.DIAMOND);
+			dayRender.setFillPoints(true);
+			renderer.addSeriesRenderer(dayRender);
+			XYSeriesRenderer nightRender = new XYSeriesRenderer();
+			nightRender.setColor(Color.YELLOW);
+			nightRender.setDisplayChartValues(true);
+			nightRender.setPointStyle(PointStyle.DIAMOND);
+			nightRender.setFillPoints(true);
+			renderer.addSeriesRenderer(nightRender);
 			onProgressUpdate(90);
 			// show
-			View chart = ChartFactory.getLineChartView(getApplicationContext(), dataSet, render);
+			GraphicalView chart = LineChartFactory.getLineChartView(getApplicationContext(), dataSet, renderer);
 			chart.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
 					LinearLayout.LayoutParams.FILL_PARENT));
 			layout.addView(chart);
