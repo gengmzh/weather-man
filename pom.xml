@@ -38,6 +38,11 @@
         	<artifactId>achartengine</artifactId>
         	<version>1.0.0</version>
         </dependency>
+        <dependency>
+        	<groupId>cn.domob</groupId>
+        	<artifactId>domob_updater</artifactId>
+        	<version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
