@@ -103,14 +103,14 @@ public class SettingActivity extends Activity {
 			super.onPostExecute(cursor);
 			// city
 			Spinner city1Spinner = (Spinner) findViewById(R.id.city1);
-			ArrayAdapter<City> city1Adapter = new ArrayAdapter<City>(getApplicationContext(),
+			ArrayAdapter<City> city1Adapter = new ArrayAdapter<City>(city1Spinner.getContext(),
 					android.R.layout.simple_spinner_item, city1List);
 			city1Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			city1Spinner.setAdapter(city1Adapter);
 			onProgressUpdate(70);
 			// update time
 			Spinner uptimeSpinner = (Spinner) findViewById(R.id.updateTimeSpinner);
-			ArrayAdapter<CharSequence> updateAdapter = ArrayAdapter.createFromResource(getApplicationContext(),
+			ArrayAdapter<CharSequence> updateAdapter = ArrayAdapter.createFromResource(uptimeSpinner.getContext(),
 					R.array.updateTime, android.R.layout.simple_spinner_item);
 			updateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			uptimeSpinner.setAdapter(updateAdapter);

@@ -108,10 +108,10 @@ public class ForecastActivity extends Activity {
 				}
 				cal.add(Calendar.HOUR_OF_DAY, -12);
 				do {
-					TableRow row = new TableRow(getApplicationContext());
+					TableRow row = new TableRow(layout.getContext());
 					// date
 					cal.add(Calendar.HOUR_OF_DAY, 12);
-					TextView view = new TextView(getApplicationContext());
+					TextView view = new TextView(layout.getContext());
 					view.setText(format(cal));
 					row.addView(view);
 					// image
@@ -121,15 +121,15 @@ public class ForecastActivity extends Activity {
 					// view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.IMAGE)));
 					// row.addView(view);
 					// weather
-					view = new TextView(getApplicationContext());
+					view = new TextView(layout.getContext());
 					view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.WEATHER)));
 					row.addView(view);
 					// temperature
-					view = new TextView(getApplicationContext());
+					view = new TextView(layout.getContext());
 					view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TEMPERATURE)));
 					row.addView(view);
 					// wind
-					view = new TextView(getApplicationContext());
+					view = new TextView(layout.getContext());
 					view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.WIND)));
 					row.addView(view);
 					layout.addView(row);

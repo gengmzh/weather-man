@@ -20,10 +20,12 @@ import org.weather.weatherman.achartengine.LineChartFactory;
 import org.weather.weatherman.achartengine.MyXYSeries;
 import org.weather.weatherman.content.Weather;
 
+import android.R.color;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Paint.Align;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -153,9 +155,17 @@ public class TrendActivity extends Activity {
 			// renderer.setChartTitleTextSize(20);
 			// renderer.setLabelsTextSize(15);
 			// renderer.setLegendTextSize(15);
+			renderer.setApplyBackgroundColor(true);
+			renderer.setBackgroundColor(Color.WHITE);
+			renderer.setMarginsColor(Color.WHITE);
 			renderer.setPointSize(4f);
-			renderer.setAxesColor(Color.LTGRAY);
-			renderer.setMargins(new int[] { 20, 10, 0, 10 });
+			renderer.setAxesColor(Color.DKGRAY);
+			renderer.setXLabelsColor(Color.BLACK);
+			// renderer.setXTitle("日期");
+			renderer.setYLabelsColor(0, Color.BLACK);
+			renderer.setYLabelsAlign(Align.RIGHT);
+			// renderer.setYTitle("温度");
+			renderer.setMargins(new int[] { 20, 20, 0, 10 });
 			// renderer.setShowGrid(true);
 			// renderer.setGridColor(Color.LTGRAY);
 			for (Double x : xlabels.keySet()) {
@@ -183,14 +193,14 @@ public class TrendActivity extends Activity {
 			dayRender.setFillPoints(true);
 			renderer.addSeriesRenderer(dayRender);
 			XYSeriesRenderer nightRender = new XYSeriesRenderer();
-			nightRender.setColor(Color.YELLOW);
+			nightRender.setColor(Color.GREEN);
 			nightRender.setDisplayChartValues(true);
 			nightRender.setPointStyle(PointStyle.DIAMOND);
 			nightRender.setFillPoints(true);
 			renderer.addSeriesRenderer(nightRender);
 			onProgressUpdate(90);
 			// show
-			GraphicalView chart = LineChartFactory.getLineChartView(getApplicationContext(), dataSet, renderer);
+			GraphicalView chart = LineChartFactory.getLineChartView(layout.getContext(), dataSet, renderer);
 			chart.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
 					LinearLayout.LayoutParams.FILL_PARENT));
 			layout.addView(chart);
