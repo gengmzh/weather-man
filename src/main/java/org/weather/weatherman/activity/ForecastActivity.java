@@ -151,4 +151,14 @@ public class ForecastActivity extends Activity {
 
 	}
 
+	@Override
+	public void onBackPressed() {
+		Activity parent = getParent();
+		if (parent != null) {
+			parent.onBackPressed();
+		} else {
+			super.onBackPressed();
+		}
+	}
+
 }

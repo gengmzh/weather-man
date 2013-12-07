@@ -16,10 +16,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.domob.android.ads.DomobAdView;
 
 public class RealtimeActivity extends Activity {
 
@@ -31,10 +29,12 @@ public class RealtimeActivity extends Activity {
 		setContentView(R.layout.realtime);
 		app = (WeatherApplication) getApplication();
 		// domob
-		RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.adContainver);
-		DomobAdView adView = new DomobAdView(this, WeatherApplication.DOMOB_PUBLISHER_ID,
-				DomobAdView.INLINE_SIZE_320X50);
-		adContainer.addView(adView);
+		// RelativeLayout adContainer = (RelativeLayout)
+		// findViewById(R.id.adContainver);
+		// DomobAdView adView = new DomobAdView(this,
+		// WeatherApplication.DOMOB_PUBLISHER_ID,
+		// DomobAdView.INLINE_SIZE_320X50);
+		// adContainer.addView(adView);
 	}
 
 	@Override
@@ -197,6 +197,16 @@ public class RealtimeActivity extends Activity {
 						Toast.LENGTH_LONG).show();
 			}
 			onProgressUpdate(100);
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		Activity parent = getParent();
+		if (parent != null) {
+			parent.onBackPressed();
+		} else {
+			super.onBackPressed();
 		}
 	}
 

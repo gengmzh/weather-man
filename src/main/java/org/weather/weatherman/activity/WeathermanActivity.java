@@ -8,27 +8,33 @@ import org.weather.weatherman.content.Weather;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TabHost;
 import android.widget.TextView;
-import cn.domob.android.ads.DomobUpdater;
 
 public class WeathermanActivity extends TabActivity {
 
+	private final String tag = WeathermanActivity.class.getSimpleName();
 	private TabHost tabHost;
 	private WeatherApplication app;
+	private String appName;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		app = (WeatherApplication) getApplication();
+		appName = getApplicationInfo().loadLabel(getPackageManager()).toString();
 		// check update
-		DomobUpdater.checkUpdate(this, WeatherApplication.DOMOB_PUBLISHER_ID);
+		// DomobUpdater.checkUpdate(this,
+		// WeatherApplication.DOMOB_PUBLISHER_ID);
 		// city
 		TextView cityView = (TextView) findViewById(R.id.city);
 		cityView.getPaint().setFakeBoldText(true);
@@ -87,6 +93,33 @@ public class WeathermanActivity extends TabActivity {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void onBackPressed() {
+		this.addShortcut();
+		super.onBackPressed();
+	}
+
+	private void addShortcut() {
+		SharedPreferences pref = getSharedPreferences(WeathermanActivity.class.getSimpleName(), Context.MODE_PRIVATE);
+		if (pref.getBoolean("shortcut-installed", false)) {
+			return;
+		}
+		Intent intent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+		intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
+		intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+				Intent.ShortcutIconResource.fromContext(this, R.drawable.icon));
+		intent.putExtra(
+				Intent.EXTRA_SHORTCUT_INTENT,
+				new Intent(this, WeathermanActivity.class).setAction("android.intent.action.MAIN").addCategory(
+						"android.intent.category.LAUNCHER"));
+		intent.putExtra("duplicate", false);
+		this.sendBroadcast(intent);
+		Editor editor = pref.edit();
+		editor.putBoolean("shortcut-installed", true);
+		editor.commit();
+		Log.i(tag, "install shortcut for " + appName);
 	}
 
 }
