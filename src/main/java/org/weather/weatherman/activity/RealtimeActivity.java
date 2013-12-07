@@ -8,6 +8,8 @@ import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
 
+import com.baidu.mobstat.StatService;
+
 import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
@@ -49,6 +51,8 @@ public class RealtimeActivity extends Activity {
 		progressBar.setVisibility(View.VISIBLE);
 		String city = (app.getCity() != null ? app.getCity().getId() : null);
 		new RealtimeTask().execute(city);
+		// stats
+		StatService.onResume(this);
 	}
 
 	class RealtimeTask extends AsyncTask<String, Integer, Cursor> {
@@ -198,6 +202,13 @@ public class RealtimeActivity extends Activity {
 			}
 			onProgressUpdate(100);
 		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// stats
+		StatService.onPause(this);
 	}
 
 	@Override

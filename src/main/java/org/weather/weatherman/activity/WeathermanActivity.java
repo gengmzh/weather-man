@@ -5,6 +5,8 @@ import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
 
+import com.baidu.mobstat.StatService;
+
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +20,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.TabHost.OnTabChangeListener;
 
 public class WeathermanActivity extends TabActivity {
 
@@ -32,9 +35,9 @@ public class WeathermanActivity extends TabActivity {
 		setContentView(R.layout.main);
 		app = (WeatherApplication) getApplication();
 		appName = getApplicationInfo().loadLabel(getPackageManager()).toString();
-		// check update
-		// DomobUpdater.checkUpdate(this,
-		// WeatherApplication.DOMOB_PUBLISHER_ID);
+		// stats
+		// StatService.setDebugOn(true);
+		StatService.setLogSenderDelayed(3);// 启动后延迟3s发送统计日志
 		// city
 		TextView cityView = (TextView) findViewById(R.id.city);
 		cityView.getPaint().setFakeBoldText(true);
@@ -70,6 +73,7 @@ public class WeathermanActivity extends TabActivity {
 				.setContent(new Intent().setClass(this, SettingActivity.class));
 		tabHost.addTab(tabSpec);
 		tabHost.setCurrentTab(city != null ? 0 : 3);
+		tabHost.setOnTabChangedListener(new TabChangeListener());
 	}
 
 	City getDefaultCitycode() {
@@ -93,6 +97,32 @@ public class WeathermanActivity extends TabActivity {
 			return true;
 		}
 		return false;
+	}
+
+	class TabChangeListener implements OnTabChangeListener {
+		@Override
+		public void onTabChanged(String tabId) {
+			// stats
+			String tabName = this.getTabName(tabId);
+			StatService.onEvent(WeathermanActivity.this, "tabs", tabName, 1);
+		}
+
+		private String getTabName(String tag) {
+			if (tag == null || tag.length() == 0) {
+				return "unknown";
+			} else if ("realtime".equalsIgnoreCase(tag)) {
+				return getResources().getString(R.string.realtime);
+			} else if ("trend".equalsIgnoreCase(tag)) {
+				return getResources().getString(R.string.trend);
+			} else if ("forecast".equalsIgnoreCase(tag)) {
+				return getResources().getString(R.string.forecast);
+			} else if ("setting".equalsIgnoreCase(tag)) {
+				return getResources().getString(R.string.setting);
+			} else {
+				return "unknown";
+			}
+		}
+
 	}
 
 	@Override

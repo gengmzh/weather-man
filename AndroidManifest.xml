@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.weather.weatherman"
-	android:versionCode="5" android:versionName="1.5">
+	android:versionCode="6" android:versionName="1.6">
 
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
 
@@ -9,6 +9,7 @@
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
@@ -19,8 +20,25 @@
 
 	<application android:name=".WeatherApplication" android:icon="@drawable/icon" android:allowBackup="true"
 	    android:label="@string/app_name" android:theme="@android:style/Theme.Light">
+	    
+	    <!-- 百度移动统计相关 -->
+	    <!-- 渠道商编号，其中name 请不要改，将value 修改为渠道商编号。渠道名称请到mtj.baidu.com的渠道管理中修改 -->
+		<meta-data android:name="BaiduMobAd_CHANNEL" android:value="hiapk" />
+		<!-- 您从百度网站获取的APPKEY -->
+		<meta-data android:name="BaiduMobAd_STAT_ID" android:value="32eeab3573" />
+		<!-- 以下是可选的 -->
+		<!-- 是否开启错误日志统计，默认为false -->
+		<meta-data android:name="BaiduMobAd_EXCEPTION_LOG" android:value="true" />
+		<!-- 日志发送策略，可选值：APP_START、ONCE_A_DAY、SET_TIME_INTERVAL，默认为APP_START -->
+		<meta-data android:name="BaiduMobAd_SEND_STRATEGY" android:value="APP_START" />
+		<!-- 上面的日志发送策略为SET_TIME_INTERVAL时，需设定时间间隔。取值为1-­‐24（小时）的整数，默认为1 -->
+		<meta-data android:name="BaiduMobAd_TIME_INTERVAL" android:value="1" />
+		<!-- 日志仅在wifi 网络下发送，默认为false -->
+		<meta-data android:name="BaiduMobAd_ONLY_WIFI" android:value="false" />
+		<!-- 是否获取基站位置信息，默认为true(获取基站位置) -->
+		<meta-data android:name="BaiduMobAd_CELL_LOCATION" android:value="true" />
+	    
 		<uses-library android:name="android.test.runner" />
-
 		<!-- <activity android:name="cn.domob.android.ads.DomobActivity" android:theme="@android:style/Theme.Translucent" /> -->
 		
 		<activity android:name=".activity.WeathermanActivity" android:label="@string/app_name" 

@@ -21,6 +21,8 @@ import org.weather.weatherman.achartengine.LineChartFactory;
 import org.weather.weatherman.achartengine.MyXYSeries;
 import org.weather.weatherman.content.Weather;
 
+import com.baidu.mobstat.StatService;
+
 import android.app.Activity;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -61,6 +63,8 @@ public class TrendActivity extends Activity {
 		progressBar.setVisibility(View.VISIBLE);
 		String city = (app.getCity() != null ? app.getCity().getId() : null);
 		new TrendTask().execute(city);
+		// stats
+		StatService.onResume(this);
 	}
 
 	class TrendTask extends AsyncTask<String, Integer, Cursor> {
@@ -207,6 +211,13 @@ public class TrendActivity extends Activity {
 			onProgressUpdate(100);
 		}
 
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// stats
+		StatService.onPause(this);
 	}
 
 	@Override

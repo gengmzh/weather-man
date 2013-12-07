@@ -3,10 +3,13 @@ package org.weather.weatherman.activity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
+
+import com.baidu.mobstat.StatService;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -49,11 +52,13 @@ public class ForecastActivity extends Activity {
 		progressBar.setVisibility(View.VISIBLE);
 		String city = (app.getCity() != null ? app.getCity().getId() : null);
 		new ForecastTask().execute(city);
+		// stats
+		StatService.onResume(this);
 	}
 
 	class ForecastTask extends AsyncTask<String, Integer, Cursor> {
 
-		private DateFormat DF_1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		private DateFormat DF_1 = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 
 		public ForecastTask() {
 		}
@@ -149,6 +154,13 @@ public class ForecastActivity extends Activity {
 					+ (date.get(Calendar.HOUR_OF_DAY) < 12 ? "白天" : "夜晚");
 		}
 
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// stats
+		StatService.onPause(this);
 	}
 
 	@Override

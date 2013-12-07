@@ -8,6 +8,8 @@ import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
 import org.weather.weatherman.content.WeatherContentProvider;
 
+import com.baidu.mobstat.StatService;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -57,6 +59,8 @@ public class SettingActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		// stats
+		StatService.onResume(this);
 	}
 
 	class SettingTask extends AsyncTask<String, Integer, Cursor> {
@@ -220,6 +224,13 @@ public class SettingActivity extends Activity {
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
 		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// stats
+		StatService.onPause(this);
 	}
 
 	@Override
