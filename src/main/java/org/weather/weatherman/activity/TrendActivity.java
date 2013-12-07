@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.achartengine.GraphicalView;
@@ -20,7 +21,6 @@ import org.weather.weatherman.achartengine.LineChartFactory;
 import org.weather.weatherman.achartengine.MyXYSeries;
 import org.weather.weatherman.content.Weather;
 
-import android.R.color;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -65,7 +65,7 @@ public class TrendActivity extends Activity {
 
 	class TrendTask extends AsyncTask<String, Integer, Cursor> {
 
-		private DateFormat DF_1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		private DateFormat DF_1 = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 
 		public TrendTask() {
 		}
