@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, WeathermanActivity!</string>
-    <string name="app_name">Weatherman</string>
+    <string name="app_name">实时天气</string>
     <string name="realtime">实况</string>
     <string name="trend">趋势</string>
     <string name="forecast">预报</string>
