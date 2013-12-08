@@ -17,7 +17,8 @@ import cn.seddat.weatherman.api.Config;
  */
 public class CityClient extends AbstractClient {
 
-	public CityClient() {
+	public CityClient(int connTimeout, int readTimeout, int retry) {
+		super(connTimeout, readTimeout, retry);
 	}
 
 	public CityTree getCity() throws Exception {

@@ -14,6 +14,10 @@ import cn.seddat.weatherman.api.Config;
  */
 public class RealtimeWeatherClient extends AbstractClient {
 
+	public RealtimeWeatherClient(int connTimeout, int readTimeout, int retry) {
+		super(connTimeout, readTimeout, retry);
+	}
+
 	public RealtimeWeather getWeather(String citycode) throws Exception {
 		String url = Config.getInstance().getRealtimeUrl(citycode);
 		Map<String, Object> weather = readSafely(url);

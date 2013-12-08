@@ -15,11 +15,15 @@ public abstract class AbstractClient {
 
 	private static final Log log = LogFactory.getLog(AbstractClient.class);
 
-	private int connTimeout = 60000;
+	private int connectTimeout = 60000;
 	private int readTimeout = 60000;
 	private int retry = 3;
 
-	public AbstractClient() {
+	public AbstractClient(int connectTimeout, int readTimeout, int retry) {
+		super();
+		this.connectTimeout = connectTimeout;
+		this.readTimeout = readTimeout;
+		this.retry = retry < 1 ? 1 : retry;
 	}
 
 	protected Map<String, Object> readOnline(String url) throws Exception {
@@ -38,8 +42,12 @@ public abstract class AbstractClient {
 			conn.setRequestProperty("Referer", "http://www.weather.com.cn/weather/101010100.shtml");
 			conn.setRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
-			conn.setConnectTimeout(connTimeout);
-			conn.setReadTimeout(readTimeout);
+			if (getConnectTimeout() > 0) {
+				conn.setConnectTimeout(getConnectTimeout());
+			}
+			if (getReadTimeout() > 0) {
+				conn.setReadTimeout(getReadTimeout());
+			}
 			// read
 			conn.connect();
 			ins = conn.getInputStream();
@@ -77,28 +85,16 @@ public abstract class AbstractClient {
 		return Collections.emptyMap();
 	}
 
-	public int getConnTimeout() {
-		return connTimeout;
-	}
-
-	public void setConnTimeout(int connTimeout) {
-		this.connTimeout = connTimeout;
+	public int getConnectTimeout() {
+		return connectTimeout;
 	}
 
 	public int getReadTimeout() {
 		return readTimeout;
 	}
 
-	public void setReadTimeout(int readTimeout) {
-		this.readTimeout = readTimeout;
-	}
-
 	public int getRetry() {
 		return retry;
-	}
-
-	public void setRetry(int retry) {
-		this.retry = retry;
 	}
 
 }

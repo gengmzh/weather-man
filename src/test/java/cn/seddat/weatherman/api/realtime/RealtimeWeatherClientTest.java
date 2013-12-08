@@ -6,7 +6,7 @@ import android.util.Log;
 
 public class RealtimeWeatherClientTest extends AndroidTestCase {
 
-	private RealtimeWeatherClient client = new RealtimeWeatherClient();
+	private RealtimeWeatherClient client = new RealtimeWeatherClient(60000, 60000, 3);
 
 	public void test_getWeather() throws Exception {
 		RealtimeWeather weather = client.getWeather("101200101");

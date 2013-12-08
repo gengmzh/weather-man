@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-
 import cn.seddat.weatherman.api.WeatherClient;
 import cn.seddat.weatherman.api.forecast.ForecastWeather;
 import cn.seddat.weatherman.api.forecast.LivingIndex;
@@ -31,7 +30,7 @@ public class WeatherService {
 	private SettingService settingProvider;
 
 	public WeatherService(DatabaseSupport databaseSupport, SettingService settingProvider) {
-		weatherClient = new WeatherClient(3000, 5000, 3);
+		weatherClient = new WeatherClient(60000, 60000, 3);
 		this.databaseSupport = databaseSupport;
 		this.settingProvider = settingProvider;
 	}

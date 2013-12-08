@@ -3,7 +3,6 @@
  */
 package cn.seddat.weatherman.api;
 
-
 import cn.seddat.weatherman.api.forecast.ForecastWeather;
 import cn.seddat.weatherman.api.forecast.ForecastWeatherClient;
 import cn.seddat.weatherman.api.realtime.RealtimeWeather;
@@ -20,19 +19,13 @@ public class WeatherClient {
 	private ForecastWeatherClient forecastWeatherClient;
 
 	public WeatherClient() {
-		this(5000, 10000, 3);
+		this(0, 0, 1);
 	}
 
 	public WeatherClient(int connTimeout, int readTimeout, int retry) {
 		super();
-		realtimeWeatherClient = new RealtimeWeatherClient();
-		realtimeWeatherClient.setConnTimeout(connTimeout);
-		realtimeWeatherClient.setReadTimeout(readTimeout);
-		realtimeWeatherClient.setRetry(retry);
-		forecastWeatherClient = new ForecastWeatherClient();
-		forecastWeatherClient.setConnTimeout(connTimeout);
-		forecastWeatherClient.setReadTimeout(readTimeout);
-		forecastWeatherClient.setRetry(retry);
+		realtimeWeatherClient = new RealtimeWeatherClient(connTimeout, readTimeout, retry);
+		forecastWeatherClient = new ForecastWeatherClient(connTimeout, readTimeout, retry);
 	}
 
 	public RealtimeWeather getRealWeather(String citycode) throws Exception {
