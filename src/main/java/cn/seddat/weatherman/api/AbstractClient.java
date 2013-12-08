@@ -1,5 +1,6 @@
 package cn.seddat.weatherman.api;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -39,11 +40,16 @@ public abstract class AbstractClient {
 					"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
 			conn.setConnectTimeout(connTimeout);
 			conn.setReadTimeout(readTimeout);
+			// read
 			conn.connect();
 			ins = conn.getInputStream();
-			byte[] bytes = new byte[ins.available()];
-			ins.read(bytes);
-			json = new String(bytes);
+			ByteArrayOutputStream ous = new ByteArrayOutputStream();
+			byte[] b = new byte[1024];
+			int len = 0;
+			while ((len = ins.read(b)) > -1) {
+				ous.write(b, 0, len);
+			}
+			json = ous.toString();
 		} finally {
 			if (ins != null) {
 				ins.close();
