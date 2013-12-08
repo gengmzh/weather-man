@@ -2,11 +2,12 @@ package org.weather.weatherman.activity;
 
 import java.util.List;
 
-import org.weather.api.cn.city.City;
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
 import org.weather.weatherman.content.WeatherContentProvider;
+
+import cn.seddat.weatherman.api.city.City;
 
 import com.baidu.mobstat.StatService;
 

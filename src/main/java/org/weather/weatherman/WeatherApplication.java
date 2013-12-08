@@ -3,7 +3,7 @@
  */
 package org.weather.weatherman;
 
-import org.weather.api.cn.city.City;
+import cn.seddat.weatherman.api.city.City;
 
 import android.app.Application;
 

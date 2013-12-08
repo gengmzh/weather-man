@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.weather.api.cn.city;
+package cn.seddat.weatherman.api.city;
 
 import java.util.ArrayList;
 import java.util.Collections;

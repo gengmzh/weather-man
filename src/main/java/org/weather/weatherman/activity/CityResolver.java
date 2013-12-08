@@ -9,9 +9,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.weather.api.cn.city.City;
 import org.weather.weatherman.content.Weather;
 import org.weather.weatherman.content.WeatherContentProvider;
+
+import cn.seddat.weatherman.api.city.City;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;

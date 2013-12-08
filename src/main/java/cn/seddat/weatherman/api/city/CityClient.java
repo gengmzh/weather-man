@@ -1,12 +1,12 @@
-package org.weather.api.cn.city;
+package cn.seddat.weatherman.api.city;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.weather.api.cn.AbstractClient;
-import org.weather.api.cn.Config;
+import cn.seddat.weatherman.api.AbstractClient;
+import cn.seddat.weatherman.api.Config;
 
 /**
  * read all city info from <a

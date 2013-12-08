@@ -1,4 +1,4 @@
-package org.weather.api.cn.realtime;
+package cn.seddat.weatherman.api.realtime;
 
 import java.io.Serializable;
 import java.util.HashMap;

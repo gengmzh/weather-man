@@ -8,10 +8,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.weather.api.cn.WeatherClient;
-import org.weather.api.cn.forecast.ForecastWeather;
-import org.weather.api.cn.forecast.LivingIndex;
-import org.weather.api.cn.realtime.RealtimeWeather;
+
+import cn.seddat.weatherman.api.WeatherClient;
+import cn.seddat.weatherman.api.forecast.ForecastWeather;
+import cn.seddat.weatherman.api.forecast.LivingIndex;
+import cn.seddat.weatherman.api.realtime.RealtimeWeather;
 
 import android.content.ContentValues;
 import android.database.Cursor;

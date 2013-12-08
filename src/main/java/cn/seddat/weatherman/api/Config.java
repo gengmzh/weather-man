@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.weather.api.cn;
+package cn.seddat.weatherman.api;
 
 /**
  * @author gmz

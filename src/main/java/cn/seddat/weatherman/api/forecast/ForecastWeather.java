@@ -1,4 +1,4 @@
-package org.weather.api.cn.forecast;
+package cn.seddat.weatherman.api.forecast;
 
 import java.io.Serializable;
 import java.text.DateFormat;

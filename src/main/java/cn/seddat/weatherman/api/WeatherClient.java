@@ -1,12 +1,13 @@
 /**
  * 
  */
-package org.weather.api.cn;
+package cn.seddat.weatherman.api;
 
-import org.weather.api.cn.forecast.ForecastWeather;
-import org.weather.api.cn.forecast.ForecastWeatherClient;
-import org.weather.api.cn.realtime.RealtimeWeather;
-import org.weather.api.cn.realtime.RealtimeWeatherClient;
+
+import cn.seddat.weatherman.api.forecast.ForecastWeather;
+import cn.seddat.weatherman.api.forecast.ForecastWeatherClient;
+import cn.seddat.weatherman.api.realtime.RealtimeWeather;
+import cn.seddat.weatherman.api.realtime.RealtimeWeatherClient;
 
 /**
  * @since 2012-5-16

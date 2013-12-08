@@ -1,9 +1,9 @@
-package org.weather.api.cn.realtime;
+package cn.seddat.weatherman.api.realtime;
 
 import java.util.Map;
 
-import org.weather.api.cn.AbstractClient;
-import org.weather.api.cn.Config;
+import cn.seddat.weatherman.api.AbstractClient;
+import cn.seddat.weatherman.api.Config;
 
 /**
  * read the real time weather info from <a

@@ -1,0 +1,98 @@
+package cn.seddat.weatherman.api;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONValue;
+
+public abstract class AbstractClient {
+
+	private static final Log log = LogFactory.getLog(AbstractClient.class);
+
+	private int connTimeout = 60000;
+	private int readTimeout = 60000;
+	private int retry = 3;
+
+	public AbstractClient() {
+	}
+
+	protected Map<String, Object> readOnline(String url) throws Exception {
+		String json = null;
+		HttpURLConnection conn = null;
+		InputStream ins = null;
+		try {
+			conn = (HttpURLConnection) new URL(url).openConnection();
+			conn.setRequestProperty("Accept", "*/*");
+			// conn.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
+			conn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4");
+			conn.setRequestProperty("Connection", "keep-alive");
+			// conn.setRequestProperty("Cookie",
+			// "vjuids=-a91c6f85.13df2da4e82.0.632bf591; vjlast=1365579026.1368776420.11");
+			conn.setRequestProperty("Host", "www.weather.com.cn");
+			conn.setRequestProperty("Referer", "http://www.weather.com.cn/weather/101010100.shtml");
+			conn.setRequestProperty("User-Agent",
+					"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
+			conn.setConnectTimeout(connTimeout);
+			conn.setReadTimeout(readTimeout);
+			conn.connect();
+			ins = conn.getInputStream();
+			byte[] bytes = new byte[ins.available()];
+			ins.read(bytes);
+			json = new String(bytes);
+		} finally {
+			if (ins != null) {
+				ins.close();
+			}
+			if (conn != null) {
+				conn.disconnect();
+			}
+		}
+		return json != null ? (Map<String, Object>) JSONValue.parse(json) : null;
+	}
+
+	protected Map<String, Object> readSafely(String url) {
+		Exception exception = null;
+		for (int i = 0; i < retry; i++) {
+			try {
+				Map<String, Object> res = readOnline(url);
+				if (res != null) {
+					return res;
+				}
+			} catch (Exception e) {
+				exception = e;
+			}
+		}
+		log.error("readOnline failed after retrying " + retry + " times", exception);
+		return Collections.emptyMap();
+	}
+
+	public int getConnTimeout() {
+		return connTimeout;
+	}
+
+	public void setConnTimeout(int connTimeout) {
+		this.connTimeout = connTimeout;
+	}
+
+	public int getReadTimeout() {
+		return readTimeout;
+	}
+
+	public void setReadTimeout(int readTimeout) {
+		this.readTimeout = readTimeout;
+	}
+
+	public int getRetry() {
+		return retry;
+	}
+
+	public void setRetry(int retry) {
+		this.retry = retry;
+	}
+
+}

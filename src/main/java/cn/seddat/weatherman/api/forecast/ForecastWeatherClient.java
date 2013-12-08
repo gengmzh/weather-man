@@ -1,9 +1,9 @@
-package org.weather.api.cn.forecast;
+package cn.seddat.weatherman.api.forecast;
 
 import java.util.Map;
 
-import org.weather.api.cn.AbstractClient;
-import org.weather.api.cn.Config;
+import cn.seddat.weatherman.api.AbstractClient;
+import cn.seddat.weatherman.api.Config;
 
 public class ForecastWeatherClient extends AbstractClient {
 
