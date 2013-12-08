@@ -30,7 +30,7 @@ public class WeatherService {
 	private SettingService settingProvider;
 
 	public WeatherService(DatabaseSupport databaseSupport, SettingService settingProvider) {
-		weatherClient = new WeatherClient(60000, 60000, 3);
+		weatherClient = new WeatherClient(10000, 10000, 3);
 		this.databaseSupport = databaseSupport;
 		this.settingProvider = settingProvider;
 	}

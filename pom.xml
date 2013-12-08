@@ -54,6 +54,21 @@
 			<artifactId>mobstat-android-sdk</artifactId>
 			<version>3.3</version>
 		</dependency>
+		<dependency>
+			<groupId>com.baidu.location</groupId>
+			<artifactId>locSDK</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.baidu.location</groupId>
+			<artifactId>liblocSDK4</artifactId>
+			<version>4</version>
+			<classifier>armeabi</classifier>
+			<type>so</type>
+			<scope>runtime</scope>
+		</dependency>
+		
+		
 		<!-- <dependency>
 			<groupId>cn.domob</groupId>
 			<artifactId>domob-android-sdk</artifactId>
