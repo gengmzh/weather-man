@@ -70,7 +70,15 @@ public class CityResolver {
 		Log.i(CityResolver.class.getSimpleName(), "init city done");
 	}
 
-	List<City> findCity(String parent) {
+	/**
+	 * 查询城市形象，parent为null表示查询一级城市
+	 * 
+	 * @author gengmaozhang01
+	 * @since 2013-12-28 下午9:35:04
+	 * @param parent
+	 * @return
+	 */
+	public List<City> findCity(String parent) {
 		List<City> cl = new ArrayList<City>();
 		Cursor cursor = contentResolver.query(Weather.City.CONTENT_URI, null, Weather.City.PARENT
 				+ (parent == null || parent.length() == 0 ? " ISNULL" : "=" + parent), null, null);
@@ -98,6 +106,52 @@ public class CityResolver {
 			return getName();
 		}
 
+	}
+
+	/**
+	 * 获取设置的城市
+	 * 
+	 * @author gengmaozhang01
+	 * @since 2013-12-28 下午9:41:18
+	 * @return
+	 */
+	public City getLocationSetting() {
+		Cursor cursor = contentResolver.query(Weather.Setting.CONTENT_URI, null, null, null, null);
+		if (cursor != null && cursor.moveToFirst()) {
+			String id = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY3_CODE));
+			String name = cursor.getString(cursor.getColumnIndex(Weather.Setting.CITY3_NAME));
+			return new City(id, name);
+		}
+		return null;
+	}
+
+	/**
+	 * 保存设置的城市
+	 * 
+	 * @author gengmaozhang01
+	 * @since 2013-12-28 下午9:37:41
+	 * @param province
+	 * @param city
+	 * @param district
+	 */
+	public void saveLocationSetting(City province, City city, City district) {
+		if (province == null) {
+			throw new IllegalArgumentException("province is required");
+		}
+		if (city == null) {
+			throw new IllegalArgumentException("city is required");
+		}
+		if (district == null) {
+			throw new IllegalArgumentException("district is required");
+		}
+		ContentValues values = new ContentValues();
+		values.put(Weather.Setting.CITY1_CODE, province.getId());
+		values.put(Weather.Setting.CITY1_NAME, province.getName());
+		values.put(Weather.Setting.CITY2_CODE, city.getId());
+		values.put(Weather.Setting.CITY2_NAME, city.getName());
+		values.put(Weather.Setting.CITY3_CODE, district.getId());
+		values.put(Weather.Setting.CITY3_NAME, district.getName());
+		contentResolver.update(Weather.Setting.CONTENT_URI, values, null, null);
 	}
 
 }

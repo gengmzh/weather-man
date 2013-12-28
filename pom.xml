@@ -59,6 +59,7 @@
 			<artifactId>locSDK</artifactId>
 			<version>4.0</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>com.baidu.location</groupId>
 			<artifactId>liblocSDK4</artifactId>
@@ -67,7 +68,7 @@
 			<type>so</type>
 			<scope>runtime</scope>
 		</dependency>
-		
+		 -->
 		
 		<!-- <dependency>
 			<groupId>cn.domob</groupId>
