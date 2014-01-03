@@ -15,6 +15,8 @@ import java.util.Map;
 
 import org.json.simple.JSONValue;
 
+import com.baidu.mobstat.StatService;
+
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.util.Log;
@@ -64,9 +66,11 @@ public class WeatherService {
 					Object msg = value.get("message");
 					throw new Exception(msg != null ? msg.toString() : "get realtime weather failed");
 				}
+				StatService.onEvent(databaseSupport.getContext(), "api", "realtime-success", 1);
 				return new Weather.RealtimeWeather(value);
 			} catch (Exception ex) {
 				Log.e(tag, "get realtime weather failed", ex);
+				StatService.onEvent(databaseSupport.getContext(), "api", "realtime-failure", 1);
 			}
 		}
 		return null;
@@ -93,9 +97,11 @@ public class WeatherService {
 					Object msg = value.get("message");
 					throw new Exception(msg != null ? msg.toString() : "get realtime weather failed");
 				}
+				StatService.onEvent(databaseSupport.getContext(), "api", "forecast-success", 1);
 				return new Weather.ForecastWeather(value);
 			} catch (Exception ex) {
 				Log.e(tag, "get realtime weather failed", ex);
+				StatService.onEvent(databaseSupport.getContext(), "api", "forecast-failure", 1);
 			}
 		}
 		return null;

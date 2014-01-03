@@ -22,8 +22,15 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 	public static final String COL_VALUE = "value";
 	public static final String COL_UPDATETIME = "ut";
 
+	private Context context;
+
 	public DatabaseSupport(Context context) {
 		super(context, DBNAME, null, DBVERSION);
+		this.context = context;
+	}
+
+	public Context getContext() {
+		return context;
 	}
 
 	@Override
