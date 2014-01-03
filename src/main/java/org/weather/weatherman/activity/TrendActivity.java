@@ -210,7 +210,9 @@ public class TrendActivity extends Activity {
 			chart.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
 					LinearLayout.LayoutParams.FILL_PARENT));
 			layout.addView(chart);
-			cursor.close();
+			if (cursor != null) {
+				cursor.close();
+			}
 			onProgressUpdate(100);
 		}
 

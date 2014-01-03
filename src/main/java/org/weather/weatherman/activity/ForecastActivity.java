@@ -147,7 +147,9 @@ public class ForecastActivity extends Activity {
 						Toast.LENGTH_LONG).show();
 				Log.e(tag, "can't get forecast weather");
 			}
-			cursor.close();
+			if (cursor != null) {
+				cursor.close();
+			}
 			onProgressUpdate(100);
 		}
 

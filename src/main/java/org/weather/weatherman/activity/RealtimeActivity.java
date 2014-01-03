@@ -198,7 +198,12 @@ public class RealtimeActivity extends Activity {
 				view.setText("--");
 				Log.e(tag, "can't get weather index");
 			}
-			realtime.close();
+			if (realtime != null) {
+				realtime.close();
+			}
+			if (index != null) {
+				index.close();
+			}
 			if (!isOk) {
 				Toast.makeText(getApplicationContext(), getResources().getText(R.string.connect_failed),
 						Toast.LENGTH_LONG).show();
