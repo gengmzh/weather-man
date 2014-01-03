@@ -1,6 +1,7 @@
 package org.weather.weatherman.content;
 
 import java.util.Date;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -62,6 +63,115 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 			rowId = db.insert(TABLE_NAME, null, values);
 		}
 		return rowId;
+	}
+
+	/**
+	 * 保存天气实况
+	 * 
+	 * @author gengmaozhang01
+	 * @since 2014-1-3 下午7:37:36
+	 */
+	public void saveRealtimeWeather(Weather.RealtimeWeather realtime) {
+		String city = (realtime != null ? realtime.getCityId() : null);
+		if (city == null || city.length() == 0) {
+			return;
+		}
+		// old
+		long rowId = -1;
+		Cursor cursor = this.find(COL_TYPE + "=? and " + COL_CODE + "=?", new Object[] { Weather.RealtimeWeather.TYPE,
+				city });
+		if (cursor.moveToFirst()) {
+			rowId = cursor.getLong(cursor.getColumnIndex(DatabaseSupport.COL_ID));
+		}
+		cursor.close();
+		// save
+		ContentValues setting = new ContentValues();
+		setting.put(DatabaseSupport.COL_TYPE, Weather.RealtimeWeather.TYPE);
+		setting.put(DatabaseSupport.COL_CODE, city);
+		StringBuffer value = new StringBuffer();
+		value.append(city).append(";");
+		value.append(realtime.getCityName()).append(";");
+		value.append(realtime.getTime()).append(";");
+		value.append(realtime.getTemperature()).append(";");
+		value.append(realtime.getHumidity()).append(";");
+		value.append(realtime.getWindDirection()).append(";");
+		value.append(realtime.getWindForce()).append(";");
+		setting.put(DatabaseSupport.COL_VALUE, value.toString());
+		rowId = this.save(rowId, setting);
+	}
+
+	/**
+	 * 保存天气预报和各个指数
+	 * 
+	 * @author gengmaozhang01
+	 * @since 2014-1-3 下午7:50:52
+	 */
+	public void saveForecastAndIndexWeather(Weather.ForecastWeather forecast) {
+		String citycode = (forecast != null ? forecast.getCityId() : null);
+		if (citycode == null || citycode.length() == 0) {
+			return;
+		}
+		// forecast
+		// old
+		long rowId = -1;
+		Cursor cursor = this.find(COL_TYPE + "=? and " + COL_CODE + "=?", new Object[] { Weather.ForecastWeather.TYPE,
+				citycode });
+		if (cursor.moveToFirst()) {
+			rowId = cursor.getLong(cursor.getColumnIndex(DatabaseSupport.COL_ID));
+		}
+		// save
+		ContentValues values = new ContentValues();
+		values.put(DatabaseSupport.COL_TYPE, Weather.ForecastWeather.TYPE);
+		values.put(DatabaseSupport.COL_CODE, citycode);
+		StringBuffer value = new StringBuffer();
+		List<String> wl = forecast.getWeather(), tl = forecast.getTemperature(), il = forecast.getImage(), wdl = forecast
+				.getWind(), wfl = forecast.getWindForce();
+		int length = Math.min(wl.size(), Math.min(tl.size(), Math.min(il.size(), Math.min(wdl.size(), wfl.size()))));
+		for (int i = 0; i < length; i++) {
+			value.append(citycode).append(";");
+			value.append(forecast.getCityName()).append(";");
+			value.append(forecast.getTime()).append(";");
+			value.append(wl.size() > i ? wl.get(i) : null).append(";");
+			value.append(tl.size() > i ? tl.get(i) : null).append(";");
+			value.append(il.size() > i ? il.get(i) : null).append(";");
+			value.append(wdl.size() > i ? wdl.get(i) : null).append(";");
+			value.append(wfl.size() > i ? wfl.get(i) : null).append("#");
+		}
+		values.put(DatabaseSupport.COL_VALUE, value.toString());
+		rowId = this.save(rowId, values);
+		// index
+		// old
+		rowId = -1;
+		cursor = this.find(COL_TYPE + "=? and " + COL_CODE + "=?", new Object[] { Weather.LivingIndex.TYPE, citycode });
+		if (cursor.moveToFirst()) {
+			rowId = cursor.getLong(cursor.getColumnIndex(DatabaseSupport.COL_ID));
+		}
+		// save
+		ContentValues index = new ContentValues();
+		index.put(DatabaseSupport.COL_TYPE, Weather.LivingIndex.TYPE);
+		index.put(DatabaseSupport.COL_CODE, citycode);
+		value = new StringBuffer();
+		value.append(citycode).append(";");
+		value.append(forecast.getCityName()).append(";");
+		value.append(forecast.getTime()).append(";");
+		Weather.LivingIndex li = forecast.getDressIndex();
+		value.append(li != null ? li.getIndex() : null).append(";");
+		li = forecast.getUltravioletIndex();
+		value.append(li != null ? li.getIndex() : null).append(";");
+		li = forecast.getCleanCarIndex();
+		value.append(li != null ? li.getIndex() : null).append(";");
+		li = forecast.getTravelIndex();
+		value.append(li != null ? li.getIndex() : null).append(";");
+		li = forecast.getComfortIndex();
+		value.append(li != null ? li.getIndex() : null).append(";");
+		li = forecast.getMorningExerciseIndex();
+		value.append(li != null ? li.getIndex() : null).append(";");
+		li = forecast.getSunDryIndex();
+		value.append(li != null ? li.getIndex() : null).append(";");
+		li = forecast.getIrritabilityIndex();
+		value.append(li != null ? li.getIndex() : null).append(";");
+		index.put(DatabaseSupport.COL_VALUE, value.toString());
+		rowId = this.save(rowId, index);
 	}
 
 }

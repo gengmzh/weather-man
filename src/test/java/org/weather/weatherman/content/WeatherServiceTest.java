@@ -25,7 +25,7 @@ public class WeatherServiceTest extends AndroidTestCase {
 	}
 
 	public void test_find() throws Exception {
-		Cursor cursor = weatherService.findRealtime("101010700");
+		Cursor cursor = weatherService.findRealtimeWeather("101010700");
 
 		Assert.assertNotNull(cursor);
 	}

@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 public class RealtimeActivity extends Activity {
 
+	private static final String tag = RealtimeTask.class.getSimpleName();
+
 	private WeatherApplication app;
 
 	@Override
@@ -85,7 +87,7 @@ public class RealtimeActivity extends Activity {
 			int progress = (values != null && values.length > 0 ? values[0] : 0);
 			ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
 			if (progressBar != null) {
-				Log.i(RealtimeTask.class.getSimpleName(), progress + "/" + progressBar.getMax());
+				Log.i(tag, progress + "/" + progressBar.getMax());
 				progressBar.setProgress(progress);
 				if (progress >= progressBar.getMax()) {
 					progressBar.setVisibility(View.GONE);
@@ -133,7 +135,7 @@ public class RealtimeActivity extends Activity {
 				// updateTime
 				view = (TextView) findViewById(R.id.updateTime);
 				view.setText("--");
-				Log.e(RealtimeActivity.class.getName(), "can't get realtime weather");
+				Log.e(tag, "can't get realtime weather");
 			}
 			if (index != null && index.moveToFirst()) {
 				// comfort
@@ -194,8 +196,9 @@ public class RealtimeActivity extends Activity {
 				// irritability
 				view = (TextView) findViewById(R.id.irritability);
 				view.setText("--");
-				Log.e(RealtimeActivity.class.getName(), "can't get weather index");
+				Log.e(tag, "can't get weather index");
 			}
+			realtime.close();
 			if (!isOk) {
 				Toast.makeText(getApplicationContext(), getResources().getText(R.string.connect_failed),
 						Toast.LENGTH_LONG).show();

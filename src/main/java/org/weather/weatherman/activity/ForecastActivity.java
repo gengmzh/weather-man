@@ -31,6 +31,8 @@ import android.widget.Toast;
  */
 public class ForecastActivity extends Activity {
 
+	private static final String tag = ForecastTask.class.getSimpleName();
+
 	private WeatherApplication app;
 
 	@Override
@@ -84,7 +86,7 @@ public class ForecastActivity extends Activity {
 			int progress = (values != null && values.length > 0 ? values[0] : 0);
 			ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
 			if (progressBar != null) {
-				Log.i(ForecastTask.class.getSimpleName(), progress + "/" + progressBar.getMax());
+				Log.i(tag, progress + "/" + progressBar.getMax());
 				progressBar.setProgress(progress);
 				if (progress >= progressBar.getMax()) {
 					progressBar.setVisibility(View.GONE);
@@ -109,7 +111,7 @@ public class ForecastActivity extends Activity {
 				try {
 					cal.setTime(DF_1.parse(text));
 				} catch (Exception e) {
-					Log.e(ForecastActivity.class.getSimpleName(), "parse update time failed", e);
+					Log.e(tag, "parse update time failed", e);
 				}
 				cal.add(Calendar.HOUR_OF_DAY, -12);
 				do {
@@ -143,8 +145,9 @@ public class ForecastActivity extends Activity {
 				uptimeView.setText("--");
 				Toast.makeText(getApplicationContext(), getResources().getText(R.string.connect_failed),
 						Toast.LENGTH_LONG).show();
-				Log.e(ForecastActivity.class.getName(), "can't get forecast weather");
+				Log.e(tag, "can't get forecast weather");
 			}
+			cursor.close();
 			onProgressUpdate(100);
 		}
 

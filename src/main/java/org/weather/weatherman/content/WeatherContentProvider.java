@@ -23,36 +23,16 @@ public class WeatherContentProvider extends ContentProvider {
 		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.CITY_PATH + "/#", Weather.City.TYPE);
 	}
 
+	private DatabaseSupport databaseSupport;
 	private SettingService settingService;
 	private WeatherService weatherService;
 
 	@Override
 	public boolean onCreate() {
-		DatabaseSupport databaseSupport = new DatabaseSupport(getContext());
+		databaseSupport = new DatabaseSupport(getContext());
 		settingService = new SettingService(databaseSupport);
 		weatherService = new WeatherService(databaseSupport, settingService);
 		return true;
-	}
-
-	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-		switch (URI_MATCHER.match(uri)) {
-		case Weather.City.TYPE:
-			return settingService.findCity(selection, selectionArgs, sortOrder);
-		case Weather.Setting.TYPE:
-			return settingService.findSetting();
-		case Weather.RealtimeWeather.TYPE:
-			String citycode = uri.getLastPathSegment();
-			return weatherService.findRealtime(citycode);
-		case Weather.ForecastWeather.TYPE:
-			citycode = uri.getLastPathSegment();
-			return weatherService.findForecast(citycode);
-		case Weather.LivingIndex.TYPE:
-			citycode = uri.getLastPathSegment();
-			return weatherService.findIndex(citycode);
-		default:
-			throw new IllegalArgumentException("unknown Uri " + uri);
-		}
 	}
 
 	@Override
@@ -68,6 +48,27 @@ public class WeatherContentProvider extends ContentProvider {
 			return Weather.ForecastWeather.CONTENT_TYPE;
 		case Weather.LivingIndex.TYPE:
 			return Weather.LivingIndex.CONTENT_TYPE;
+		default:
+			throw new IllegalArgumentException("unknown Uri " + uri);
+		}
+	}
+
+	@Override
+	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+		switch (URI_MATCHER.match(uri)) {
+		case Weather.City.TYPE:
+			return settingService.findCity(selection, selectionArgs, sortOrder);
+		case Weather.Setting.TYPE:
+			return settingService.findSetting();
+		case Weather.RealtimeWeather.TYPE:// 天气实况
+			String citycode = uri.getLastPathSegment();
+			return weatherService.findRealtimeWeather(citycode);
+		case Weather.ForecastWeather.TYPE:// 天气预报
+			citycode = uri.getLastPathSegment();
+			return weatherService.findForecastWeather(citycode);
+		case Weather.LivingIndex.TYPE:// 天气指数
+			citycode = uri.getLastPathSegment();
+			return weatherService.findIndexWeather(citycode);
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
 		}

@@ -3,40 +3,148 @@
  */
 package org.weather.weatherman.content;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import cn.seddat.weatherman.api.WeatherClient;
-import cn.seddat.weatherman.api.forecast.ForecastWeather;
-import cn.seddat.weatherman.api.forecast.LivingIndex;
-import cn.seddat.weatherman.api.realtime.RealtimeWeather;
+import org.json.simple.JSONValue;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.util.Log;
 
 /**
- * @since 2012-5-16
- * @author gmz
+ * 天气信息服务类
  * 
+ * @author gengmaozhang01
+ * @since 2014-1-3 下午7:05:57
  */
 public class WeatherService {
 
-	private WeatherClient weatherClient;
-	private DatabaseSupport databaseSupport;
-	private SettingService settingProvider;
+	private static final String tag = WeatherService.class.getSimpleName();
+	private static final String api = "http://42.96.143.229:8387/openapi/api/weather";
 
-	public WeatherService(DatabaseSupport databaseSupport, SettingService settingProvider) {
-		weatherClient = new WeatherClient(10000, 10000, 3);
+	private int connectTimeout = 30000;
+	private int readTimeout = 30000;
+	private int retry = 3;
+
+	private DatabaseSupport databaseSupport;
+	private SettingService settingService;
+
+	public WeatherService(DatabaseSupport databaseSupport, SettingService settingService) {
+		super();
 		this.databaseSupport = databaseSupport;
-		this.settingProvider = settingProvider;
+		this.settingService = settingService;
 	}
 
-	public Cursor findRealtime(String citycode) {
-		Log.i(WeatherService.class.getSimpleName(), "citycode: " + citycode);
+	/**
+	 * 获取天气实况信息
+	 * 
+	 * @author gengmaozhang01
+	 * @since 2014-1-3 下午7:28:04
+	 */
+	private Weather.RealtimeWeather getRealtimeWeather(String citycode) throws Exception {
+		if (citycode == null || citycode.length() == 0) {
+			throw new IllegalArgumentException("citycode is required");
+		}
+		String url = api + "/realtime/" + citycode;
+		for (int i = 0; i < retry; i++) {
+			try {
+				String json = this.request(url);
+				@SuppressWarnings("unchecked")
+				Map<String, Object> value = (Map<String, Object>) JSONValue.parse(json);
+				Object code = value.get("code");
+				if (code == null || !Number.class.isInstance(code) || ((Number) code).intValue() != 0) {
+					Object msg = value.get("message");
+					throw new Exception(msg != null ? msg.toString() : "get realtime weather failed");
+				}
+				return new Weather.RealtimeWeather(value);
+			} catch (Exception ex) {
+				Log.e(tag, "get realtime weather failed", ex);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 获取天气预报信息
+	 * 
+	 * @author gengmaozhang01
+	 * @since 2014-1-3 下午7:28:04
+	 */
+	private Weather.ForecastWeather getForecastWeather(String citycode) throws Exception {
+		if (citycode == null || citycode.length() == 0) {
+			throw new IllegalArgumentException("citycode is required");
+		}
+		String url = api + "/forecast/" + citycode;
+		for (int i = 0; i < retry; i++) {
+			try {
+				String json = this.request(url);
+				@SuppressWarnings("unchecked")
+				Map<String, Object> value = (Map<String, Object>) JSONValue.parse(json);
+				Object code = value.get("code");
+				if (code == null || !Number.class.isInstance(code) || ((Number) code).intValue() != 0) {
+					Object msg = value.get("message");
+					throw new Exception(msg != null ? msg.toString() : "get realtime weather failed");
+				}
+				return new Weather.ForecastWeather(value);
+			} catch (Exception ex) {
+				Log.e(tag, "get realtime weather failed", ex);
+			}
+		}
+		return null;
+	}
+
+	private String request(String url) throws Exception {
+		String json = null;
+		HttpURLConnection conn = null;
+		InputStream ins = null;
+		try {
+			conn = (HttpURLConnection) new URL(url).openConnection();
+			conn.setRequestProperty("User-Agent", "WeatherMan/1.7 Android");
+			conn.setRequestProperty("Content-Type", "text/html; charset=utf-8");
+			if (connectTimeout > 0) {
+				conn.setConnectTimeout(connectTimeout);
+			}
+			if (readTimeout > 0) {
+				conn.setReadTimeout(readTimeout);
+			}
+			// read
+			conn.connect();
+			ins = conn.getInputStream();
+			ByteArrayOutputStream ous = new ByteArrayOutputStream();
+			byte[] b = new byte[1024];
+			int len = 0;
+			while ((len = ins.read(b)) > -1) {
+				ous.write(b, 0, len);
+			}
+			json = ous.toString();
+			ous.close();
+		} finally {
+			if (ins != null) {
+				ins.close();
+			}
+			if (conn != null) {
+				conn.disconnect();
+			}
+		}
+		return json;
+	}
+
+	/**
+	 * 获取天气实况信息
+	 * 
+	 * @author gengmaozhang01
+	 * @since 2014-1-3 下午7:53:19
+	 */
+	public Cursor findRealtimeWeather(String citycode) {
+		Log.i(tag, "city is " + citycode);
 		MatrixCursor result = new MatrixCursor(new String[] { Weather.RealtimeWeather.ID, Weather.RealtimeWeather.NAME,
 				Weather.RealtimeWeather.TIME, Weather.RealtimeWeather.TEMPERATURE, Weather.RealtimeWeather.HUMIDITY,
 				Weather.RealtimeWeather.WINDDIRECTION, Weather.RealtimeWeather.WINDFORCE });
@@ -45,69 +153,40 @@ public class WeatherService {
 				new Object[] { Weather.RealtimeWeather.TYPE, citycode });
 		if (cursor.moveToFirst()) {
 			String uptime = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_UPDATETIME));
-			if (!settingProvider.isOvertime(new Date(Long.valueOf(uptime)))) {
+			if (!settingService.isOvertime(new Date(Long.valueOf(uptime)))) {
 				String value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
 				result.addRow(value.split(";"));
 				cursor.close();
-				Log.i(WeatherService.class.getSimpleName(), "found realtime weather from database");
+				Log.i(tag, "get realtime weather from database");
 				return result;
 			}
 		}
 		cursor.close();
 		// web
-		RealtimeWeather realtime = this.fetchRealtime(citycode);
-		if (realtime != null && realtime.getCityId() != null && realtime.getCityId().length() > 0) {
-			Log.i(WeatherService.class.getSimpleName(), "found realtime weather from web");
+		Weather.RealtimeWeather realtime = null;
+		try {
+			realtime = this.getRealtimeWeather(citycode);
+		} catch (Exception e) {
+			Log.e(tag, "get realtime weather failed", e);
+		}
+		if (realtime != null) {
 			result.addRow(new Object[] { realtime.getCityId(), realtime.getCityName(), realtime.getTime(),
 					realtime.getTemperature(), realtime.getHumidity(), realtime.getWindDirection(),
 					realtime.getWindForce() });
-			this.updateRealtime(realtime);
-		} else {
-			Log.e(WeatherService.class.getName(), "get realtime weather failed");
+			databaseSupport.saveRealtimeWeather(realtime);
+			Log.i(tag, "refresh realtime weather by api");
 		}
 		return result;
 	}
 
-	public RealtimeWeather fetchRealtime(String citycode) {
-		try {
-			return weatherClient.getRealWeather(citycode);
-		} catch (Exception e) {
-			Log.e(WeatherService.class.getSimpleName(), "get weather failed", e);
-			return null;
-		}
-	}
-
-	public void updateRealtime(RealtimeWeather realtime) {
-		String city = (realtime != null ? realtime.getCityId() : null);
-		if (city == null || city.length() == 0) {
-			return;
-		}
-		// old
-		long rowId = -1;
-		Cursor cursor = databaseSupport.find(DatabaseSupport.COL_TYPE + "=? and " + DatabaseSupport.COL_CODE + "=?",
-				new Object[] { Weather.RealtimeWeather.TYPE, city });
-		if (cursor.moveToFirst()) {
-			rowId = cursor.getLong(cursor.getColumnIndex(DatabaseSupport.COL_ID));
-		}
-		// save
-		ContentValues setting = new ContentValues();
-		setting.put(DatabaseSupport.COL_TYPE, Weather.RealtimeWeather.TYPE);
-		setting.put(DatabaseSupport.COL_CODE, city);
-		StringBuffer value = new StringBuffer();
-		value.append(city).append(";");
-		value.append(realtime.getCityName()).append(";");
-		value.append(realtime.getTime()).append(";");
-		value.append(realtime.getTemperature()).append(";");
-		value.append(realtime.getHumidity()).append(";");
-		value.append(realtime.getWindDirection()).append(";");
-		value.append(realtime.getWindForce()).append(";");
-		setting.put(DatabaseSupport.COL_VALUE, value.toString());
-		rowId = databaseSupport.save(rowId, setting);
-		Log.i(WeatherService.class.getSimpleName(), "updated realtime weather");
-	}
-
-	public Cursor findForecast(String citycode) {
-		Log.i(WeatherService.class.getSimpleName(), "citycode: " + citycode);
+	/**
+	 * 获取天气预报信息
+	 * 
+	 * @author gengmaozhang01
+	 * @since 2014-1-3 下午7:53:35
+	 */
+	public Cursor findForecastWeather(String citycode) {
+		Log.i(tag, "city is " + citycode);
 		MatrixCursor result = new MatrixCursor(new String[] { Weather.ForecastWeather.ID, Weather.ForecastWeather.NAME,
 				Weather.ForecastWeather.TIME, Weather.ForecastWeather.WEATHER, Weather.ForecastWeather.TEMPERATURE,
 				Weather.ForecastWeather.IMAGE, Weather.ForecastWeather.WIND, Weather.ForecastWeather.WINDFORCE });
@@ -116,22 +195,26 @@ public class WeatherService {
 				new Object[] { Weather.ForecastWeather.TYPE, citycode });
 		if (cursor.moveToFirst()) {
 			String uptime = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_UPDATETIME));
-			if (!settingProvider.isOvertime(new Date(Long.valueOf(uptime)))) {
+			if (!settingService.isOvertime(new Date(Long.valueOf(uptime)))) {
 				String value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
 				String[] rows = value.split("#");
 				for (String row : rows) {
 					result.addRow(row.split(";"));
 				}
 				cursor.close();
-				Log.i(WeatherService.class.getSimpleName(), "found forecast weather from database");
+				Log.i(tag, "get forecast weather from database");
 				return result;
 			}
 		}
 		cursor.close();
 		// query web server
-		ForecastWeather forecast = this.fetchForecast(citycode);
-		if (forecast != null && forecast.getCityId() != null && forecast.getCityId().length() > 0) {
-			Log.i(WeatherService.class.getSimpleName(), "found forecast weather from web");
+		Weather.ForecastWeather forecast = null;
+		try {
+			forecast = this.getForecastWeather(citycode);
+		} catch (Exception e) {
+			Log.e(tag, "get forecast weather failed", e);
+		}
+		if (forecast != null) {
 			List<String> wl = forecast.getWeather(), tl = forecast.getTemperature(), il = forecast.getImage(), wdl = forecast
 					.getWind(), wfl = forecast.getWindForce();
 			int length = Math
@@ -142,24 +225,20 @@ public class WeatherService {
 						il.size() > i ? il.get(i) : null, wdl.size() > i ? wdl.get(i) : null,
 						wfl.size() > i ? wfl.get(i) : null });
 			}
-			this.updateForecastAndIndex(forecast);
-		} else {
-			Log.e(WeatherService.class.getSimpleName(), "get forecast weather failed");
+			databaseSupport.saveForecastAndIndexWeather(forecast);
+			Log.i(tag, "refresh forecast weather by api");
 		}
 		return result;
 	}
 
-	public ForecastWeather fetchForecast(String citycode) {
-		try {
-			return weatherClient.getForecastWeather(citycode);
-		} catch (Exception e) {
-			Log.e(WeatherService.class.getSimpleName(), "get weather failed", e);
-			return null;
-		}
-	}
-
-	public Cursor findIndex(String citycode) {
-		Log.i(WeatherService.class.getSimpleName(), "citycode: " + citycode);
+	/**
+	 * 获取天气指数信息
+	 * 
+	 * @author gengmaozhang01
+	 * @since 2014-1-3 下午7:57:48
+	 */
+	public Cursor findIndexWeather(String citycode) {
+		Log.i(tag, "city is " + citycode);
 		MatrixCursor result = new MatrixCursor(new String[] { Weather.LivingIndex.ID, Weather.LivingIndex.NAME,
 				Weather.LivingIndex.TIME, Weather.LivingIndex.DRESS, Weather.LivingIndex.ULTRAVIOLET,
 				Weather.LivingIndex.CLEANCAR, Weather.LivingIndex.TRAVEL, Weather.LivingIndex.COMFORT,
@@ -169,22 +248,26 @@ public class WeatherService {
 				new Object[] { Weather.LivingIndex.TYPE, citycode });
 		if (cursor.moveToFirst()) {
 			String uptime = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_UPDATETIME));
-			if (!settingProvider.isOvertime(new Date(Long.valueOf(uptime)))) {
+			if (!settingService.isOvertime(new Date(Long.valueOf(uptime)))) {
 				String value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
 				result.addRow(value.split(";"));
 				cursor.close();
-				Log.i(WeatherService.class.getSimpleName(), "found living index from database");
+				Log.i(tag, "get living index from database");
 				return result;
 			}
 		}
 		cursor.close();
 		// web
-		ForecastWeather forecast = this.fetchForecast(citycode);
-		if (forecast != null && forecast.getCityId() != null && forecast.getCityId().length() > 0) {
-			Log.i(WeatherService.class.getSimpleName(), "found living index from web");
+		Weather.ForecastWeather forecast = null;
+		try {
+			forecast = this.getForecastWeather(citycode);
+		} catch (Exception e) {
+			Log.e(tag, "get living index failed", e);
+		}
+		if (forecast != null) {
 			List<Object> row = new ArrayList<Object>();
 			Collections.addAll(row, forecast.getCityId(), forecast.getCityName(), forecast.getTime());
-			LivingIndex li = forecast.getDressIndex();
+			Weather.LivingIndex li = forecast.getDressIndex();
 			row.add(li != null ? li.getIndex() : null);
 			li = forecast.getUltravioletIndex();
 			row.add(li != null ? li.getIndex() : null);
@@ -201,82 +284,10 @@ public class WeatherService {
 			li = forecast.getIrritabilityIndex();
 			row.add(li != null ? li.getIndex() : null);
 			result.addRow(row);
-			this.updateForecastAndIndex(forecast);
-		} else {
-			Log.e(WeatherService.class.getName(), "get living index failed");
+			databaseSupport.saveForecastAndIndexWeather(forecast);
+			Log.i(tag, "refresh living index by api");
 		}
 		return result;
-	}
-
-	public void updateForecastAndIndex(ForecastWeather forecast) {
-		String citycode = (forecast != null ? forecast.getCityId() : null);
-		if (citycode == null || citycode.length() == 0) {
-			return;
-		}
-		// forecast
-		// old
-		long rowId = -1;
-		Cursor cursor = databaseSupport.find(DatabaseSupport.COL_TYPE + "=? and " + DatabaseSupport.COL_CODE + "=?",
-				new Object[] { Weather.ForecastWeather.TYPE, citycode });
-		if (cursor.moveToFirst()) {
-			rowId = cursor.getLong(cursor.getColumnIndex(DatabaseSupport.COL_ID));
-		}
-		// save
-		ContentValues values = new ContentValues();
-		values.put(DatabaseSupport.COL_TYPE, Weather.ForecastWeather.TYPE);
-		values.put(DatabaseSupport.COL_CODE, citycode);
-		StringBuffer value = new StringBuffer();
-		List<String> wl = forecast.getWeather(), tl = forecast.getTemperature(), il = forecast.getImage(), wdl = forecast
-				.getWind(), wfl = forecast.getWindForce();
-		int length = Math.min(wl.size(), Math.min(tl.size(), Math.min(il.size(), Math.min(wdl.size(), wfl.size()))));
-		for (int i = 0; i < length; i++) {
-			value.append(citycode).append(";");
-			value.append(forecast.getCityName()).append(";");
-			value.append(forecast.getTime()).append(";");
-			value.append(wl.size() > i ? wl.get(i) : null).append(";");
-			value.append(tl.size() > i ? tl.get(i) : null).append(";");
-			value.append(il.size() > i ? il.get(i) : null).append(";");
-			value.append(wdl.size() > i ? wdl.get(i) : null).append(";");
-			value.append(wfl.size() > i ? wfl.get(i) : null).append("#");
-		}
-		values.put(DatabaseSupport.COL_VALUE, value.toString());
-		rowId = databaseSupport.save(rowId, values);
-		Log.i(WeatherService.class.getSimpleName(), "updated forecast weather");
-		// index
-		// old
-		rowId = -1;
-		cursor = databaseSupport.find(DatabaseSupport.COL_TYPE + "=? and " + DatabaseSupport.COL_CODE + "=?",
-				new Object[] { Weather.LivingIndex.TYPE, citycode });
-		if (cursor.moveToFirst()) {
-			rowId = cursor.getLong(cursor.getColumnIndex(DatabaseSupport.COL_ID));
-		}
-		// save
-		ContentValues index = new ContentValues();
-		index.put(DatabaseSupport.COL_TYPE, Weather.LivingIndex.TYPE);
-		index.put(DatabaseSupport.COL_CODE, citycode);
-		value = new StringBuffer();
-		value.append(citycode).append(";");
-		value.append(forecast.getCityName()).append(";");
-		value.append(forecast.getTime()).append(";");
-		LivingIndex li = forecast.getDressIndex();
-		value.append(li != null ? li.getIndex() : null).append(";");
-		li = forecast.getUltravioletIndex();
-		value.append(li != null ? li.getIndex() : null).append(";");
-		li = forecast.getCleanCarIndex();
-		value.append(li != null ? li.getIndex() : null).append(";");
-		li = forecast.getTravelIndex();
-		value.append(li != null ? li.getIndex() : null).append(";");
-		li = forecast.getComfortIndex();
-		value.append(li != null ? li.getIndex() : null).append(";");
-		li = forecast.getMorningExerciseIndex();
-		value.append(li != null ? li.getIndex() : null).append(";");
-		li = forecast.getSunDryIndex();
-		value.append(li != null ? li.getIndex() : null).append(";");
-		li = forecast.getIrritabilityIndex();
-		value.append(li != null ? li.getIndex() : null).append(";");
-		index.put(DatabaseSupport.COL_VALUE, value.toString());
-		rowId = databaseSupport.save(rowId, index);
-		Log.i(WeatherService.class.getSimpleName(), "updated living index");
 	}
 
 }
