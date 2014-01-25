@@ -9,8 +9,6 @@ import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
 
-import com.baidu.mobstat.StatService;
-
 import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
@@ -22,7 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.baidu.mobstat.StatService;
 
 /**
  * @since 2012-5-18
@@ -52,10 +51,18 @@ public class ForecastActivity extends Activity {
 		super.onResume();
 		ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
 		progressBar.setVisibility(View.VISIBLE);
-		String city = (app.getCity() != null ? app.getCity().getId() : null);
-		new ForecastTask().execute(city);
+		this.refreshData();
 		// stats
 		StatService.onResume(this);
+	}
+
+	/**
+	 * @author gengmaozhang01
+	 * @since 2014-1-25 下午6:06:02
+	 */
+	public void refreshData() {
+		String city = (app.getCity() != null ? app.getCity().getId() : null);
+		new ForecastTask().execute(city);
 	}
 
 	class ForecastTask extends AsyncTask<String, Integer, Cursor> {
@@ -143,8 +150,7 @@ public class ForecastActivity extends Activity {
 				} while (cursor.moveToNext());
 			} else {
 				uptimeView.setText("--");
-				Toast.makeText(getApplicationContext(), getResources().getText(R.string.connect_failed),
-						Toast.LENGTH_LONG).show();
+				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
 				Log.e(tag, "can't get forecast weather");
 			}
 			if (cursor != null) {

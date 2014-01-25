@@ -19,29 +19,20 @@ import android.util.Log;
  * @author gmz
  * 
  */
-public class CityResolverTest extends AndroidTestCase {
+public class CityServiceTest extends AndroidTestCase {
 
-	CityResolver cityResolver;
+	CityService cityService;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		cityResolver = new CityResolver(getContext().getContentResolver());
-	}
-
-	public void test_initCity() throws Exception {
-		getContext().getContentResolver().delete(Weather.City.CONTENT_URI, null, null);
-
-		long st = System.currentTimeMillis();
-		cityResolver.initCity();
-		long et = System.currentTimeMillis();
-		Log.i(CityResolverTest.class.getSimpleName(), "initCity spend " + (et - st) + " ms");
+		cityService = new CityService(getContext().getContentResolver());
 	}
 
 	public void test_findCity() throws Exception {
-		List<City> cl = cityResolver.findCity(null);
-		Log.i(CityResolverTest.class.getSimpleName(), "province count: " + cl.size());
-		Log.i(CityResolverTest.class.getSimpleName(), cl.toString());
+		List<City> cl = cityService.findCityByParent(null);
+		Log.i(CityServiceTest.class.getSimpleName(), "province count: " + cl.size());
+		Log.i(CityServiceTest.class.getSimpleName(), cl.toString());
 	}
 
 	public void test_findAllCity() throws Exception {
@@ -52,7 +43,7 @@ public class CityResolverTest extends AndroidTestCase {
 					.getColumnIndex(Weather.City.PARENT);
 			do {
 				String code = cursor.getString(ci), name = cursor.getString(ni), parent = cursor.getString(pi);
-				Log.i(CityResolverTest.class.getSimpleName(), "City{code:" + code + ",name:" + name + ",parent:"
+				Log.i(CityServiceTest.class.getSimpleName(), "City{code:" + code + ",name:" + name + ",parent:"
 						+ parent + "}");
 			} while (cursor.moveToNext());
 		}

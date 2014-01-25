@@ -24,14 +24,14 @@ public class WeatherContentProvider extends ContentProvider {
 	}
 
 	private DatabaseSupport databaseSupport;
-	private SettingService settingService;
-	private WeatherService weatherService;
+	private CitySupport citySupport;
+	private WeatherSupport weatherSupport;
 
 	@Override
 	public boolean onCreate() {
 		databaseSupport = new DatabaseSupport(getContext());
-		settingService = new SettingService(databaseSupport);
-		weatherService = new WeatherService(databaseSupport, settingService);
+		citySupport = new CitySupport(databaseSupport);
+		weatherSupport = new WeatherSupport(databaseSupport);
 		return true;
 	}
 
@@ -57,38 +57,20 @@ public class WeatherContentProvider extends ContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		switch (URI_MATCHER.match(uri)) {
 		case Weather.City.TYPE:
-			return settingService.findCity(selection, selectionArgs, sortOrder);
+			return citySupport.findCity(selection, selectionArgs, sortOrder);
 		case Weather.Setting.TYPE:
-			return settingService.findSetting();
+			return citySupport.findSetting();
 		case Weather.RealtimeWeather.TYPE:// 天气实况
 			String citycode = uri.getLastPathSegment();
-			return weatherService.findRealtimeWeather(citycode);
+			return weatherSupport.findRealtimeWeather(citycode);
 		case Weather.ForecastWeather.TYPE:// 天气预报
 			citycode = uri.getLastPathSegment();
-			return weatherService.findForecastWeather(citycode);
+			return weatherSupport.findForecastWeather(citycode);
 		case Weather.LivingIndex.TYPE:// 天气指数
 			citycode = uri.getLastPathSegment();
-			return weatherService.findIndexWeather(citycode);
+			return weatherSupport.findIndexWeather(citycode);
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
-		}
-	}
-
-	@Override
-	public int delete(Uri arg0, String arg1, String[] arg2) {
-		switch (URI_MATCHER.match(arg0)) {
-		case Weather.City.TYPE:
-			return 0;
-		case Weather.Setting.TYPE:
-			return 0;
-		case Weather.RealtimeWeather.TYPE:
-			return 0;
-		case Weather.ForecastWeather.TYPE:
-			return 0;
-		case Weather.LivingIndex.TYPE:
-			return 0;
-		default:
-			throw new IllegalArgumentException("unknown Uri " + arg0);
 		}
 	}
 
@@ -114,7 +96,7 @@ public class WeatherContentProvider extends ContentProvider {
 	public int bulkInsert(Uri uri, ContentValues[] values) {
 		switch (URI_MATCHER.match(uri)) {
 		case Weather.City.TYPE:
-			return settingService.insertCity(values);
+			return citySupport.insertCity(values);
 		case Weather.Setting.TYPE:
 			return 0;
 		case Weather.RealtimeWeather.TYPE:
@@ -134,7 +116,7 @@ public class WeatherContentProvider extends ContentProvider {
 		case Weather.City.TYPE:
 			return 0;
 		case Weather.Setting.TYPE:
-			settingService.updateSetting(values);
+			citySupport.updateSetting(values);
 			return 1;
 		case Weather.RealtimeWeather.TYPE:
 			return 0;
@@ -144,6 +126,24 @@ public class WeatherContentProvider extends ContentProvider {
 			return 0;
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
+		}
+	}
+
+	@Override
+	public int delete(Uri arg0, String arg1, String[] arg2) {
+		switch (URI_MATCHER.match(arg0)) {
+		case Weather.City.TYPE:
+			return 0;
+		case Weather.Setting.TYPE:
+			return 0;
+		case Weather.RealtimeWeather.TYPE:
+			return 0;
+		case Weather.ForecastWeather.TYPE:
+			return 0;
+		case Weather.LivingIndex.TYPE:
+			return 0;
+		default:
+			throw new IllegalArgumentException("unknown Uri " + arg0);
 		}
 	}
 

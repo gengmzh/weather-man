@@ -3,11 +3,10 @@
  */
 package org.weather.weatherman;
 
-import org.weather.weatherman.activity.CityResolver;
-
-import cn.seddat.weatherman.api.city.City;
+import org.weather.weatherman.activity.CityService;
 
 import android.app.Application;
+import cn.seddat.weatherman.api.city.City;
 
 /**
  * @since 2012-5-18
@@ -24,8 +23,8 @@ public class WeatherApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		// 恢复城市设置
-		CityResolver cityResolver = new CityResolver(getContentResolver());
-		City city = cityResolver.getLocationSetting();
+		CityService cityService = new CityService(getContentResolver());
+		City city = cityService.getCitySetting();
 		if (city != null) {
 			this.city = city;
 		}

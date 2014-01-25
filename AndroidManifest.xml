@@ -79,6 +79,12 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
+		<activity android:name=".activity.CityActivity" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
 		
 		<activity android:name="org.achartengine.GraphicalActivity" />
 

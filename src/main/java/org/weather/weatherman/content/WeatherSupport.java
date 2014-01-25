@@ -9,17 +9,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONValue;
 
-import com.baidu.mobstat.StatService;
-
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.util.Log;
+
+import com.baidu.mobstat.StatService;
 
 /**
  * 天气信息服务类
@@ -27,9 +26,9 @@ import android.util.Log;
  * @author gengmaozhang01
  * @since 2014-1-3 下午7:05:57
  */
-public class WeatherService {
+public class WeatherSupport {
 
-	private static final String tag = WeatherService.class.getSimpleName();
+	private static final String tag = WeatherSupport.class.getSimpleName();
 	private static final String api = "http://42.96.143.229:8387/openapi/api/weather";
 
 	private int connectTimeout = 30000;
@@ -37,12 +36,10 @@ public class WeatherService {
 	private int retry = 3;
 
 	private DatabaseSupport databaseSupport;
-	private SettingService settingService;
 
-	public WeatherService(DatabaseSupport databaseSupport, SettingService settingService) {
+	public WeatherSupport(DatabaseSupport databaseSupport) {
 		super();
 		this.databaseSupport = databaseSupport;
-		this.settingService = settingService;
 	}
 
 	/**
@@ -155,12 +152,13 @@ public class WeatherService {
 				Weather.RealtimeWeather.TIME, Weather.RealtimeWeather.TEMPERATURE, Weather.RealtimeWeather.HUMIDITY,
 				Weather.RealtimeWeather.WINDDIRECTION, Weather.RealtimeWeather.WINDFORCE });
 		// database
+		String value = null;
 		Cursor cursor = databaseSupport.find(DatabaseSupport.COL_TYPE + "=? and " + DatabaseSupport.COL_CODE + "=?",
 				new Object[] { Weather.RealtimeWeather.TYPE, citycode });
 		if (cursor.moveToFirst()) {
+			value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
 			String uptime = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_UPDATETIME));
-			if (!settingService.isOvertime(new Date(Long.valueOf(uptime)))) {
-				String value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
+			if (this.isNotOvertime(uptime)) {
 				result.addRow(value.split(";"));
 				cursor.close();
 				Log.i(tag, "get realtime weather from database");
@@ -181,6 +179,9 @@ public class WeatherService {
 					realtime.getWindForce() });
 			databaseSupport.saveRealtimeWeather(realtime);
 			Log.i(tag, "refresh realtime weather by api");
+		} else if (value != null) { // 网络异常使用旧的实况信息
+			result.addRow(value.split(";"));
+			Log.i(tag, "using old realtime weather");
 		}
 		return result;
 	}
@@ -197,12 +198,13 @@ public class WeatherService {
 				Weather.ForecastWeather.TIME, Weather.ForecastWeather.WEATHER, Weather.ForecastWeather.TEMPERATURE,
 				Weather.ForecastWeather.IMAGE, Weather.ForecastWeather.WIND, Weather.ForecastWeather.WINDFORCE });
 		// query database
+		String value = null;
 		Cursor cursor = databaseSupport.find(DatabaseSupport.COL_TYPE + "=? and " + DatabaseSupport.COL_CODE + "=?",
 				new Object[] { Weather.ForecastWeather.TYPE, citycode });
 		if (cursor.moveToFirst()) {
+			value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
 			String uptime = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_UPDATETIME));
-			if (!settingService.isOvertime(new Date(Long.valueOf(uptime)))) {
-				String value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
+			if (this.isNotOvertime(uptime)) {
 				String[] rows = value.split("#");
 				for (String row : rows) {
 					result.addRow(row.split(";"));
@@ -233,6 +235,12 @@ public class WeatherService {
 			}
 			databaseSupport.saveForecastAndIndexWeather(forecast);
 			Log.i(tag, "refresh forecast weather by api");
+		} else if (value != null) { // 网络异常使用旧的预报信息
+			String[] rows = value.split("#");
+			for (String row : rows) {
+				result.addRow(row.split(";"));
+			}
+			Log.i(tag, "using old forecast weather");
 		}
 		return result;
 	}
@@ -250,12 +258,13 @@ public class WeatherService {
 				Weather.LivingIndex.CLEANCAR, Weather.LivingIndex.TRAVEL, Weather.LivingIndex.COMFORT,
 				Weather.LivingIndex.MORNINGEXERCISE, Weather.LivingIndex.SUNDRY, Weather.LivingIndex.IRRITABILITY });
 		// database
+		String value = null;
 		Cursor cursor = databaseSupport.find(DatabaseSupport.COL_TYPE + "=? and " + DatabaseSupport.COL_CODE + "=?",
 				new Object[] { Weather.LivingIndex.TYPE, citycode });
 		if (cursor.moveToFirst()) {
+			value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
 			String uptime = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_UPDATETIME));
-			if (!settingService.isOvertime(new Date(Long.valueOf(uptime)))) {
-				String value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
+			if (this.isNotOvertime(uptime)) {
 				result.addRow(value.split(";"));
 				cursor.close();
 				Log.i(tag, "get living index from database");
@@ -292,8 +301,18 @@ public class WeatherService {
 			result.addRow(row);
 			databaseSupport.saveForecastAndIndexWeather(forecast);
 			Log.i(tag, "refresh living index by api");
+		} else if (value != null) { // 网络异常使用旧的指数信息
+			result.addRow(value.split(";"));
+			Log.i(tag, "using old living index");
 		}
 		return result;
+	}
+
+	private boolean isNotOvertime(String uptime) {
+		if (System.currentTimeMillis() - Long.parseLong(uptime) > 10 * 60 * 1000) {
+			return false;
+		}
+		return true;
 	}
 
 }

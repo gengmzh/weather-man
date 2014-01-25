@@ -21,13 +21,35 @@
             android:layout_height="50dp"
             android:orientation="horizontal"
             android:padding="3dp" >
+
             <TextView
                 android:id="@+id/city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/city_hint"
-                android:textSize="28dp"
-                android:textStyle="bold" android:textColor="#99CC33" />
+                android:textColor="#99CC33"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/cityPrompt"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/city"
+                android:contentDescription="@string/city_prompt"
+                android:src="@drawable/addr_icon" />
+
+            <TextView
+                android:id="@+id/cityHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/cityPrompt"
+                android:text="@string/city_hint"
+                android:textColor="#708090"
+                android:textSize="12sp" />
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleSmall"

@@ -5,16 +5,18 @@ import java.util.List;
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 
+import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo.State;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
@@ -26,31 +28,25 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mobstat.StatService;
 
-public class WeathermanActivity extends TabActivity implements OnTabChangeListener, BDLocationListener {
+public class WeathermanActivity extends TabActivity {
 
-	private final String tag = WeathermanActivity.class.getSimpleName();
+	private static final String tag = WeathermanActivity.class.getSimpleName();
 	private WeatherApplication app;
+	private CityService cityService;
+
 	private TabHost tabHost;
 	private TextView cityView;
 	private LocationClient locationClient;
-	private CityResolver cityResolver;
-	List<City> provinces;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		app = (WeatherApplication) getApplication();
+		cityService = new CityService(getContentResolver());
 		// 百度移动统计
 		// StatService.setDebugOn(true);
 		StatService.setLogSenderDelayed(3);// 启动后延迟3s发送统计日志
-		// network
-		// if (!checkNetwork()) {
-		// Log.i(WeathermanActivity.class.getSimpleName(), "network not found");
-		// Toast.makeText(getApplicationContext(),
-		// getResources().getText(R.string.network_disconnected),
-		// Toast.LENGTH_LONG).show();
-		// }
 		// tab widget
 		tabHost = getTabHost();
 		Resources res = getResources();
@@ -66,132 +62,31 @@ public class WeathermanActivity extends TabActivity implements OnTabChangeListen
 				.setIndicator(res.getString(R.string.trend), res.getDrawable(R.drawable.icon_trend))
 				.setContent(new Intent().setClass(this, TrendActivity.class));
 		tabHost.addTab(tabSpec);
-		tabSpec = tabHost.newTabSpec("setting")
-				.setIndicator(res.getString(R.string.setting), res.getDrawable(R.drawable.icon_setting))
-				.setContent(new Intent().setClass(this, SettingActivity.class));
-		tabHost.addTab(tabSpec);
-		// tabHost.setCurrentTab(0);
-		tabHost.setOnTabChangedListener(this);
-		// city
+		// tabSpec = tabHost.newTabSpec("setting")
+		// .setIndicator(res.getString(R.string.setting), res.getDrawable(R.drawable.icon_setting))
+		// .setContent(new Intent().setClass(this, SettingActivity.class));
+		// tabHost.addTab(tabSpec);
+		tabHost.setCurrentTab(0);
+		tabHost.setOnTabChangedListener(new WeatherTabChangeListener());
+		// init city
 		cityView = (TextView) findViewById(R.id.city);
 		cityView.getPaint().setFakeBoldText(true);
 		if (app.getCity() != null) {
 			cityView.setText(app.getCity().getName());
 		}
+		// 切换城市点击事件
+		CityPromptClickListener listener = new CityPromptClickListener();
+		ImageView cityPrompt = (ImageView) findViewById(R.id.cityPrompt);
+		cityPrompt.setOnClickListener(listener);
+		TextView cityHint = (TextView) findViewById(R.id.cityHint);
+		cityHint.setOnClickListener(listener);
 		// 百度地图地位API
 		locationClient = new LocationClient(getApplicationContext());
 		locationClient.setAK("tQHM3bNhLOkS0BFBRuzf8FQP");
-		locationClient.registerLocationListener(this);
-		// 初始化城市信息
-		cityResolver = new CityResolver(getContentResolver());
-		provinces = cityResolver.findCity(null);
-		if (provinces == null || provinces.isEmpty()) {
-			try {
-				cityResolver.initCity();
-			} catch (Exception e) {
-				Log.e(tag, "init city failed", e);
-			}
-			provinces = cityResolver.findCity(null);
-		}
-	}
-
-	boolean checkNetwork() {
-		ConnectivityManager conn = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		State state = conn.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
-		if (state != null && (state == State.CONNECTED || state == State.CONNECTING)) {
-			return true;
-		}
-		state = conn.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
-		if (state != null && (state == State.CONNECTED || state == State.CONNECTING)) {
-			return true;
-		}
-		return false;
+		locationClient.registerLocationListener(new BaiduLocationListener());
 	}
 
 	@Override
-	public void onTabChanged(String tabId) {
-		String tabName = null;
-		if (tabId == null || tabId.length() == 0) {
-			tabName = "unknown";
-		} else if ("realtime".equalsIgnoreCase(tabId)) {
-			tabName = getResources().getString(R.string.realtime);
-		} else if ("trend".equalsIgnoreCase(tabId)) {
-			tabName = getResources().getString(R.string.trend);
-		} else if ("forecast".equalsIgnoreCase(tabId)) {
-			tabName = getResources().getString(R.string.forecast);
-		} else if ("setting".equalsIgnoreCase(tabId)) {
-			tabName = getResources().getString(R.string.setting);
-		} else {
-			tabName = "unknown";
-		}
-		// 统计各个Tab点击情况
-		StatService.onEvent(WeathermanActivity.this, "tabs", tabName, 1);
-	}
-
-	@Override
-	public void onReceiveLocation(BDLocation location) {
-		if (location == null) {
-			return;
-		}
-		Log.i(tag, "location: " + location.toJsonString());
-		// Toast.makeText(this, location.toJsonString(),
-		// Toast.LENGTH_LONG).show();
-		City c1 = null, c2 = null, c3 = null;
-		String province = location.getProvince(), city = location.getCity(), district = location.getDistrict();
-		if (province == null || province.length() == 0 || city == null || city.length() == 0 || district == null
-				|| district.length() == 0) {
-			Log.e(tag, "get location failed");
-		} else { // parse
-			for (City prov : provinces) {
-				if (province.contains(prov.getName()) || prov.getName().contains(province)) {
-					c1 = prov;
-					break;
-				}
-			}
-			if (c1 != null) {
-				List<City> cities = cityResolver.findCity(c1.getId());
-				for (City cit : cities) {
-					if (city.contains(cit.getName()) || cit.getName().contains(city)) {
-						c2 = cit;
-						break;
-					}
-				}
-				if (c2 != null) {
-					List<City> districts = cityResolver.findCity(c2.getId());
-					for (City dis : districts) {
-						if (district.contains(dis.getName()) || dis.getName().contains(district)) {
-							c3 = dis;
-							break;
-						}
-					}
-				}
-			}
-		}
-		// result
-		if (c3 != null && c2 != null && c1 != null) {
-			app.setCity(c3);
-			cityView.setText(c3.getName());
-			cityResolver.saveLocationSetting(c1, c2, c3);
-			tabHost.setCurrentTab(0);
-			// 停止定时定位
-			LocationClientOption option = locationClient.getLocOption();
-			option.setScanSpan(0);
-			locationClient.setLocOption(option);
-			if (locationClient.isStarted()) {
-				locationClient.stop();
-			}
-		} else {
-			tabHost.setCurrentTab(3);
-		}
-	}
-
-	public void onReceivePoi(BDLocation location) {
-		if (location == null) {
-			return;
-		}
-		Log.i(tag, "poi: " + location.toJsonString());
-	}
-
 	protected void onStart() {
 		super.onStart();
 		if (app.getCity() == null) {
@@ -205,7 +100,7 @@ public class WeathermanActivity extends TabActivity implements OnTabChangeListen
 			option.setAddrType("all");// 返回的定位结果包含地址信息
 			option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
 			option.setProdName("weather-man");
-			option.setScanSpan(1000);// 设置发起定位请求的间隔时间为1000ms
+			option.setScanSpan(1000);// 设置发起定位请求的间隔时间为1000ms，大于等于1000是定时定位
 			option.setPriority(LocationClientOption.NetWorkFirst);
 			option.setPoiNumber(10); // 最多返回POI个数
 			option.setPoiDistance(1000); // poi查询距离
@@ -214,6 +109,148 @@ public class WeathermanActivity extends TabActivity implements OnTabChangeListen
 			// request
 			locationClient.requestLocation();
 		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 1) {// 修改城市结果
+			if (resultCode == 1) {
+				City c1 = new City(data.getStringExtra("city1Id"), data.getStringExtra("city1Name"));
+				City c2 = new City(data.getStringExtra("city2Id"), data.getStringExtra("city2Name"));
+				City c3 = new City(data.getStringExtra("city3Id"), data.getStringExtra("city3Name"));
+				this.resetCity(c1, c2, c3);
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
+
+	private void resetCity(City province, City city, City district) {
+		Log.i(tag, "reset city to " + district);
+		cityService.saveCitySetting(province, city, district);
+		app.setCity(district);
+		cityView.setText(district.getName());
+		// refresh data
+		Activity activity = getLocalActivityManager().getActivity(tabHost.getCurrentTabTag());
+		if (RealtimeActivity.class.isInstance(activity)) {
+			((RealtimeActivity) activity).refreshData();
+		} else if (ForecastActivity.class.isInstance(activity)) {
+			((ForecastActivity) activity).refreshData();
+		} else if (TrendActivity.class.isInstance(activity)) {
+			((TrendActivity) activity).refreshData();
+		} else {
+			Log.e(tag, "unknown activity " + activity.getClass().getName());
+		}
+	}
+
+	class WeatherTabChangeListener implements OnTabChangeListener {
+
+		@Override
+		public void onTabChanged(String tabId) {
+			String tabName = null;
+			if (tabId == null || tabId.length() == 0) {
+				tabName = "unknown";
+			} else if ("realtime".equalsIgnoreCase(tabId)) {
+				tabName = getResources().getString(R.string.realtime);
+			} else if ("trend".equalsIgnoreCase(tabId)) {
+				tabName = getResources().getString(R.string.trend);
+			} else if ("forecast".equalsIgnoreCase(tabId)) {
+				tabName = getResources().getString(R.string.forecast);
+			} else if ("setting".equalsIgnoreCase(tabId)) {
+				tabName = getResources().getString(R.string.setting);
+			} else {
+				tabName = "unknown";
+			}
+			// 统计各个Tab点击情况
+			StatService.onEvent(WeathermanActivity.this, "tabs", tabName, 1);
+		}
+
+	}
+
+	class CityPromptClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			// 打开修改城市页面
+			final WeathermanActivity act = WeathermanActivity.this;
+			act.startActivityForResult(new Intent(act, CityActivity.class), 1);
+		}
+
+	}
+
+	class BaiduLocationListener implements BDLocationListener {
+
+		private int count = 0;
+		private int maxLocationTimes = 30;
+
+		@Override
+		public void onReceiveLocation(BDLocation location) {
+			if (location == null) {
+				return;
+			}
+			count++;
+			Log.i(tag, "location: " + location.toJsonString());
+			City c1 = null, c2 = null, c3 = null;
+			String province = location.getProvince(), city = location.getCity(), district = location.getDistrict();
+			if (province == null || province.length() == 0 || city == null || city.length() == 0 || district == null
+					|| district.length() == 0) {
+				Log.e(tag, "get location failed by round " + count);
+			} else { // parse
+				List<City> provinces = cityService.findCityByParent(null);
+				for (City prov : provinces) {
+					if (province.contains(prov.getName()) || prov.getName().contains(province)) {
+						c1 = prov;
+						break;
+					}
+				}
+				if (c1 != null) {
+					List<City> cities = cityService.findCityByParent(c1.getId());
+					for (City cit : cities) {
+						if (city.contains(cit.getName()) || cit.getName().contains(city)) {
+							c2 = cit;
+							break;
+						}
+					}
+					if (c2 != null) {
+						List<City> districts = cityService.findCityByParent(c2.getId());
+						for (City dis : districts) {
+							if (district.contains(dis.getName()) || dis.getName().contains(district)) {
+								c3 = dis;
+								break;
+							}
+						}
+					}
+				}
+			}
+			// result
+			if (c3 != null && c2 != null && c1 != null) {
+				resetCity(c1, c2, c3);
+				this.stopLocation(); // 停止定时定位
+			} else {
+				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.location_failed));
+				if (count > maxLocationTimes) {
+					this.stopLocation();
+				}
+			}
+		}
+
+		private void stopLocation() {
+			LocationClientOption option = locationClient.getLocOption();
+			option.setScanSpan(0);
+			locationClient.setLocOption(option);
+			if (locationClient.isStarted()) {
+				locationClient.stop();
+			}
+			Log.i(tag, "baidu location client stopped");
+		}
+
+		public void onReceivePoi(BDLocation location) {
+			if (location == null) {
+				return;
+			}
+			Log.i(tag, "poi: " + location.toJsonString());
+		}
+
 	}
 
 	@Override

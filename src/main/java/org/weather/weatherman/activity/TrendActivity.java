@@ -21,8 +21,6 @@ import org.weather.weatherman.achartengine.LineChartFactory;
 import org.weather.weatherman.achartengine.MyXYSeries;
 import org.weather.weatherman.content.Weather;
 
-import com.baidu.mobstat.StatService;
-
 import android.app.Activity;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -35,7 +33,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+
+import com.baidu.mobstat.StatService;
 
 /**
  * @author gmz
@@ -63,10 +62,18 @@ public class TrendActivity extends Activity {
 		super.onResume();
 		ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
 		progressBar.setVisibility(View.VISIBLE);
-		String city = (app.getCity() != null ? app.getCity().getId() : null);
-		new TrendTask().execute(city);
+		this.refreshData();
 		// stats
 		StatService.onResume(this);
+	}
+
+	/**
+	 * @author gengmaozhang01
+	 * @since 2014-1-25 下午6:06:22
+	 */
+	public void refreshData() {
+		String city = (app.getCity() != null ? app.getCity().getId() : null);
+		new TrendTask().execute(city);
 	}
 
 	class TrendTask extends AsyncTask<String, Integer, Cursor> {
@@ -147,8 +154,7 @@ public class TrendActivity extends Activity {
 					}
 				} while (cursor.moveToNext());
 			} else {
-				Toast.makeText(getApplicationContext(), getResources().getText(R.string.connect_failed),
-						Toast.LENGTH_LONG).show();
+				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
 				Log.e(tag, "can't get forecast weather");
 			}
 			dataSet.addSeries(daySeries);

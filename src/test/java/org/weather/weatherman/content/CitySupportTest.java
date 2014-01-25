@@ -13,23 +13,23 @@ import android.util.Log;
  * @author gmz
  * 
  */
-public class SettingServiceTest extends AndroidTestCase {
+public class CitySupportTest extends AndroidTestCase {
 
 	private DatabaseSupport databaseSupport;
-	private SettingService settingService;
+	private CitySupport citySupport;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		databaseSupport = new DatabaseSupport(getContext());
-		settingService = new SettingService(databaseSupport);
+		citySupport = new CitySupport(databaseSupport);
 	}
 
 	public void test_isOvertime() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR_OF_DAY, -4);
-		boolean isOver = settingService.isOvertime(cal.getTime());
-		Log.i(SettingServiceTest.class.getSimpleName(), "isOvertime: " + isOver);
+		boolean isOver = citySupport.isOvertime(cal.getTime());
+		Log.i(CitySupportTest.class.getSimpleName(), "isOvertime: " + isOver);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class SettingServiceTest extends AndroidTestCase {
 		super.tearDown();
 		databaseSupport.close();
 		databaseSupport = null;
-		settingService = null;
+		citySupport = null;
 	}
 
 }

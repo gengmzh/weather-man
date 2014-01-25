@@ -1,6 +1,11 @@
 package org.weather.weatherman.content;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -8,14 +13,72 @@ import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
+import cn.seddat.weatherman.api.city.City;
 
-public class SettingService {
+public class CitySupport {
+
+	private static final String tag = CitySupport.class.getSimpleName();
 
 	private DatabaseSupport databaseSupport;
 
-	public SettingService(DatabaseSupport databaseSupport) {
+	public CitySupport(DatabaseSupport databaseSupport) {
 		super();
 		this.databaseSupport = databaseSupport;
+		if (!this.isInitialized()) {
+			try {
+				this.initialize();
+			} catch (Exception e) {
+				Log.e(tag, "init city failed", e);
+			}
+		}
+	}
+
+	private boolean isInitialized() {
+		Cursor cursor = this.findCity(Weather.City.PARENT + " ISNULL", null, null);
+		if (cursor != null && cursor.moveToFirst()) {
+			cursor.close();
+			return true;
+		}
+		cursor.close();
+		return false;
+	}
+
+	private void initialize() throws Exception {
+		Log.i(tag, "init city starts");
+		BufferedReader reader = null;
+		try {
+			InputStream ins = CitySupport.class.getClassLoader().getResourceAsStream(
+					"org/weather/weatherman/content/city.properties");
+			reader = new BufferedReader(new InputStreamReader(ins));
+			City c1 = null, c2 = null;
+			String line = null;
+			List<ContentValues> cvl = new ArrayList<ContentValues>();
+			while ((line = reader.readLine()) != null) {
+				String[] ls = line.split("\t");
+				if (ls.length < 2) {
+					continue;
+				}
+				City tmp = new City(ls[0], ls[1]);
+				ContentValues values = new ContentValues();
+				values.put(Weather.City.CODE, tmp.getId());
+				values.put(Weather.City.NAME, tmp.getName());
+				if (tmp.getId().length() == 5) {
+					c1 = tmp;
+				} else if (tmp.getId().length() == 7) {
+					c2 = tmp;
+					values.put(Weather.City.PARENT, c1.getId());
+				} else if (tmp.getId().length() == 9) {
+					values.put(Weather.City.PARENT, c2.getId());
+				}
+				cvl.add(values);
+			}
+			this.insertCity(cvl.toArray(new ContentValues[cvl.size()]));
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+		Log.i(tag, "init city done");
 	}
 
 	public Cursor findCity(String selection, String[] selectionArgs, String sortOrder) {
@@ -111,7 +174,7 @@ public class SettingService {
 		buf.append(values.getAsString(Weather.Setting.UPTIME)).append(";");
 		setting.put(DatabaseSupport.COL_VALUE, buf.toString());
 		rowId = databaseSupport.save(rowId, setting);
-		Log.i(SettingService.class.getSimpleName(), "updated setting");
+		Log.i(CitySupport.class.getSimpleName(), "updated setting");
 	}
 
 	public boolean isOvertime(Date date) {

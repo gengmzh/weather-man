@@ -35,9 +35,11 @@ public class DatabaseSupport extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase arg0) {
+		// 内容表，记录实况、预报、指数等天气信息以及城市设置信息
 		String sql = "create table if not exists " + TABLE_NAME + "( " + COL_ID + " integer primary key, " + COL_CODE
 				+ " text, " + COL_TYPE + " integer, " + COL_VALUE + " text, " + COL_UPDATETIME + " integer " + "); ";
 		arg0.execSQL(sql);
+		// 城市表，记录全国三级城市信息
 		sql = "create table if not exists " + Weather.City.TABLE_NAME + "( " + Weather.City.ID
 				+ " integer primary key, " + Weather.City.CODE + " text, " + Weather.City.NAME + " text, "
 				+ Weather.City.PARENT + " text " + "); ";

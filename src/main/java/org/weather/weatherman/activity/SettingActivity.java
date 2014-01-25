@@ -5,11 +5,6 @@ import java.util.List;
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
-import org.weather.weatherman.content.WeatherContentProvider;
-
-import cn.seddat.weatherman.api.city.City;
-
-import com.baidu.mobstat.StatService;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -24,23 +19,29 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import cn.seddat.weatherman.api.city.City;
+
+import com.baidu.mobstat.StatService;
 
 /**
  * @author gmz
  * @time 2012-5-19
+ * @deprecated using {@link CityActivity} instead
  */
 public class SettingActivity extends Activity {
 
-	private CityResolver cityResolver;
 	private WeatherApplication app;
+	private CityService cityService;
+
 	private TextView cityView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setting);
-		cityResolver = new CityResolver(getContentResolver());
 		app = (WeatherApplication) getApplication();
+		cityService = new CityService(getContentResolver());
+		// init
 		cityView = (TextView) getParent().findViewById(R.id.city);
 		// register events
 		Spinner city1Spinner = (Spinner) findViewById(R.id.city1);
@@ -72,16 +73,7 @@ public class SettingActivity extends Activity {
 		protected Cursor doInBackground(String... params) {
 			onProgressUpdate(0);
 			// init city
-			city1List = cityResolver.findCity(null);
-			if (city1List == null || city1List.isEmpty()) {
-				try {
-					cityResolver.initCity();
-				} catch (Exception e) {
-					Log.e(WeatherContentProvider.class.getSimpleName(), "init city failed", e);
-					return null;
-				}
-				city1List = cityResolver.findCity(null);
-			}
+			city1List = cityService.findCityByParent(null);
 			onProgressUpdate(40);
 			// reset
 			Cursor cursor = getContentResolver().query(Weather.Setting.CONTENT_URI, null, null, null, null);
@@ -182,7 +174,7 @@ public class SettingActivity extends Activity {
 			City city = (City) arg0.getItemAtPosition(arg2);
 			if (spinner != null) {
 				ArrayAdapter<City> adapter = new ArrayAdapter<City>(arg0.getContext(),
-						android.R.layout.simple_spinner_item, cityResolver.findCity(city.getId()));
+						android.R.layout.simple_spinner_item, cityService.findCityByParent(city.getId()));
 				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				spinner.setAdapter(adapter);
 			} else {

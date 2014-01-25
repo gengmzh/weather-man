@@ -15,17 +15,17 @@ import android.test.AndroidTestCase;
 public class WeatherServiceTest extends AndroidTestCase {
 
 	private DatabaseSupport databaseSupport;
-	private WeatherService weatherService;
+	private WeatherSupport weatherSupport;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		databaseSupport = new DatabaseSupport(getContext());
-		weatherService = new WeatherService(databaseSupport, new SettingService(databaseSupport));
+		weatherSupport = new WeatherSupport(databaseSupport);
 	}
 
 	public void test_find() throws Exception {
-		Cursor cursor = weatherService.findRealtimeWeather("101010700");
+		Cursor cursor = weatherSupport.findRealtimeWeather("101010700");
 
 		Assert.assertNotNull(cursor);
 	}
@@ -35,7 +35,7 @@ public class WeatherServiceTest extends AndroidTestCase {
 		super.tearDown();
 		databaseSupport.close();
 		databaseSupport = null;
-		weatherService = null;
+		weatherSupport = null;
 	}
 
 }
