@@ -9,6 +9,8 @@ import java.util.List;
 import org.weather.weatherman.R;
 import org.weather.weatherman.content.Weather;
 
+import com.baidu.mobstat.StatService;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -138,6 +140,18 @@ public class CityActivity extends Activity {
 			return getName();
 		}
 
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		StatService.onResume(this);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		StatService.onResume(this);
 	}
 
 }

@@ -108,6 +108,8 @@ public class WeathermanActivity extends TabActivity {
 			locationClient.setLocOption(option);
 			// request
 			locationClient.requestLocation();
+			// 统计切换城市事件
+			StatService.onEvent(this, "city-setting", "location-automatically", 1);
 		}
 	}
 
@@ -141,6 +143,8 @@ public class WeathermanActivity extends TabActivity {
 		} else {
 			Log.e(tag, "unknown activity " + activity.getClass().getName());
 		}
+		// 统计切换城市事件
+		StatService.onEvent(this, "city-setting", "reset-city", 1);
 	}
 
 	class WeatherTabChangeListener implements OnTabChangeListener {
@@ -174,6 +178,8 @@ public class WeathermanActivity extends TabActivity {
 			// 打开修改城市页面
 			final WeathermanActivity act = WeathermanActivity.this;
 			act.startActivityForResult(new Intent(act, CityActivity.class), 1);
+			// 统计切换城市事件
+			StatService.onEvent(act, "city-setting", "change-manually", 1);
 		}
 
 	}
