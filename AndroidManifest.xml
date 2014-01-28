@@ -27,7 +27,7 @@
 	    
 	    <!-- 百度移动统计相关 -->
 	    <!-- 渠道商编号，其中name 请不要改，将value 修改为渠道商编号。渠道名称请到mtj.baidu.com的渠道管理中修改 -->
-		<meta-data android:name="BaiduMobAd_CHANNEL" android:value="baidu-market" />
+		<meta-data android:name="BaiduMobAd_CHANNEL" android:value="hiapk" />
 		<!-- 您从百度网站获取的APPKEY -->
 		<meta-data android:name="BaiduMobAd_STAT_ID" android:value="32eeab3573" />
 		<!-- 以下是可选的 -->
