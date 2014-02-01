@@ -16,12 +16,13 @@
         android:layout_above="@id/adContainver"
         android:padding="3dp"
         android:stretchColumns="1"
-        android:textSize="20dp" >
+        android:textSize="20sp" >
 
         <TableRow>
 
             <TextView
                 android:id="@+id/updateTime"
+                android:layout_marginBottom="5dp"
                 android:layout_span="2" />
         </TableRow>
 
@@ -29,21 +30,25 @@
 
             <TextView
                 android:id="@+id/temperatue"
-                android:layout_span="2" />
+                android:layout_span="2"
+                android:textColor="#87CEFA" />
         </TableRow>
 
         <TableRow>
 
             <TextView
                 android:id="@+id/wind"
-                android:layout_span="2" />
+                android:layout_span="2"
+                android:textColor="#8FBC8F" />
         </TableRow>
 
         <TableRow>
 
             <TextView
                 android:id="@+id/humidity"
-                android:layout_span="2" />
+                android:layout_marginBottom="5dp"
+                android:layout_span="2"
+                android:textColor="#5F9EA0" />
         </TableRow>
 
         <!-- living index -->

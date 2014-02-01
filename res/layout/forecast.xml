@@ -10,8 +10,10 @@
 
         <TextView
             android:id="@+id/updateTime"
+            android:layout_marginBottom="5dp"
             android:layout_span="4" />
     </TableRow>
+
     <!--
     <TableRow>
 
@@ -44,7 +46,6 @@
             android:padding="3dip"
             android:text="@string/hello"
             android:textSize="14dip" />
-    </TableRow>
-    -->
+    </TableRow>    -->
 
 </TableLayout>
