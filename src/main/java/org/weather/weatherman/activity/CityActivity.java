@@ -151,7 +151,7 @@ public class CityActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		StatService.onResume(this);
+		StatService.onPause(this);
 	}
 
 }

@@ -159,10 +159,15 @@ public class WeatherSupport {
 			value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
 			String uptime = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_UPDATETIME));
 			if (this.isNotOvertime(uptime)) {
-				result.addRow(value.split(";"));
-				cursor.close();
-				Log.i(tag, "get realtime weather from database");
-				return result;
+				try {
+					result.addRow(value.split(";"));
+					Log.i(tag, "get realtime weather from database");
+					return result;
+				} catch (Exception ex) {
+					Log.e(tag, "parse realtime weather failed", ex);
+				} finally {
+					cursor.close();
+				}
 			}
 		}
 		cursor.close();
@@ -180,8 +185,12 @@ public class WeatherSupport {
 			databaseSupport.saveRealtimeWeather(realtime);
 			Log.i(tag, "refresh realtime weather by api");
 		} else if (value != null) { // 网络异常使用旧的实况信息
-			result.addRow(value.split(";"));
-			Log.i(tag, "using old realtime weather");
+			try {
+				result.addRow(value.split(";"));
+				Log.i(tag, "using old realtime weather");
+			} catch (Exception ex) {
+				Log.e(tag, "parse realtime weather failed", ex);
+			}
 		}
 		return result;
 	}
@@ -205,13 +214,23 @@ public class WeatherSupport {
 			value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
 			String uptime = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_UPDATETIME));
 			if (this.isNotOvertime(uptime)) {
-				String[] rows = value.split("#");
-				for (String row : rows) {
-					result.addRow(row.split(";"));
+				try {
+					String[] rows = value.split("#");
+					for (String row : rows) {
+						result.addRow(row.split(";"));
+					}
+					Log.i(tag, "get forecast weather from database");
+					return result;
+				} catch (Exception ex) {
+					result.close();
+					result = new MatrixCursor(new String[] { Weather.ForecastWeather.ID, Weather.ForecastWeather.NAME,
+							Weather.ForecastWeather.TIME, Weather.ForecastWeather.WEATHER,
+							Weather.ForecastWeather.TEMPERATURE, Weather.ForecastWeather.IMAGE,
+							Weather.ForecastWeather.WIND, Weather.ForecastWeather.WINDFORCE });
+					Log.e(tag, "parse forcast weather failed", ex);
+				} finally {
+					cursor.close();
 				}
-				cursor.close();
-				Log.i(tag, "get forecast weather from database");
-				return result;
 			}
 		}
 		cursor.close();
@@ -235,12 +254,21 @@ public class WeatherSupport {
 			}
 			databaseSupport.saveForecastAndIndexWeather(forecast);
 			Log.i(tag, "refresh forecast weather by api");
-		} else if (value != null) { // 网络异常使用旧的预报信息
-			String[] rows = value.split("#");
-			for (String row : rows) {
-				result.addRow(row.split(";"));
+		} else if (value != null && value.length() > 0) { // 网络异常使用旧的预报信息
+			try {
+				String[] rows = value.split("#");
+				for (String row : rows) {
+					result.addRow(row.split(";"));
+				}
+				Log.i(tag, "using old forecast weather");
+			} catch (Exception ex) {
+				Log.e(tag, "parse forcast weather failed", ex);
+				result.close();
+				result = new MatrixCursor(new String[] { Weather.ForecastWeather.ID, Weather.ForecastWeather.NAME,
+						Weather.ForecastWeather.TIME, Weather.ForecastWeather.WEATHER,
+						Weather.ForecastWeather.TEMPERATURE, Weather.ForecastWeather.IMAGE,
+						Weather.ForecastWeather.WIND, Weather.ForecastWeather.WINDFORCE });
 			}
-			Log.i(tag, "using old forecast weather");
 		}
 		return result;
 	}
@@ -265,10 +293,15 @@ public class WeatherSupport {
 			value = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_VALUE));
 			String uptime = cursor.getString(cursor.getColumnIndex(DatabaseSupport.COL_UPDATETIME));
 			if (this.isNotOvertime(uptime)) {
-				result.addRow(value.split(";"));
-				cursor.close();
-				Log.i(tag, "get living index from database");
-				return result;
+				try {
+					result.addRow(value.split(";"));
+					Log.i(tag, "get living index from database");
+					return result;
+				} catch (Exception ex) {
+					Log.e(tag, "parse living index failed", ex);
+				} finally {
+					cursor.close();
+				}
 			}
 		}
 		cursor.close();
@@ -301,9 +334,13 @@ public class WeatherSupport {
 			result.addRow(row);
 			databaseSupport.saveForecastAndIndexWeather(forecast);
 			Log.i(tag, "refresh living index by api");
-		} else if (value != null) { // 网络异常使用旧的指数信息
-			result.addRow(value.split(";"));
-			Log.i(tag, "using old living index");
+		} else if (value != null && value.length() > 0) { // 网络异常使用旧的指数信息
+			try {
+				result.addRow(value.split(";"));
+				Log.i(tag, "using old living index");
+			} catch (Exception ex) {
+				Log.e(tag, "using old living index failed", ex);
+			}
 		}
 		return result;
 	}
