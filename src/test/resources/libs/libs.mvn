@@ -1,4 +1,4 @@
-mvn install:install-file -DgroupId=com.baidu.mobstat -DartifactId=mobstat-android-sdk -Dversion=3.3 -Dpackaging=jar -Dfile=android_api.jar -DgeneratePom=true
+mvn install:install-file -DgroupId=com.baidu.mobstat -DartifactId=mobstat-android-sdk -Dversion=3.4 -Dpackaging=jar -Dfile=android_api_3_4.jar -DgeneratePom=true
 mvn install:install-file -DgroupId=cn.domob -DartifactId=domob-android-sdk -Dversion=3.0.1 -Dpackaging=jar -DgeneratePom=true -Dfile=domob_android_sdk-3.0.1.jar -DgeneratePom=true
 mvn install:install-file -DgroupId=com.google.code -DartifactId=achartengine -Dversion=1.0.0 -Dpackaging=jar -DgeneratePom=true -Dfile=achartengine-1.0.0.jar -DgeneratePom=true
 
