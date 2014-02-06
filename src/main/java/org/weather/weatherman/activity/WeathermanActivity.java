@@ -141,7 +141,7 @@ public class WeathermanActivity extends TabActivity {
 		} else if (TrendActivity.class.isInstance(activity)) {
 			((TrendActivity) activity).refreshData();
 		} else {
-			Log.e(tag, "unknown activity " + activity.getClass().getName());
+			Log.e(tag, "unknown activity " + (activity != null ? activity.getClass().getName() : "null"));
 		}
 		// 统计切换城市事件
 		StatService.onEvent(this, "city-setting", "reset-city", 1);

@@ -92,12 +92,12 @@ public class WeatherSupport {
 				Object code = value.get("code");
 				if (code == null || !Number.class.isInstance(code) || ((Number) code).intValue() != 0) {
 					Object msg = value.get("message");
-					throw new Exception(msg != null ? msg.toString() : "get realtime weather failed");
+					throw new Exception(msg != null ? msg.toString() : "get forecast weather failed");
 				}
 				StatService.onEvent(databaseSupport.getContext(), "api", "forecast-success", 1);
 				return new Weather.ForecastWeather(value);
 			} catch (Exception ex) {
-				Log.e(tag, "get realtime weather failed", ex);
+				Log.e(tag, "get forecast weather failed", ex);
 				StatService.onEvent(databaseSupport.getContext(), "api", "forecast-failure", 1);
 			}
 		}
