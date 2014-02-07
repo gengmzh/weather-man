@@ -15,7 +15,8 @@ public final class Weather {
 
 	public static final String AUTHORITY = "org.weather.weatherman.provider";
 	public static final String CITY_PATH = "city", SETTING_PATH = "setting";
-	public static final String REALTIME_PATH = "realtime", FORECAST_PATH = "forecast", INDEX_PATH = "index";
+	public static final String REALTIME_PATH = "realtime", FORECAST_PATH = "forecast", INDEX_PATH = "index",
+			AQI_PATH = "aqi";
 
 	private Weather() {
 	}
@@ -361,6 +362,110 @@ public final class Weather {
 		@Override
 		public String toString() {
 			return "LivingIndex{index:" + index + ", description:" + description + "}";
+		}
+
+	}
+
+	public static final class AirQualityIndex implements BaseColumns {
+
+		public static final int TYPE = 5;
+		public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + AQI_PATH);
+		public static final String CONTENT_TYPE = "vnd.android.cursor.item/vnd." + AUTHORITY + "." + AQI_PATH;
+
+		public static final String ID = _ID;
+		public static final String NAME = "city";
+		public static final String TIME = "time";
+		public static final String AQI = "aqi";
+		public static final String TAG = "tag";
+
+		private Map<String, Object> value;
+
+		public AirQualityIndex(Map<String, Object> value) {
+			this.value = new HashMap<String, Object>();
+			if (value != null) {
+				Object obj = value.get("weatherinfo");
+				if (obj != null && (obj instanceof Map)) {
+					value = (Map<String, Object>) obj;
+				}
+				for (String key : value.keySet()) {
+					this.value.put(key, value.get(key));
+				}
+			}
+		}
+
+		public String getTime() {
+			return (String) value.get("time");
+		}
+
+		public String getCityId() {
+			return (String) value.get("cityid");
+		}
+
+		public String getCityName() {
+			return (String) value.get("city");
+		}
+
+		public String getAQICity() {
+			return (String) value.get("AQI_city");
+		}
+
+		public int getCurrentAQI() {
+			Object obj = value.get("AQI");
+			return obj == null ? -1 : Integer.parseInt(obj.toString());
+		}
+
+		public int getHourlySize() {
+			List<Object> hourly = (List<Object>) value.get("hourly");
+			return hourly != null ? hourly.size() : 0;
+		}
+
+		public String getHourlyTime(int index) {
+			List<Map<String, String>> hourly = (List<Map<String, String>>) value.get("hourly");
+			if (index >= 0 && index < hourly.size()) {
+				return hourly.get(index).get("time");
+			}
+			return null;
+		}
+
+		public int getHourlyAQI(int index) {
+			List<Map<String, String>> hourly = (List<Map<String, String>>) value.get("hourly");
+			if (index >= 0 && index < hourly.size()) {
+				String aqi = hourly.get(index).get("AQI");
+				return aqi != null ? Integer.parseInt(aqi) : -1;
+			}
+			return -1;
+		}
+
+		public int getDailySize() {
+			List<Object> daily = (List<Object>) value.get("daily");
+			return daily != null ? daily.size() : 0;
+		}
+
+		public String getDailyTime(int index) {
+			List<Map<String, String>> daily = (List<Map<String, String>>) value.get("daily");
+			if (index >= 0 && index < daily.size()) {
+				return daily.get(index).get("time");
+			}
+			return null;
+		}
+
+		public int getDailyAQI(int index) {
+			List<Map<String, String>> daily = (List<Map<String, String>>) value.get("daily");
+			if (index >= 0 && index < daily.size()) {
+				String aqi = daily.get(index).get("AQI");
+				return aqi != null ? Integer.parseInt(aqi) : -1;
+			}
+			return -1;
+		}
+
+		public long getTimestamp() {
+			Object obj = value.get("timestamp");
+			return obj == null ? 0 : Long.parseLong(obj.toString());
+		}
+
+		@Override
+		public String toString() {
+			return AirQualityIndex.class.getSimpleName() + "{value:" + value.toString() + "}";
 		}
 
 	}

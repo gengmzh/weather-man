@@ -20,16 +20,21 @@
     <string name="updatetime_prompt">请选择更新间隔时长</string>
     <string name="connect_failed">网络连接失败，请切换菜单重试</string>
     <string name="network_disconnected">网络未连接，请检查网络设置</string>
-    
     <string name="trend_temperature_day">白天温度</string>
     <string name="trend_temperature_night">夜晚温度</string>
     <string name="trend_title">一周天气走势</string>
     <string name="trend_x_title">日期</string>
-    
     <string name="location_failed">自动定位当前地址失败，请手动切换城市</string>
     <string name="city_hint">切换城市</string>
     <string name="city_prompt">请选择所在城市</string>
     <string name="city_save">保存</string>
     <string name="city_cancel">取消</string>
+
+    <color name="AQI_perfect">#07FD04</color>
+    <color name="AQI_fine">#FFFF00</color>
+    <color name="AQI_smell_little">#FF7805</color>
+    <color name="AQI_smell_middle">#FA0100</color>
+    <color name="AQI_smell_heavy">#9E004F</color>
+    <color name="AQI_smell_fatal">#790222</color>
 
 </resources>

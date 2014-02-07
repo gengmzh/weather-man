@@ -3,22 +3,13 @@
  */
 package org.weather.weatherman.content;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-
-import org.json.simple.JSONValue;
 
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.util.Log;
-
-import com.baidu.mobstat.StatService;
 
 /**
  * 天气信息服务类
@@ -29,115 +20,17 @@ import com.baidu.mobstat.StatService;
 public class WeatherSupport {
 
 	private static final String tag = WeatherSupport.class.getSimpleName();
-	private static final String api = "http://42.96.143.229:8387/openapi/api/weather";
-
-	private int connectTimeout = 30000;
-	private int readTimeout = 30000;
-	private int retry = 3;
 
 	private DatabaseSupport databaseSupport;
+	private WeatherClient weatherClient;
 
 	public WeatherSupport(DatabaseSupport databaseSupport) {
 		super();
+		if (databaseSupport == null) {
+			throw new IllegalArgumentException("databaseSupport is required");
+		}
 		this.databaseSupport = databaseSupport;
-	}
-
-	/**
-	 * 获取天气实况信息
-	 * 
-	 * @author gengmaozhang01
-	 * @since 2014-1-3 下午7:28:04
-	 */
-	private Weather.RealtimeWeather getRealtimeWeather(String citycode) throws Exception {
-		if (citycode == null || citycode.length() == 0) {
-			throw new IllegalArgumentException("citycode is required");
-		}
-		String url = api + "/realtime/" + citycode;
-		for (int i = 0; i < retry; i++) {
-			try {
-				String json = this.request(url);
-				@SuppressWarnings("unchecked")
-				Map<String, Object> value = (Map<String, Object>) JSONValue.parse(json);
-				Object code = value.get("code");
-				if (code == null || !Number.class.isInstance(code) || ((Number) code).intValue() != 0) {
-					Object msg = value.get("message");
-					throw new Exception(msg != null ? msg.toString() : "get realtime weather failed");
-				}
-				StatService.onEvent(databaseSupport.getContext(), "api", "realtime-success", 1);
-				return new Weather.RealtimeWeather(value);
-			} catch (Exception ex) {
-				Log.e(tag, "get realtime weather failed", ex);
-				StatService.onEvent(databaseSupport.getContext(), "api", "realtime-failure", 1);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * 获取天气预报信息
-	 * 
-	 * @author gengmaozhang01
-	 * @since 2014-1-3 下午7:28:04
-	 */
-	private Weather.ForecastWeather getForecastWeather(String citycode) throws Exception {
-		if (citycode == null || citycode.length() == 0) {
-			throw new IllegalArgumentException("citycode is required");
-		}
-		String url = api + "/forecast/" + citycode;
-		for (int i = 0; i < retry; i++) {
-			try {
-				String json = this.request(url);
-				@SuppressWarnings("unchecked")
-				Map<String, Object> value = (Map<String, Object>) JSONValue.parse(json);
-				Object code = value.get("code");
-				if (code == null || !Number.class.isInstance(code) || ((Number) code).intValue() != 0) {
-					Object msg = value.get("message");
-					throw new Exception(msg != null ? msg.toString() : "get forecast weather failed");
-				}
-				StatService.onEvent(databaseSupport.getContext(), "api", "forecast-success", 1);
-				return new Weather.ForecastWeather(value);
-			} catch (Exception ex) {
-				Log.e(tag, "get forecast weather failed", ex);
-				StatService.onEvent(databaseSupport.getContext(), "api", "forecast-failure", 1);
-			}
-		}
-		return null;
-	}
-
-	private String request(String url) throws Exception {
-		String json = null;
-		HttpURLConnection conn = null;
-		InputStream ins = null;
-		try {
-			conn = (HttpURLConnection) new URL(url).openConnection();
-			conn.setRequestProperty("User-Agent", "WeatherMan/1.7 Android");
-			conn.setRequestProperty("Content-Type", "text/html; charset=utf-8");
-			if (connectTimeout > 0) {
-				conn.setConnectTimeout(connectTimeout);
-			}
-			if (readTimeout > 0) {
-				conn.setReadTimeout(readTimeout);
-			}
-			// read
-			conn.connect();
-			ins = conn.getInputStream();
-			ByteArrayOutputStream ous = new ByteArrayOutputStream();
-			byte[] b = new byte[1024];
-			int len = 0;
-			while ((len = ins.read(b)) > -1) {
-				ous.write(b, 0, len);
-			}
-			json = ous.toString();
-			ous.close();
-		} finally {
-			if (ins != null) {
-				ins.close();
-			}
-			if (conn != null) {
-				conn.disconnect();
-			}
-		}
-		return json;
+		this.weatherClient = new WeatherClient(databaseSupport.getContext());
 	}
 
 	/**
@@ -174,7 +67,7 @@ public class WeatherSupport {
 		// web
 		Weather.RealtimeWeather realtime = null;
 		try {
-			realtime = this.getRealtimeWeather(citycode);
+			realtime = weatherClient.getRealtimeWeather(citycode);
 		} catch (Exception e) {
 			Log.e(tag, "get realtime weather failed", e);
 		}
@@ -237,7 +130,7 @@ public class WeatherSupport {
 		// query web server
 		Weather.ForecastWeather forecast = null;
 		try {
-			forecast = this.getForecastWeather(citycode);
+			forecast = weatherClient.getForecastWeather(citycode);
 		} catch (Exception e) {
 			Log.e(tag, "get forecast weather failed", e);
 		}
@@ -308,7 +201,7 @@ public class WeatherSupport {
 		// web
 		Weather.ForecastWeather forecast = null;
 		try {
-			forecast = this.getForecastWeather(citycode);
+			forecast = weatherClient.getForecastWeather(citycode);
 		} catch (Exception e) {
 			Log.e(tag, "get living index failed", e);
 		}

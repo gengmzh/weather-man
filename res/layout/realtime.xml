@@ -55,6 +55,15 @@
 
         <TableRow>
 
+            <TextView android:text="空气质量：" />
+
+            <TextView
+                android:id="@+id/AQI"
+                android:textColor="@color/AQI_perfect" />
+        </TableRow>
+
+        <TableRow>
+
             <TextView android:text="舒适度：" />
 
             <TextView android:id="@+id/comfort" />

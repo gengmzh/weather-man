@@ -18,20 +18,22 @@ public class WeatherContentProvider extends ContentProvider {
 		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.REALTIME_PATH + "/#", Weather.RealtimeWeather.TYPE);
 		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.FORECAST_PATH + "/#", Weather.ForecastWeather.TYPE);
 		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.INDEX_PATH + "/#", Weather.LivingIndex.TYPE);
+		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.AQI_PATH + "/#", Weather.AirQualityIndex.TYPE);
 		// city
 		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.CITY_PATH, Weather.City.TYPE);
 		URI_MATCHER.addURI(Weather.AUTHORITY, Weather.CITY_PATH + "/#", Weather.City.TYPE);
 	}
 
-	private DatabaseSupport databaseSupport;
 	private CitySupport citySupport;
 	private WeatherSupport weatherSupport;
+	private AQISupport aqiSupport;
 
 	@Override
 	public boolean onCreate() {
-		databaseSupport = new DatabaseSupport(getContext());
+		DatabaseSupport databaseSupport = new DatabaseSupport(getContext());
 		citySupport = new CitySupport(databaseSupport);
 		weatherSupport = new WeatherSupport(databaseSupport);
+		aqiSupport = new AQISupport(databaseSupport);
 		return true;
 	}
 
@@ -48,6 +50,8 @@ public class WeatherContentProvider extends ContentProvider {
 			return Weather.ForecastWeather.CONTENT_TYPE;
 		case Weather.LivingIndex.TYPE:
 			return Weather.LivingIndex.CONTENT_TYPE;
+		case Weather.AirQualityIndex.TYPE:
+			return Weather.AirQualityIndex.CONTENT_TYPE;
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
 		}
@@ -69,6 +73,9 @@ public class WeatherContentProvider extends ContentProvider {
 		case Weather.LivingIndex.TYPE:// 天气指数
 			citycode = uri.getLastPathSegment();
 			return weatherSupport.findIndexWeather(citycode);
+		case Weather.AirQualityIndex.TYPE:
+			citycode = uri.getLastPathSegment();
+			return aqiSupport.findAirQualityIndex(citycode);
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
 		}
@@ -87,6 +94,8 @@ public class WeatherContentProvider extends ContentProvider {
 			return null;
 		case Weather.LivingIndex.TYPE:
 			return null;
+		case Weather.AirQualityIndex.TYPE:
+			return null;
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
 		}
@@ -104,6 +113,8 @@ public class WeatherContentProvider extends ContentProvider {
 		case Weather.ForecastWeather.TYPE:
 			return 0;
 		case Weather.LivingIndex.TYPE:
+			return 0;
+		case Weather.AirQualityIndex.TYPE:
 			return 0;
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
@@ -124,6 +135,8 @@ public class WeatherContentProvider extends ContentProvider {
 			return 0;
 		case Weather.LivingIndex.TYPE:
 			return 0;
+		case Weather.AirQualityIndex.TYPE:
+			return 0;
 		default:
 			throw new IllegalArgumentException("unknown Uri " + uri);
 		}
@@ -141,6 +154,8 @@ public class WeatherContentProvider extends ContentProvider {
 		case Weather.ForecastWeather.TYPE:
 			return 0;
 		case Weather.LivingIndex.TYPE:
+			return 0;
+		case Weather.AirQualityIndex.TYPE:
 			return 0;
 		default:
 			throw new IllegalArgumentException("unknown Uri " + arg0);
