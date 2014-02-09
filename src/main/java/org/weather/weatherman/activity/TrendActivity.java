@@ -177,7 +177,7 @@ public class TrendActivity extends Activity {
 			renderer.setYLabelsColor(0, Color.BLACK);
 			renderer.setYLabelsAlign(Align.RIGHT);
 			// renderer.setYTitle("温度");
-			renderer.setMargins(new int[] { 20, 20, 0, 10 });
+			renderer.setMargins(new int[] { 20, 25, 0, 10 });
 			// renderer.setShowGrid(true);
 			// renderer.setGridColor(Color.LTGRAY);
 			for (Double x : xlabels.keySet()) {
@@ -186,12 +186,11 @@ public class TrendActivity extends Activity {
 			renderer.setXAxisMin(Math.min(daySeries.getMinX(), nightSeries.getMinX()) - 0.5);
 			renderer.setXAxisMax(Math.max(daySeries.getMaxX(), nightSeries.getMaxX()) + 0.5);
 			renderer.setXLabels(0);
-			double ymax = Math.max(daySeries.getMaxY(), nightSeries.getMaxY());
-			for (int t = 0; t <= ymax + 2; t += 2) {
+			renderer.setYAxisMax(Math.max(daySeries.getMaxY(), nightSeries.getMaxY()) + 2);
+			renderer.setYAxisMin(Math.min(daySeries.getMinY(), nightSeries.getMinY()) - 2);
+			for (int t = (int) Math.ceil(renderer.getYAxisMin()); t <= renderer.getYAxisMax(); t += 2) {
 				renderer.addYTextLabel(t, t + "℃");
 			}
-			renderer.setYAxisMax(ymax + 2);
-			renderer.setYAxisMin(Math.min(daySeries.getMinY(), nightSeries.getMinY()) - 2);
 			renderer.setYLabels(0);
 			// renderer.setXTitle(res.getString(R.string.trend_x_title));
 			renderer.setZoomButtonsVisible(true);

@@ -30,11 +30,13 @@
     <string name="city_save">保存</string>
     <string name="city_cancel">取消</string>
 
+    <string name="AQI_title">AQI</string>
     <color name="AQI_perfect">#07FD04</color>
     <color name="AQI_fine">#FFFF00</color>
     <color name="AQI_smell_little">#FF7805</color>
     <color name="AQI_smell_middle">#FA0100</color>
     <color name="AQI_smell_heavy">#9E004F</color>
     <color name="AQI_smell_fatal">#790222</color>
+    <string name="AQI_series_name">空气质量指数（AQI）</string>
 
 </resources>

@@ -17,9 +17,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 import cn.seddat.weatherman.api.city.City;
 
 import com.baidu.location.BDLocation;
@@ -31,6 +33,7 @@ import com.baidu.mobstat.StatService;
 public class WeathermanActivity extends TabActivity {
 
 	private static final String tag = WeathermanActivity.class.getSimpleName();
+	private String appName;
 	private WeatherApplication app;
 	private CityService cityService;
 
@@ -42,6 +45,7 @@ public class WeathermanActivity extends TabActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		appName = getApplicationInfo().loadLabel(getPackageManager()).toString();
 		app = (WeatherApplication) getApplication();
 		cityService = new CityService(getContentResolver());
 		// 百度移动统计
@@ -61,6 +65,10 @@ public class WeathermanActivity extends TabActivity {
 		tabSpec = tabHost.newTabSpec("trend")
 				.setIndicator(res.getString(R.string.trend), res.getDrawable(R.drawable.icon_trend))
 				.setContent(new Intent().setClass(this, TrendActivity.class));
+		tabHost.addTab(tabSpec);
+		tabSpec = tabHost.newTabSpec("aqi")
+				.setIndicator(res.getString(R.string.AQI_title), res.getDrawable(R.drawable.icon_trend))
+				.setContent(new Intent().setClass(this, AQIActivity.class));
 		tabHost.addTab(tabSpec);
 		// tabSpec = tabHost.newTabSpec("setting")
 		// .setIndicator(res.getString(R.string.setting), res.getDrawable(R.drawable.icon_setting))
@@ -133,6 +141,8 @@ public class WeathermanActivity extends TabActivity {
 		app.setCity(district);
 		cityView.setText(district.getName());
 		// refresh data
+		ProgressBar progressBar = (ProgressBar) this.findViewById(R.id.progressBar);
+		progressBar.setVisibility(View.VISIBLE);
 		Activity activity = getLocalActivityManager().getActivity(tabHost.getCurrentTabTag());
 		if (RealtimeActivity.class.isInstance(activity)) {
 			((RealtimeActivity) activity).refreshData();
@@ -259,10 +269,18 @@ public class WeathermanActivity extends TabActivity {
 
 	}
 
+	private long backTime = 0;
+
 	@Override
 	public void onBackPressed() {
-		this.addShortcut();
-		super.onBackPressed();
+		long time = System.currentTimeMillis();
+		if (time - backTime > 2000) {
+			backTime = time;
+			ToastService.toast(this, "再按一次退出" + appName, Toast.LENGTH_SHORT);
+		} else {
+			this.addShortcut();
+			super.onBackPressed();
+		}
 	}
 
 	private void addShortcut() {

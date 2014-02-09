@@ -216,7 +216,7 @@ public class RealtimeActivity extends Activity {
 						int aqi = aqiCursor.getInt(aqiCursor.getColumnIndex(Weather.AirQualityIndex.AQI));
 						TextView view = (TextView) findViewById(R.id.AQI);
 						if (aqi >= 0) {
-							String text = String.valueOf(aqi) + "，";
+							String text = String.valueOf(aqi) + ", ";
 							int color = 0;
 							if (aqi <= 50) {
 								text += "优";

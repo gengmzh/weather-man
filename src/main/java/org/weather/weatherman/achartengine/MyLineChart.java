@@ -4,6 +4,7 @@
 package org.weather.weatherman.achartengine;
 
 import org.achartengine.chart.LineChart;
+import org.achartengine.chart.ScatterChart;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.SimpleSeriesRenderer;
@@ -24,6 +25,11 @@ public class MyLineChart extends LineChart {
 	public MyLineChart(XYMultipleSeriesDataset dataset, XYMultipleSeriesRenderer renderer, float displayPointDistance) {
 		super(dataset, renderer);
 		this.displayPointDistance = displayPointDistance;
+	}
+
+	@Override
+	public ScatterChart getPointsChart() {
+		return new MyScatterChart(getDataset(), getRenderer());
 	}
 
 	@Override
