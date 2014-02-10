@@ -73,6 +73,17 @@ public class ForecastActivity extends Activity {
 		}
 
 		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			// updateTime
+			TextView view = (TextView) findViewById(R.id.updateTime);
+			view.setText("--");
+			// clear
+			TableLayout layout = (TableLayout) view.getParent().getParent();
+			layout.removeViews(1, layout.getChildCount() - 1);
+		}
+
+		@Override
 		protected Cursor doInBackground(String... params) {
 			onProgressUpdate(0);
 			String city = (params != null && params.length > 0 ? params[0] : null);
@@ -105,15 +116,13 @@ public class ForecastActivity extends Activity {
 		protected void onPostExecute(Cursor cursor) {
 			super.onPostExecute(cursor);
 			onProgressUpdate(80);
-			// clear old
-			TextView uptimeView = (TextView) findViewById(R.id.updateTime);
-			TableLayout layout = (TableLayout) uptimeView.getParent().getParent();
-			layout.removeViews(1, layout.getChildCount() - 1);
 			if (cursor != null && cursor.moveToFirst()) {
 				// update time
+				TextView uptimeView = (TextView) findViewById(R.id.updateTime);
 				String text = cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TIME));
 				uptimeView.setText(text + "更新");
 				// add row
+				TableLayout layout = (TableLayout) uptimeView.getParent().getParent();
 				Calendar cal = Calendar.getInstance();
 				try {
 					cal.setTime(DF_1.parse(text));
@@ -149,7 +158,6 @@ public class ForecastActivity extends Activity {
 					layout.addView(row);
 				} while (cursor.moveToNext());
 			} else {
-				uptimeView.setText("--");
 				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
 				Log.e(tag, "can't get forecast weather");
 			}

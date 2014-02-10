@@ -33,6 +33,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.baidu.mobstat.StatService;
 
@@ -84,6 +85,18 @@ public class TrendActivity extends Activity {
 		}
 
 		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			// updateTime
+			TextView view = (TextView) findViewById(R.id.updateTime);
+			view.setText("--");
+			// clear
+			if (layout.getChildCount() > 0) {
+				layout.removeViews(0, layout.getChildCount());
+			}
+		}
+
+		@Override
 		protected Cursor doInBackground(String... params) {
 			onProgressUpdate(0);
 			String city = (params != null && params.length > 0 ? params[0] : null);
@@ -115,10 +128,6 @@ public class TrendActivity extends Activity {
 		@Override
 		protected void onPostExecute(Cursor cursor) {
 			super.onPostExecute(cursor);
-			// clear
-			if (layout.getChildCount() > 0) {
-				layout.removeViews(0, layout.getChildCount());
-			}
 			onProgressUpdate(70);
 			// dataSet
 			XYMultipleSeriesDataset dataSet = new XYMultipleSeriesDataset();
@@ -129,6 +138,8 @@ public class TrendActivity extends Activity {
 				double i = 0;
 				// update time
 				String text = cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TIME));
+				TextView uptimeView = (TextView) findViewById(R.id.updateTime);
+				uptimeView.setText(text + "更新");
 				Calendar cal = Calendar.getInstance();
 				try {
 					cal.setTime(DF_1.parse(text));

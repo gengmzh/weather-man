@@ -99,58 +99,23 @@ public class AQIActivity extends Activity {
 		new AQITask().execute(city);
 	}
 
-	private String getAQITitle(int value) {
-		String text = null;
-		if (value <= 50) {
-			text = "优";
-		} else if (value <= 100) {
-			text = "良";
-		} else if (value <= 150) {
-			text = "轻度污染";
-		} else if (value <= 200) {
-			text = "中度污染";
-		} else if (value <= 300) {
-			text = "重度污染";
-		} else {
-			text = "严重污染";
-		}
-		return text;
-	}
-
-	private int getAQIColor(int value) {
-		int id = R.color.AQI_perfect;
-		if (value <= 50) {
-			id = R.color.AQI_perfect;
-		} else if (value <= 100) {
-			id = R.color.AQI_fine;
-		} else if (value <= 150) {
-			id = R.color.AQI_smell_little;
-		} else if (value <= 200) {
-			id = R.color.AQI_smell_middle;
-		} else if (value <= 300) {
-			id = R.color.AQI_smell_heavy;
-		} else {
-			id = R.color.AQI_smell_fatal;
-		}
-		return getResources().getColor(id);
-	}
-
 	class AQITask extends AsyncTask<String, Integer, Cursor> {
 
 		public AQITask() {
 		}
 
 		@Override
-		protected void onProgressUpdate(Integer... values) {
-			super.onProgressUpdate(values);
-			int progress = (values != null && values.length > 0 ? values[0] : 0);
-			ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
-			if (progressBar != null) {
-				Log.i(tag, progress + "/" + progressBar.getMax());
-				progressBar.setProgress(progress);
-				if (progress >= progressBar.getMax()) {
-					progressBar.setVisibility(View.GONE);
-				}
+		protected void onPreExecute() {
+			super.onPreExecute();
+			// updateTime
+			TextView view = (TextView) findViewById(R.id.updateTime);
+			view.setText("--");
+			// AQI
+			view = (TextView) findViewById(R.id.AQI);
+			view.setText("--");
+			// clear
+			if (container.getChildCount() > 0) {
+				container.removeViews(0, container.getChildCount());
 			}
 		}
 
@@ -170,12 +135,22 @@ public class AQIActivity extends Activity {
 		}
 
 		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+			int progress = (values != null && values.length > 0 ? values[0] : 0);
+			ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
+			if (progressBar != null) {
+				Log.i(tag, progress + "/" + progressBar.getMax());
+				progressBar.setProgress(progress);
+				if (progress >= progressBar.getMax()) {
+					progressBar.setVisibility(View.GONE);
+				}
+			}
+		}
+
+		@Override
 		protected void onPostExecute(Cursor cursor) {
 			super.onPostExecute(cursor);
-			// clear
-			if (container.getChildCount() > 0) {
-				container.removeViews(0, container.getChildCount());
-			}
 			onProgressUpdate(70);
 			// 当前AQI
 			if (cursor != null && cursor.moveToFirst()) {
@@ -192,9 +167,10 @@ public class AQIActivity extends Activity {
 						int value = cursor.getInt(cursor.getColumnIndex(Weather.AirQualityIndex.AQI));
 						view = (TextView) findViewById(R.id.AQI);
 						if (value >= 0) {
-							String text = String.valueOf(value) + ", " + getAQITitle(value);
+							String text = "指数" + value + "，" + Weather.AirQualityIndex.getAQITitle(value);
 							view.setText(text);
-							view.setTextColor(getAQIColor(value));
+							int color = getResources().getColor(Weather.AirQualityIndex.getAQIColor(value));
+							view.setTextColor(color);
 						} else {
 							view.setText("--");
 						}
@@ -260,7 +236,7 @@ public class AQIActivity extends Activity {
 			renderer.setYAxisMax(aqiSeries.getMaxY() + 10);
 			renderer.setYAxisMin(aqiSeries.getMinY() - 10);
 			int step = (int) (renderer.getYAxisMax() - renderer.getYAxisMin());
-			step = (step < 50 ? 5 : (step < 100 ? 100 : 20));
+			step = (step < 50 ? 5 : (step < 100 ? 10 : (step < 200 ? 20 : 50)));
 			for (int y = 0; y <= aqiSeries.getMaxY() + 10; y += step) {
 				renderer.addYTextLabel(y, String.valueOf(y));
 			}
@@ -276,7 +252,8 @@ public class AQIActivity extends Activity {
 			aqiRender.setPointStyle(PointStyle.DIAMOND);
 			aqiRender.setFillPoints(true);
 			for (int i = 0; i < aqiSeries.getItemCount(); i++) {
-				aqiRender.setPointColor(i, getAQIColor((int) aqiSeries.getY(i)));
+				int color = getResources().getColor(Weather.AirQualityIndex.getAQIColor((int) aqiSeries.getY(i)));
+				aqiRender.setPointColor(i, color);
 			}
 			renderer.addSeriesRenderer(aqiRender);
 			onProgressUpdate(90);

@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.weather.weatherman.R;
+
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -377,6 +379,54 @@ public final class Weather {
 		public static final String TIME = "time";
 		public static final String AQI = "aqi";
 		public static final String TAG = "tag";
+
+		/**
+		 * 获取AQI所属等级名称
+		 * 
+		 * @author gengmaozhang01
+		 * @since 2014-2-10 下午10:46:01
+		 */
+		public static String getAQITitle(int value) {
+			String text = null;
+			if (value <= 50) {
+				text = "优";
+			} else if (value <= 100) {
+				text = "良";
+			} else if (value <= 150) {
+				text = "轻度污染";
+			} else if (value <= 200) {
+				text = "中度污染";
+			} else if (value <= 300) {
+				text = "重度污染";
+			} else {
+				text = "严重污染";
+			}
+			return text;
+		}
+
+		/**
+		 * 获取AQI所属等级的颜色ID
+		 * 
+		 * @author gengmaozhang01
+		 * @since 2014-2-10 下午10:46:35
+		 */
+		public static int getAQIColor(int value) {
+			int color = R.color.AQI_perfect;
+			if (value <= 50) {
+				color = R.color.AQI_perfect;
+			} else if (value <= 100) {
+				color = R.color.AQI_fine;
+			} else if (value <= 150) {
+				color = R.color.AQI_smell_little;
+			} else if (value <= 200) {
+				color = R.color.AQI_smell_middle;
+			} else if (value <= 300) {
+				color = R.color.AQI_smell_heavy;
+			} else {
+				color = R.color.AQI_smell_fatal;
+			}
+			return color;
+		}
 
 		private Map<String, Object> value;
 
