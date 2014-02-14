@@ -115,6 +115,7 @@ public class ForecastActivity extends Activity {
 		@Override
 		protected void onPostExecute(Cursor cursor) {
 			super.onPostExecute(cursor);
+			this.onPreExecute();
 			onProgressUpdate(80);
 			if (cursor != null && cursor.moveToFirst()) {
 				// update time

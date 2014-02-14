@@ -32,7 +32,7 @@
 
     <string name="AQI_title">AQI</string>
     <color name="AQI_perfect">#07FD04</color>
-    <color name="AQI_fine">#FFFF00</color>
+    <color name="AQI_fine">#FFD700</color><!-- #FFFF00 -->
     <color name="AQI_smell_little">#FF7805</color>
     <color name="AQI_smell_middle">#FA0100</color>
     <color name="AQI_smell_heavy">#9E004F</color>

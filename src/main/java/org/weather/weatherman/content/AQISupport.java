@@ -133,23 +133,31 @@ public class AQISupport {
 		}
 		if (values.length > 3) {
 			List<Map<String, String>> hourly = new ArrayList<Map<String, String>>();
-			String[] vs = values[3].split(",");
-			for (int i = 0; i < vs.length; i += 2) {
-				Map<String, String> m = new HashMap<String, String>();
-				m.put("time", vs[i]);
-				m.put("AQI", vs[i + 1]);
-				hourly.add(m);
+			if (values[3].length() > 0) {
+				String[] vs = values[3].split(",");
+				for (int i = 0; i < vs.length; i += 2) {
+					if (i + 1 < vs.length) {
+						Map<String, String> m = new HashMap<String, String>();
+						m.put("time", vs[i]);
+						m.put("AQI", vs[i + 1]);
+						hourly.add(m);
+					}
+				}
 			}
 			weatherinfo.put("hourly", hourly);
 		}
 		if (values.length > 4) {
 			List<Map<String, String>> daily = new ArrayList<Map<String, String>>();
-			String[] vs = values[4].split(",");
-			for (int i = 0; i < vs.length; i += 2) {
-				Map<String, String> m = new HashMap<String, String>();
-				m.put("time", vs[i]);
-				m.put("AQI", vs[i + 1]);
-				daily.add(m);
+			if (values[4].length() > 0) {
+				String[] vs = values[4].split(",");
+				for (int i = 0; i < vs.length; i += 2) {
+					if (i + 1 < vs.length) {
+						Map<String, String> m = new HashMap<String, String>();
+						m.put("time", vs[i]);
+						m.put("AQI", vs[i + 1]);
+						daily.add(m);
+					}
+				}
 			}
 			weatherinfo.put("daily", daily);
 		}
