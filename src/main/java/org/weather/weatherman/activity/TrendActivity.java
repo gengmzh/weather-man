@@ -3,11 +3,7 @@
  */
 package org.weather.weatherman.activity;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.achartengine.GraphicalView;
@@ -20,13 +16,12 @@ import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.achartengine.LineChartFactory;
 import org.weather.weatherman.achartengine.MyXYSeries;
 import org.weather.weatherman.content.Weather;
+import org.weather.weatherman.content.WeatherService;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,6 +41,8 @@ public class TrendActivity extends Activity {
 	private static final String tag = TrendTask.class.getSimpleName();
 
 	private WeatherApplication app;
+	private WeatherService weatherService;
+
 	private LinearLayout layout;
 	private Resources res;
 
@@ -54,6 +51,7 @@ public class TrendActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.trend);
 		app = (WeatherApplication) getApplication();
+		weatherService = new WeatherService(this);
 		layout = (LinearLayout) findViewById(R.id.trendContainer);
 		res = getResources();
 	}
@@ -77,9 +75,7 @@ public class TrendActivity extends Activity {
 		new TrendTask().execute(city);
 	}
 
-	class TrendTask extends AsyncTask<String, Integer, Cursor> {
-
-		private DateFormat DF_1 = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+	class TrendTask extends AsyncTask<String, Integer, Weather.ForecastWeather> {
 
 		public TrendTask() {
 		}
@@ -97,18 +93,16 @@ public class TrendActivity extends Activity {
 		}
 
 		@Override
-		protected Cursor doInBackground(String... params) {
+		protected Weather.ForecastWeather doInBackground(String... params) {
 			onProgressUpdate(0);
 			String city = (params != null && params.length > 0 ? params[0] : null);
 			if (city == null || city.length() == 0) {
 				return null;
 			}
 			onProgressUpdate(20);
-			Uri uri = Uri.withAppendedPath(Weather.ForecastWeather.CONTENT_URI, city);
-			onProgressUpdate(40);
-			Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+			Weather.ForecastWeather forecast = weatherService.findForecastWeather(city);
 			onProgressUpdate(60);
-			return cursor;
+			return forecast;
 		}
 
 		@Override
@@ -126,44 +120,37 @@ public class TrendActivity extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(Cursor cursor) {
-			super.onPostExecute(cursor);
+		protected void onPostExecute(Weather.ForecastWeather forecast) {
+			this.onPreExecute();
+			super.onPostExecute(forecast);
 			onProgressUpdate(70);
 			// dataSet
 			XYMultipleSeriesDataset dataSet = new XYMultipleSeriesDataset();
 			MyXYSeries daySeries = new MyXYSeries(res.getString(R.string.trend_temperature_day));
 			MyXYSeries nightSeries = new MyXYSeries(res.getString(R.string.trend_temperature_night));
 			Map<Double, String> xlabels = new HashMap<Double, String>();
-			if (cursor != null && cursor.moveToFirst()) {
-				double i = 0;
+			if (forecast != null) {
 				// update time
-				String text = cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TIME));
 				TextView uptimeView = (TextView) findViewById(R.id.updateTime);
-				uptimeView.setText(text + "更新");
-				Calendar cal = Calendar.getInstance();
-				try {
-					cal.setTime(DF_1.parse(text));
-				} catch (Exception e) {
-					Log.e(tag, "parse update time failed", e);
-				}
-				cal.add(Calendar.HOUR_OF_DAY, -12);
-				do {
+				uptimeView.setText(forecast.getTime() + "更新");
+				for (int i = 0; i < forecast.getForecastSize(); i++) {
+					double x = i;
 					// date
-					cal.add(Calendar.HOUR_OF_DAY, 12);
-					String date = (cal.get(Calendar.MONTH) + 1) + "." + cal.get(Calendar.DAY_OF_MONTH);
+					String time = forecast.getForecastTime(i);
+					String date = time.substring(5, 7);
 					if (!xlabels.containsValue(date)) {
-						xlabels.put(++i, date);
+						xlabels.put(x, date);
 					}
 					// temperature
-					String tp = cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TEMPERATURE));
-					Double temp = Double.valueOf(tp.substring(0, tp.length() - 1));
-					boolean isNight = (cal.get(Calendar.HOUR_OF_DAY) >= 12);
+					boolean isNight = time.contains("夜");
+					String label = forecast.getForecastTemperature(i);
+					Double y = Double.valueOf(label.substring(0, label.length() - 1));
 					if (isNight) {
-						nightSeries.add(i, temp, tp);
+						nightSeries.add(i, y, label);
 					} else {
-						daySeries.add(i, temp, tp);
+						daySeries.add(i, y, label);
 					}
-				} while (cursor.moveToNext());
+				}
 			} else {
 				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
 				Log.e(tag, "can't get forecast weather");
@@ -226,9 +213,6 @@ public class TrendActivity extends Activity {
 			chart.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
 					LinearLayout.LayoutParams.FILL_PARENT));
 			layout.addView(chart);
-			if (cursor != null) {
-				cursor.close();
-			}
 			onProgressUpdate(100);
 		}
 

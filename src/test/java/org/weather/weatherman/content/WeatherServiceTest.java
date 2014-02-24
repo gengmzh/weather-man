@@ -4,7 +4,6 @@
 package org.weather.weatherman.content;
 
 import junit.framework.Assert;
-import android.database.Cursor;
 import android.test.AndroidTestCase;
 
 /**
@@ -14,28 +13,23 @@ import android.test.AndroidTestCase;
  */
 public class WeatherServiceTest extends AndroidTestCase {
 
-	private DatabaseSupport databaseSupport;
-	private WeatherSupport weatherSupport;
+	private WeatherService weatherService;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		databaseSupport = new DatabaseSupport(getContext());
-		weatherSupport = new WeatherSupport(databaseSupport);
+		weatherService = new WeatherService(getContext());
 	}
 
-	public void test_find() throws Exception {
-		Cursor cursor = weatherSupport.findRealtimeWeather("101010700");
+	public void test_findRealtimeWeather() throws Exception {
+		Weather.RealtimeWeather realtime = weatherService.findRealtimeWeather("101010700");
 
-		Assert.assertNotNull(cursor);
+		Assert.assertNotNull(realtime);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		databaseSupport.close();
-		databaseSupport = null;
-		weatherSupport = null;
 	}
 
 }

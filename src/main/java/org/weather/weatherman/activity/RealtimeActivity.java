@@ -1,22 +1,18 @@
 package org.weather.weatherman.activity;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
+import org.weather.weatherman.content.WeatherService;
 
 import android.app.Activity;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.baidu.mobstat.StatService;
@@ -26,12 +22,14 @@ public class RealtimeActivity extends Activity {
 	private static final String tag = RealtimeTask.class.getSimpleName();
 
 	private WeatherApplication app;
+	private WeatherService weatherService;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.realtime);
 		app = (WeatherApplication) getApplication();
+		weatherService = new WeatherService(this);
 		// domob
 		// RelativeLayout adContainer = (RelativeLayout)
 		// findViewById(R.id.adContainver);
@@ -67,9 +65,6 @@ public class RealtimeActivity extends Activity {
 
 	class RealtimeTask extends AsyncTask<String, Integer, Boolean> {
 
-		private DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-		private Cursor realtimeCursor, indexCursor, aqiCursor;
-
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
@@ -88,31 +83,13 @@ public class RealtimeActivity extends Activity {
 			// AQI
 			view = (TextView) findViewById(R.id.AQI);
 			view.setText("--");
-			// comfort
-			view = (TextView) findViewById(R.id.comfort);
-			view.setText("--");
-			// dress
-			view = (TextView) findViewById(R.id.dress);
-			view.setText("--");
-			// ultraviolet
-			view = (TextView) findViewById(R.id.ultraviolet);
-			view.setText("--");
-			// cleancar
-			view = (TextView) findViewById(R.id.cleancar);
-			view.setText("--");
-			// travel
-			view = (TextView) findViewById(R.id.travel);
-			view.setText("--");
-			// morningexercise
-			view = (TextView) findViewById(R.id.morningexercise);
-			view.setText("--");
-			// sundry
-			view = (TextView) findViewById(R.id.sundry);
-			view.setText("--");
-			// irritability
-			view = (TextView) findViewById(R.id.irritability);
-			view.setText("--");
+			// living index
+			TableLayout layout = (TableLayout) view.getParent().getParent();
+			layout.removeViews(5, layout.getChildCount() - 5);
 		}
+
+		private Weather.RealtimeWeather realtime;
+		private Weather.AirQualityIndex aqi;
 
 		@Override
 		protected Boolean doInBackground(String... params) {
@@ -122,15 +99,9 @@ public class RealtimeActivity extends Activity {
 				return false;
 			}
 			onProgressUpdate(20);
-			Uri uri = Uri.withAppendedPath(Weather.RealtimeWeather.CONTENT_URI, city);
-			realtimeCursor = getContentResolver().query(uri, null, null, null, null);
+			realtime = weatherService.findRealtimeWeather(city);
 			onProgressUpdate(40);
-			// if (realtimeCursor != null && realtimeCursor.moveToFirst()) {
-			uri = Uri.withAppendedPath(Weather.LivingIndex.CONTENT_URI, city);
-			indexCursor = getContentResolver().query(uri, null, null, null, null);
-			// }
-			uri = Uri.withAppendedPath(Weather.AirQualityIndex.CONTENT_URI, city);
-			aqiCursor = getContentResolver().query(uri, null, null, null, null);
+			aqi = weatherService.findAirQualityIndex(city);
 			onProgressUpdate(60);
 			return true;
 		}
@@ -151,100 +122,54 @@ public class RealtimeActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+			this.onPreExecute();
 			super.onPostExecute(result);
 			onProgressUpdate(80);
 			boolean isOk = true;
-			if (realtimeCursor != null && realtimeCursor.moveToFirst()) {
+			if (realtime != null) {
 				// updateTime
-				String text = realtimeCursor.getString(realtimeCursor.getColumnIndex(Weather.RealtimeWeather.TIME));
 				TextView view = (TextView) findViewById(R.id.updateTime);
-				view.setText(DATE_FORMAT.format(new Date()) + " " + text + "更新");
+				view.setText(realtime.getTime() + "更新");
 				// temperature
-				text = realtimeCursor.getString(realtimeCursor.getColumnIndex(Weather.RealtimeWeather.TEMPERATURE));
 				view = (TextView) findViewById(R.id.temperatue);
-				view.setText(text);
+				view.setText(realtime.getTemperature());
 				// wind
 				view = (TextView) findViewById(R.id.wind);
-				text = realtimeCursor.getString(realtimeCursor.getColumnIndex(Weather.RealtimeWeather.WINDDIRECTION));
-				view.setText(text);
-				text = realtimeCursor.getString(realtimeCursor.getColumnIndex(Weather.RealtimeWeather.WINDFORCE));
-				if (text != null && !text.equals(view.getText())) {
-					view.setText(view.getText() + text);
-				}
+				view.setText(realtime.getWindDirection() + "，" + realtime.getWindForce());
 				// humidity
-				text = realtimeCursor.getString(realtimeCursor.getColumnIndex(Weather.RealtimeWeather.HUMIDITY));
 				view = (TextView) findViewById(R.id.humidity);
-				view.setText("湿度" + text);
+				view.setText("湿度" + realtime.getHumidity());
+				// living index
+				TableLayout layout = (TableLayout) view.getParent().getParent();
+				for (int i = 0; i < realtime.getIndexSize(); i++) {
+					TableRow row = new TableRow(layout.getContext());
+					view = new TextView(layout.getContext());
+					view.setText(realtime.getIndexName(i) + "：");
+					row.addView(view);
+					view = new TextView(layout.getContext());
+					view.setText(realtime.getIndexValue(i) + "，" + realtime.getIndexDesc(i));
+					row.addView(view);
+					layout.addView(row);
+				}
 			} else {
 				isOk = false;
 				Log.e(tag, "can't get realtime weather");
 			}
-			if (indexCursor != null && indexCursor.moveToFirst()) {
-				// comfort
-				String text = indexCursor.getString(indexCursor.getColumnIndex(Weather.LivingIndex.COMFORT));
-				TextView view = (TextView) findViewById(R.id.comfort);
-				view.setText(text);
-				// dress
-				text = indexCursor.getString(indexCursor.getColumnIndex(Weather.LivingIndex.DRESS));
-				view = (TextView) findViewById(R.id.dress);
-				view.setText(text);
-				// ultraviolet
-				text = indexCursor.getString(indexCursor.getColumnIndex(Weather.LivingIndex.ULTRAVIOLET));
-				view = (TextView) findViewById(R.id.ultraviolet);
-				view.setText(text);
-				// cleancar
-				text = indexCursor.getString(indexCursor.getColumnIndex(Weather.LivingIndex.CLEANCAR));
-				view = (TextView) findViewById(R.id.cleancar);
-				view.setText(text);
-				// travel
-				text = indexCursor.getString(indexCursor.getColumnIndex(Weather.LivingIndex.TRAVEL));
-				view = (TextView) findViewById(R.id.travel);
-				view.setText(text);
-				// morningexercise
-				text = indexCursor.getString(indexCursor.getColumnIndex(Weather.LivingIndex.MORNINGEXERCISE));
-				view = (TextView) findViewById(R.id.morningexercise);
-				view.setText(text);
-				// sundry
-				text = indexCursor.getString(indexCursor.getColumnIndex(Weather.LivingIndex.SUNDRY));
-				view = (TextView) findViewById(R.id.sundry);
-				view.setText(text);
-				// irritability
-				text = indexCursor.getString(indexCursor.getColumnIndex(Weather.LivingIndex.IRRITABILITY));
-				view = (TextView) findViewById(R.id.irritability);
-				view.setText(text);
-			} else {
-				isOk = false;
-				Log.e(tag, "can't get weather index");
-			}
-			if (aqiCursor != null && aqiCursor.moveToFirst()) {
-				do { // AQI
-					String tag = aqiCursor.getString(aqiCursor.getColumnIndex(Weather.AirQualityIndex.TAG));
-					if ("current".equalsIgnoreCase(tag)) {
-						int value = aqiCursor.getInt(aqiCursor.getColumnIndex(Weather.AirQualityIndex.AQI));
-						TextView view = (TextView) findViewById(R.id.AQI);
-						if (value >= 0) {
-							String text = "指数" + value + "，" + Weather.AirQualityIndex.getAQITitle(value);
-							view.setText(text);
-							int color = getResources().getColor(Weather.AirQualityIndex.getAQIColor(value));
-							view.setTextColor(color);
-						} else {
-							view.setText("--");
-						}
-						break;
-					}
-				} while (aqiCursor.moveToNext());
+			// aqi
+			if (aqi != null) {
+				TextView view = (TextView) findViewById(R.id.AQI);
+				int value = aqi.getCurrentAQI();
+				if (value >= 0) {
+					String text = "指数" + value + "，" + Weather.AirQualityIndex.getAQITitle(value);
+					view.setText(text);
+					int color = getResources().getColor(Weather.AirQualityIndex.getAQIColor(value));
+					view.setTextColor(color);
+				} else {
+					view.setText("--");
+				}
 			} else {
 				// isOk = false;
 				Log.e(tag, "can't get AQI");
-			}
-			if (realtimeCursor != null) {
-				realtimeCursor.close();
-			}
-			if (indexCursor != null) {
-				indexCursor.close();
-			}
-			if (aqiCursor != null) {
-				aqiCursor.close();
 			}
 			if (!isOk) {
 				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));

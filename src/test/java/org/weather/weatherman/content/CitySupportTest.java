@@ -3,10 +3,11 @@
  */
 package org.weather.weatherman.content;
 
-import java.util.Calendar;
+import java.util.List;
 
+import junit.framework.Assert;
 import android.test.AndroidTestCase;
-import android.util.Log;
+import cn.seddat.weatherman.api.city.City;
 
 /**
  * @since 2012-5-28
@@ -15,29 +16,23 @@ import android.util.Log;
  */
 public class CitySupportTest extends AndroidTestCase {
 
-	private DatabaseSupport databaseSupport;
-	private CitySupport citySupport;
+	private SettingService settingService;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		databaseSupport = new DatabaseSupport(getContext());
-		citySupport = new CitySupport(databaseSupport);
+		settingService = new SettingService(getContext());
 	}
 
 	public void test_isOvertime() throws Exception {
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.HOUR_OF_DAY, -4);
-		boolean isOver = citySupport.isOvertime(cal.getTime());
-		Log.i(CitySupportTest.class.getSimpleName(), "isOvertime: " + isOver);
+		List<City> cities = settingService.findCity(null);
+
+		Assert.assertNotNull(cities);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		databaseSupport.close();
-		databaseSupport = null;
-		citySupport = null;
 	}
 
 }

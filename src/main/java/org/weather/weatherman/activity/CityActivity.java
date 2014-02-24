@@ -3,17 +3,13 @@
  */
 package org.weather.weatherman.activity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.weather.weatherman.R;
-import org.weather.weatherman.content.Weather;
-
-import com.baidu.mobstat.StatService;
+import org.weather.weatherman.content.SettingService;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +20,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import cn.seddat.weatherman.api.city.City;
 
+import com.baidu.mobstat.StatService;
+
 /**
  * @author gengmaozhang01
  * @since 2014-1-19 下午4:39:46
@@ -32,12 +30,14 @@ public class CityActivity extends Activity {
 
 	private static final String tag = CityActivity.class.getSimpleName();
 
+	private SettingService settingService;
 	private Spinner city1Spinner, city2Spinner, city3Spinner;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.city);
+		settingService = new SettingService(this);
 		// register events
 		city1Spinner = (Spinner) findViewById(R.id.city1);
 		city2Spinner = (Spinner) findViewById(R.id.city2);
@@ -107,23 +107,11 @@ public class CityActivity extends Activity {
 	}
 
 	private List<City> findCityByParent(String parent) {
-		List<City> cl = new ArrayList<City>();
-		Cursor cursor = null;
-		if (parent == null || parent.length() == 0) {
-			cursor = getContentResolver().query(Weather.City.CONTENT_URI, null, Weather.City.PARENT + " ISNULL", null,
-					null);
-		} else {
-			cursor = getContentResolver().query(Weather.City.CONTENT_URI, null, Weather.City.PARENT + "=?",
-					new String[] { parent }, null);
+		List<City> cl = settingService.findCity(parent);
+		for (int i = 0; i < cl.size(); i++) {
+			City city = cl.get(i);
+			cl.set(i, new SpinnerCity(city.getId(), city.getName()));
 		}
-		if (cursor.moveToFirst()) {
-			int codeIndex = cursor.getColumnIndex(Weather.City.CODE);
-			int nameIndex = cursor.getColumnIndex(Weather.City.NAME);
-			do {
-				cl.add(new SpinnerCity(cursor.getString(codeIndex), cursor.getString(nameIndex)));
-			} while (cursor.moveToNext());
-		}
-		cursor.close();
 		return cl;
 	}
 

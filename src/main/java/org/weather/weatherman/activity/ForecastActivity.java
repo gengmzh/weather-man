@@ -1,17 +1,11 @@
 package org.weather.weatherman.activity;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
 import org.weather.weatherman.content.Weather;
+import org.weather.weatherman.content.WeatherService;
 
 import android.app.Activity;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,12 +27,14 @@ public class ForecastActivity extends Activity {
 	private static final String tag = ForecastTask.class.getSimpleName();
 
 	private WeatherApplication app;
+	private WeatherService weatherService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.forecast);
 		app = (WeatherApplication) getApplication();
+		weatherService = new WeatherService(this);
 	}
 
 	@Override
@@ -65,9 +61,7 @@ public class ForecastActivity extends Activity {
 		new ForecastTask().execute(city);
 	}
 
-	class ForecastTask extends AsyncTask<String, Integer, Cursor> {
-
-		private DateFormat DF_1 = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+	class ForecastTask extends AsyncTask<String, Integer, Weather.ForecastWeather> {
 
 		public ForecastTask() {
 		}
@@ -84,18 +78,16 @@ public class ForecastActivity extends Activity {
 		}
 
 		@Override
-		protected Cursor doInBackground(String... params) {
+		protected Weather.ForecastWeather doInBackground(String... params) {
 			onProgressUpdate(0);
 			String city = (params != null && params.length > 0 ? params[0] : null);
 			if (city == null || city.length() == 0) {
 				return null;
 			}
 			onProgressUpdate(20);
-			Uri uri = Uri.withAppendedPath(Weather.ForecastWeather.CONTENT_URI, city);
-			onProgressUpdate(40);
-			Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+			Weather.ForecastWeather forecast = weatherService.findForecastWeather(city);
 			onProgressUpdate(60);
-			return cursor;
+			return forecast;
 		}
 
 		@Override
@@ -113,30 +105,21 @@ public class ForecastActivity extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(Cursor cursor) {
-			super.onPostExecute(cursor);
+		protected void onPostExecute(Weather.ForecastWeather forecast) {
 			this.onPreExecute();
+			super.onPostExecute(forecast);
 			onProgressUpdate(80);
-			if (cursor != null && cursor.moveToFirst()) {
+			if (forecast != null) {
 				// update time
 				TextView uptimeView = (TextView) findViewById(R.id.updateTime);
-				String text = cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TIME));
-				uptimeView.setText(text + "更新");
+				uptimeView.setText(forecast.getTime() + "更新");
 				// add row
 				TableLayout layout = (TableLayout) uptimeView.getParent().getParent();
-				Calendar cal = Calendar.getInstance();
-				try {
-					cal.setTime(DF_1.parse(text));
-				} catch (Exception e) {
-					Log.e(tag, "parse update time failed", e);
-				}
-				cal.add(Calendar.HOUR_OF_DAY, -12);
-				do {
+				for (int i = 0; i < forecast.getForecastSize(); i++) {
 					TableRow row = new TableRow(layout.getContext());
 					// date
-					cal.add(Calendar.HOUR_OF_DAY, 12);
 					TextView view = new TextView(layout.getContext());
-					view.setText(format(cal));
+					view.setText(forecast.getForecastTime(i).substring(5));
 					row.addView(view);
 					// image
 					// view = new TextView(this);
@@ -146,32 +129,23 @@ public class ForecastActivity extends Activity {
 					// row.addView(view);
 					// weather
 					view = new TextView(layout.getContext());
-					view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.WEATHER)));
+					view.setText(forecast.getForecastWeather(i));
 					row.addView(view);
 					// temperature
 					view = new TextView(layout.getContext());
-					view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.TEMPERATURE)));
+					view.setText(forecast.getForecastTemperature(i));
 					row.addView(view);
 					// wind
 					view = new TextView(layout.getContext());
-					view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.WIND)));
+					view.setText(forecast.getForecastWind(i) + "，" + forecast.getForecastWindForce(i));
 					row.addView(view);
 					layout.addView(row);
-				} while (cursor.moveToNext());
+				}
 			} else {
 				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
 				Log.e(tag, "can't get forecast weather");
 			}
-			if (cursor != null) {
-				cursor.close();
-			}
 			onProgressUpdate(100);
-		}
-
-		String format(Calendar date) {
-			int day = date.get(Calendar.DAY_OF_MONTH);
-			return (date.get(Calendar.MONTH) + 1) + "." + (day < 10 ? "0" : "") + day
-					+ (date.get(Calendar.HOUR_OF_DAY) < 12 ? "白天" : "夜晚");
 		}
 
 	}

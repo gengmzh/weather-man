@@ -25,7 +25,8 @@ import com.baidu.mobstat.StatService;
 public class WeatherClient {
 
 	private static final String tag = WeatherClient.class.getSimpleName();
-	private static final String api = "http://42.96.143.229:8387/openapi/api/weather";
+	// private static final String api = "http://42.96.143.229:8387/openapi/api/weather";
+	private static final String api = "http://seddat.duapp.com/openapi/api/weather";
 
 	private Context context;
 	private int connectTimeout = 60 * 1000;

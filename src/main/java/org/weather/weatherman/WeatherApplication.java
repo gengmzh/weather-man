@@ -3,7 +3,8 @@
  */
 package org.weather.weatherman;
 
-import org.weather.weatherman.activity.CityService;
+import org.weather.weatherman.content.SettingService;
+import org.weather.weatherman.content.Weather;
 
 import android.app.Application;
 import cn.seddat.weatherman.api.city.City;
@@ -23,10 +24,10 @@ public class WeatherApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		// 恢复城市设置
-		CityService cityService = new CityService(getContentResolver());
-		City city = cityService.getCitySetting();
-		if (city != null) {
-			this.city = city;
+		SettingService settingService = new SettingService(this);
+		Weather.Setting setting = settingService.getSetting();
+		if (setting != null) {
+			this.city = setting.getDistrict();
 		}
 	}
 

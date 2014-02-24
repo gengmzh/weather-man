@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.weather.weatherman.R;
 import org.weather.weatherman.WeatherApplication;
+import org.weather.weatherman.content.SettingService;
 
 import android.app.Activity;
 import android.app.TabActivity;
@@ -35,7 +36,7 @@ public class WeathermanActivity extends TabActivity {
 	private static final String tag = WeathermanActivity.class.getSimpleName();
 	private String appName;
 	private WeatherApplication app;
-	private CityService cityService;
+	private SettingService settingService;
 
 	private TabHost tabHost;
 	private TextView cityView;
@@ -47,7 +48,7 @@ public class WeathermanActivity extends TabActivity {
 		setContentView(R.layout.main);
 		appName = getApplicationInfo().loadLabel(getPackageManager()).toString();
 		app = (WeatherApplication) getApplication();
-		cityService = new CityService(getContentResolver());
+		settingService = new SettingService(this);
 		// 百度移动统计
 		// StatService.setDebugOn(true);
 		StatService.setLogSenderDelayed(3);// 启动后延迟3s发送统计日志
@@ -137,7 +138,7 @@ public class WeathermanActivity extends TabActivity {
 
 	private void resetCity(City province, City city, City district) {
 		Log.i(tag, "reset city to " + district);
-		cityService.saveCitySetting(province, city, district);
+		settingService.saveSetting(province, city, district);
 		app.setCity(district);
 		cityView.setText(district.getName());
 		// refresh data
@@ -212,7 +213,7 @@ public class WeathermanActivity extends TabActivity {
 					|| district.length() == 0) {
 				Log.e(tag, "get location failed by round " + count);
 			} else { // parse
-				List<City> provinces = cityService.findCityByParent(null);
+				List<City> provinces = settingService.findCity(null);
 				for (City prov : provinces) {
 					if (province.contains(prov.getName()) || prov.getName().contains(province)) {
 						c1 = prov;
@@ -220,7 +221,7 @@ public class WeathermanActivity extends TabActivity {
 					}
 				}
 				if (c1 != null) {
-					List<City> cities = cityService.findCityByParent(c1.getId());
+					List<City> cities = settingService.findCity(c1.getId());
 					for (City cit : cities) {
 						if (city.contains(cit.getName()) || cit.getName().contains(city)) {
 							c2 = cit;
@@ -228,7 +229,7 @@ public class WeathermanActivity extends TabActivity {
 						}
 					}
 					if (c2 != null) {
-						List<City> districts = cityService.findCityByParent(c2.getId());
+						List<City> districts = settingService.findCity(c2.getId());
 						for (City dis : districts) {
 							if (district.contains(dis.getName()) || dis.getName().contains(district)) {
 								c3 = dis;

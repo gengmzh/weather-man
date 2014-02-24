@@ -10,113 +10,65 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
 
-    <TableLayout
+    <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/adContainver"
-        android:padding="3dp"
-        android:stretchColumns="1"
-        android:textSize="20sp" >
+        android:fadingEdge="vertical"
+        android:scrollbars="vertical" >
 
-        <TableRow>
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:stretchColumns="0,1"
+            android:textSize="20sp" >
 
-            <TextView
-                android:id="@+id/updateTime"
-                android:layout_marginBottom="5dp"
-                android:layout_span="2" />
-        </TableRow>
+            <TableRow>
 
-        <TableRow>
+                <TextView
+                    android:id="@+id/updateTime"
+                    android:layout_marginBottom="5dp"
+                    android:layout_span="2" />
+            </TableRow>
 
-            <TextView
-                android:id="@+id/temperatue"
-                android:layout_span="2"
-                android:textColor="#87CEFA" />
-        </TableRow>
+            <TableRow>
 
-        <TableRow>
+                <TextView
+                    android:id="@+id/temperatue"
+                    android:layout_span="2"
+                    android:textColor="#87CEFA" />
+            </TableRow>
 
-            <TextView
-                android:id="@+id/wind"
-                android:layout_span="2"
-                android:textColor="#8FBC8F" />
-        </TableRow>
+            <TableRow>
 
-        <TableRow>
+                <TextView
+                    android:id="@+id/wind"
+                    android:layout_span="2"
+                    android:textColor="#8FBC8F" />
+            </TableRow>
 
-            <TextView
-                android:id="@+id/humidity"
-                android:layout_marginBottom="5dp"
-                android:layout_span="2"
-                android:textColor="#5F9EA0" />
-        </TableRow>
+            <TableRow>
 
-        <!-- living index -->
+                <TextView
+                    android:id="@+id/humidity"
+                    android:layout_marginBottom="5dp"
+                    android:layout_span="2"
+                    android:textColor="#5F9EA0" />
+            </TableRow>
 
-        <TableRow>
+            <TableRow>
 
-            <TextView android:text="空气质量：" />
+                <TextView android:text="空气质量：" />
 
-            <TextView
-                android:id="@+id/AQI"
-                android:textColor="@color/AQI_perfect" />
-        </TableRow>
+                <TextView
+                    android:id="@+id/AQI"
+                    android:textColor="@color/AQI_perfect" />
+            </TableRow>
 
-        <TableRow>
+            <!-- living index -->
 
-            <TextView android:text="舒适度：" />
-
-            <TextView android:id="@+id/comfort" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView android:text="穿衣指数：" />
-
-            <TextView android:id="@+id/dress" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView android:text="紫外线强度：" />
-
-            <TextView android:id="@+id/ultraviolet" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView android:text="洗车指数：" />
-
-            <TextView android:id="@+id/cleancar" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView android:text="出游指数：" />
-
-            <TextView android:id="@+id/travel" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView android:text="晨练指数：" />
-
-            <TextView android:id="@+id/morningexercise" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView android:text="晾晒指数：" />
-
-            <TextView android:id="@+id/sundry" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView android:text="过敏指数：" />
-
-            <TextView android:id="@+id/irritability" />
-        </TableRow>
-    </TableLayout>
+        </TableLayout>
+    </ScrollView>
 
 </RelativeLayout>

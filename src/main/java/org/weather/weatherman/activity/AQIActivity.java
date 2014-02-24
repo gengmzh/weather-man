@@ -16,13 +16,12 @@ import org.weather.weatherman.achartengine.LineChartFactory;
 import org.weather.weatherman.achartengine.MyXYSeries;
 import org.weather.weatherman.achartengine.MyXYSeriesRenderer;
 import org.weather.weatherman.content.Weather;
+import org.weather.weatherman.content.WeatherService;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +42,8 @@ public class AQIActivity extends Activity {
 	private static final String tag = AQITask.class.getSimpleName();
 
 	private WeatherApplication app;
+	private WeatherService weatherService;
+
 	private LinearLayout container;
 	private Resources resources;
 	private String aqiTag = "hourly";
@@ -52,6 +53,7 @@ public class AQIActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.aqi);
 		app = (WeatherApplication) getApplication();
+		weatherService = new WeatherService(this);
 		container = (LinearLayout) findViewById(R.id.aqiContainer);
 		resources = getResources();
 		// event
@@ -99,7 +101,7 @@ public class AQIActivity extends Activity {
 		new AQITask().execute(city);
 	}
 
-	class AQITask extends AsyncTask<String, Integer, Cursor> {
+	class AQITask extends AsyncTask<String, Integer, Weather.AirQualityIndex> {
 
 		public AQITask() {
 		}
@@ -120,18 +122,16 @@ public class AQIActivity extends Activity {
 		}
 
 		@Override
-		protected Cursor doInBackground(String... params) {
+		protected Weather.AirQualityIndex doInBackground(String... params) {
 			onProgressUpdate(0);
 			String city = (params != null && params.length > 0 ? params[0] : null);
 			if (city == null || city.length() == 0) {
 				return null;
 			}
 			onProgressUpdate(20);
-			Uri uri = Uri.withAppendedPath(Weather.AirQualityIndex.CONTENT_URI, city);
-			onProgressUpdate(40);
-			Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+			Weather.AirQualityIndex aqi = weatherService.findAirQualityIndex(city);
 			onProgressUpdate(60);
-			return cursor;
+			return aqi;
 		}
 
 		@Override
@@ -149,58 +149,56 @@ public class AQIActivity extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(Cursor cursor) {
-			super.onPostExecute(cursor);
+		protected void onPostExecute(Weather.AirQualityIndex aqi) {
+			this.onPreExecute();
+			super.onPostExecute(aqi);
 			onProgressUpdate(70);
 			// 当前AQI
-			if (cursor != null && cursor.moveToFirst()) {
-				do {
-					String tag = cursor.getString(cursor.getColumnIndex(Weather.AirQualityIndex.TAG));
-					if ("current".equalsIgnoreCase(tag)) {
-						String time = cursor.getString(cursor.getColumnIndex(Weather.AirQualityIndex.TIME));
-						TextView view = (TextView) findViewById(R.id.updateTime);
-						if (time != null && time.length() > 0) {
-							view.setText(time + "更新");
-						} else {
-							view.setText("--");
-						}
-						int value = cursor.getInt(cursor.getColumnIndex(Weather.AirQualityIndex.AQI));
-						view = (TextView) findViewById(R.id.AQI);
-						if (value >= 0) {
-							String text = "指数" + value + "，" + Weather.AirQualityIndex.getAQITitle(value);
-							view.setText(text);
-							int color = getResources().getColor(Weather.AirQualityIndex.getAQIColor(value));
-							view.setTextColor(color);
-						} else {
-							view.setText("--");
-						}
-						break;
-					}
-				} while (cursor.moveToNext());
+			if (aqi != null) {
+				// update time
+				TextView view = (TextView) findViewById(R.id.updateTime);
+				String time = aqi.getTime();
+				if (time != null && time.length() > 0) {
+					view.setText(time + "更新");
+				} else {
+					view.setText("--");
+				}
+				// current AQI
+				view = (TextView) findViewById(R.id.AQI);
+				int value = aqi.getCurrentAQI();
+				if (value >= 0) {
+					String text = "指数" + value + "，" + Weather.AirQualityIndex.getAQITitle(value);
+					view.setText(text);
+					int color = getResources().getColor(Weather.AirQualityIndex.getAQIColor(value));
+					view.setTextColor(color);
+				} else {
+					view.setText("--");
+				}
 			}
 			// dataSet
 			XYMultipleSeriesDataset dataSet = new XYMultipleSeriesDataset();
 			Map<Double, String> xlabels = new HashMap<Double, String>();
 			MyXYSeries aqiSeries = new MyXYSeries(resources.getString(R.string.AQI_series_name));
-			if (cursor != null && cursor.moveToFirst()) {
-				double i = 0;
-				do {
-					String tag = cursor.getString(cursor.getColumnIndex(Weather.AirQualityIndex.TAG));
-					if (aqiTag == null || aqiTag.equalsIgnoreCase(tag)) {
-						String time = cursor.getString(cursor.getColumnIndex(Weather.AirQualityIndex.TIME));
-						String value = cursor.getString(cursor.getColumnIndex(Weather.AirQualityIndex.AQI));
-						if ("hourly".equalsIgnoreCase(tag)) {
-							time = time.substring(8);
-						} else if ("daily".equalsIgnoreCase(tag)) {
-							time = time.substring(5);
-						}
-						xlabels.put(++i, time);
-						aqiSeries.add(i, Double.parseDouble(value));
+			if (aqi != null) {
+				int size = (aqiTag == null || "hourly".equalsIgnoreCase(aqiTag) ? aqi.getHourlySize() : aqi
+						.getDailySize());
+				for (int i = 0; i < size; i++) {
+					String time = null;
+					int value = 0;
+					if (aqiTag == null || "hourly".equalsIgnoreCase(aqiTag)) {
+						time = aqi.getHourlyTime(i).substring(8);
+						value = aqi.getHourlyAQI(i);
+					} else {
+						time = aqi.getDailyTime(i).substring(5);
+						value = aqi.getDailyAQI(i);
 					}
-				} while (cursor.moveToNext());
+					double x = i, y = value;
+					xlabels.put(x, time);
+					aqiSeries.add(x, y);
+				}
 			} else {
 				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
-				Log.e(tag, "can't get forecast weather");
+				Log.e(tag, "can't get AQI");
 			}
 			dataSet.addSeries(aqiSeries);
 			onProgressUpdate(80);
@@ -262,10 +260,6 @@ public class AQIActivity extends Activity {
 			chart.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
 					LinearLayout.LayoutParams.FILL_PARENT));
 			container.addView(chart);
-			// clear
-			if (cursor != null) {
-				cursor.close();
-			}
 			onProgressUpdate(100);
 		}
 	}
