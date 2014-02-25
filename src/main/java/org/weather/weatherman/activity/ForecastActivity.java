@@ -119,25 +119,14 @@ public class ForecastActivity extends Activity {
 					TableRow row = new TableRow(layout.getContext());
 					// date
 					TextView view = new TextView(layout.getContext());
-					view.setText(forecast.getForecastTime(i).substring(5));
+					final String time = forecast.getForecastTime(i).substring(5);
+					view.setText(time + "：");
 					row.addView(view);
-					// image
-					// view = new TextView(this);
-					// view.setPadding(3, 3, 3, 3);
-					// view.setTextSize(14);
-					// view.setText(cursor.getString(cursor.getColumnIndex(Weather.ForecastWeather.IMAGE)));
-					// row.addView(view);
 					// weather
 					view = new TextView(layout.getContext());
-					view.setText(forecast.getForecastWeather(i));
-					row.addView(view);
-					// temperature
-					view = new TextView(layout.getContext());
-					view.setText(forecast.getForecastTemperature(i));
-					row.addView(view);
-					// wind
-					view = new TextView(layout.getContext());
-					view.setText(forecast.getForecastWind(i) + "，" + forecast.getForecastWindForce(i));
+					view.setText(forecast.getForecastWeather(i) + "。" + (time.contains("夜") ? "低温" : "高温")
+							+ forecast.getForecastTemperature(i) + "。" + forecast.getForecastWind(i) + "，"
+							+ forecast.getForecastWindForce(i));
 					row.addView(view);
 					layout.addView(row);
 				}

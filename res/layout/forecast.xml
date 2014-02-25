@@ -9,7 +9,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="3dp"
-        android:shrinkColumns="*"
+        android:shrinkColumns="1"
         android:stretchColumns="*"
         android:textSize="20sp" >
 
