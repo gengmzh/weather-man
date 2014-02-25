@@ -137,7 +137,7 @@ public class TrendActivity extends Activity {
 					double x = i;
 					// date
 					String time = forecast.getForecastTime(i);
-					String date = time.substring(5, 7);
+					String date = time.substring(time.indexOf('.') + 1, time.indexOf(' '));
 					if (!xlabels.containsValue(date)) {
 						xlabels.put(x, date);
 					}

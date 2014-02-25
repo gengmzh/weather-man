@@ -147,7 +147,7 @@ public class RealtimeActivity extends Activity {
 					view.setText(realtime.getIndexName(i) + "：");
 					row.addView(view);
 					view = new TextView(layout.getContext());
-					view.setText(realtime.getIndexValue(i) + "，" + realtime.getIndexDesc(i));
+					view.setText(realtime.getIndexValue(i) + "。" + realtime.getIndexDesc(i));
 					row.addView(view);
 					layout.addView(row);
 				}

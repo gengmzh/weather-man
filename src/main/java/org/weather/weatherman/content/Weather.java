@@ -184,8 +184,8 @@ public final class Weather {
 			names.put("xc", "洗车指数");
 			names.put("pp", "化妆指数");
 			names.put("gm", "感冒指数");
-			names.put("uv", "紫外线指数");
-			names.put("co", "舒适度指数");
+			names.put("uv", "紫外线");
+			names.put("co", "舒适度");
 			names.put("ag", "过敏指数");
 			names.put("gj", "逛街指数");
 			names.put("mf", "美发指数");

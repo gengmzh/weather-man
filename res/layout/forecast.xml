@@ -1,51 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="3dp"
-    android:stretchColumns="*"
-    android:textSize="20sp" >
+    android:fadingEdge="vertical"
+    android:scrollbars="vertical" >
 
-    <TableRow>
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        android:textSize="20sp" >
 
-        <TextView
-            android:id="@+id/updateTime"
-            android:layout_marginBottom="5dp"
-            android:layout_span="4" />
-    </TableRow>
+        <TableRow>
 
-    <!--
-    <TableRow>
+            <TextView
+                android:id="@+id/updateTime"
+                android:layout_marginBottom="5dp"
+                android:layout_span="4" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/date"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
+	    <!--
+	    <TableRow>
+	
+	        <TextView
+	            android:id="@+id/date"
+	            android:padding="3dip"
+	            android:text="@string/hello"
+	            android:textSize="14dip" />
+	
+	        <TextView
+	            android:id="@+id/image"
+	            android:padding="3dip"
+	            android:text="@string/hello"
+	            android:textSize="14dip" />
+	
+	        <TextView
+	            android:id="@+id/weather"
+	            android:padding="3dip"
+	            android:text="@string/hello"
+	            android:textSize="14dip" />
+	
+	        <TextView
+	            android:id="@+id/temperatue"
+	            android:padding="3dip"
+	            android:text="@string/hello"
+	            android:textSize="14dip" />
+	
+	        <TextView
+	            android:id="@+id/wind"
+	            android:padding="3dip"
+	            android:text="@string/hello"
+	            android:textSize="14dip" />
+	    </TableRow>
+	    -->
+    </TableLayout>
 
-        <TextView
-            android:id="@+id/image"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-
-        <TextView
-            android:id="@+id/weather"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-
-        <TextView
-            android:id="@+id/temperatue"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-
-        <TextView
-            android:id="@+id/wind"
-            android:padding="3dip"
-            android:text="@string/hello"
-            android:textSize="14dip" />
-    </TableRow>    -->
-
-</TableLayout>
+</ScrollView>
