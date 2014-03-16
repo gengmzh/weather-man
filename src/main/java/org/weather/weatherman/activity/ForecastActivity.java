@@ -112,7 +112,7 @@ public class ForecastActivity extends Activity {
 			if (forecast != null) {
 				// update time
 				TextView uptimeView = (TextView) findViewById(R.id.updateTime);
-				uptimeView.setText(forecast.getTime() + "更新");
+				uptimeView.setText("天气预报，" + forecast.getTime() + "更新");
 				// add row
 				TableLayout layout = (TableLayout) uptimeView.getParent().getParent();
 				for (int i = 0; i < forecast.getForecastSize(); i++) {

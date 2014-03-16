@@ -15,8 +15,10 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
@@ -34,8 +36,9 @@ import com.baidu.mobstat.StatService;
 public class WeathermanActivity extends TabActivity {
 
 	private static final String tag = WeathermanActivity.class.getSimpleName();
-	private String appName;
 	private WeatherApplication app;
+	private String appName;
+
 	private SettingService settingService;
 
 	private TabHost tabHost;
@@ -45,37 +48,37 @@ public class WeathermanActivity extends TabActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		appName = getApplicationInfo().loadLabel(getPackageManager()).toString();
+		this.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		this.setContentView(R.layout.main);
+		this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.main_title);
+		// title
 		app = (WeatherApplication) getApplication();
+		appName = getApplicationInfo().loadLabel(getPackageManager()).toString();
 		settingService = new SettingService(this);
 		// 百度移动统计
 		// StatService.setDebugOn(true);
 		StatService.setLogSenderDelayed(3);// 启动后延迟3s发送统计日志
 		// tab widget
 		tabHost = getTabHost();
-		Resources res = getResources();
-		TabHost.TabSpec tabSpec = tabHost.newTabSpec("realtime")
-				.setIndicator(res.getString(R.string.realtime), res.getDrawable(R.drawable.icon_realtime))
-				.setContent(new Intent().setClass(this, RealtimeActivity.class));
-		tabHost.addTab(tabSpec);
-		tabSpec = tabHost.newTabSpec("forecast")
-				.setIndicator(res.getString(R.string.forecast), res.getDrawable(R.drawable.icon_forecast))
-				.setContent(new Intent().setClass(this, ForecastActivity.class));
-		tabHost.addTab(tabSpec);
-		tabSpec = tabHost.newTabSpec("trend")
-				.setIndicator(res.getString(R.string.trend), res.getDrawable(R.drawable.icon_trend))
-				.setContent(new Intent().setClass(this, TrendActivity.class));
-		tabHost.addTab(tabSpec);
-		tabSpec = tabHost.newTabSpec("aqi")
-				.setIndicator(res.getString(R.string.AQI_title), res.getDrawable(R.drawable.icon_trend))
-				.setContent(new Intent().setClass(this, AQIActivity.class));
-		tabHost.addTab(tabSpec);
-		// tabSpec = tabHost.newTabSpec("setting")
-		// .setIndicator(res.getString(R.string.setting), res.getDrawable(R.drawable.icon_setting))
-		// .setContent(new Intent().setClass(this, SettingActivity.class));
-		// tabHost.addTab(tabSpec);
-		tabHost.setCurrentTab(0);
+		final String[] tags = new String[] { "realtime", "forecast", "trend", "aqi" };
+		final int[] labels = new int[] { R.string.realtime, R.string.forecast, R.string.trend, R.string.AQI_title };
+		final Class<?>[] tagets = new Class<?>[] { RealtimeActivity.class, ForecastActivity.class, TrendActivity.class,
+				AQIActivity.class };
+		final Resources res = getResources();
+		final LayoutInflater inflater = LayoutInflater.from(this);
+		final int defaultTab = 0;
+		for (int i = 0, size = tags.length; i < size; i++) {
+			View tab = inflater.inflate(R.layout.main_tab_indicator, getTabWidget(), false);
+			TextView title = (TextView) tab.findViewById(android.R.id.title);
+			title.setText(res.getString(labels[i]));
+			if (i == defaultTab) {
+				title.setTextColor(res.getColor(R.color.main_tab_selected));
+			}
+			TabHost.TabSpec tabSpec = tabHost.newTabSpec(tags[i]).setIndicator(tab)
+					.setContent(new Intent().setClass(this, tagets[i]));
+			tabHost.addTab(tabSpec);
+		}
+		tabHost.setCurrentTab(defaultTab);
 		tabHost.setOnTabChangedListener(new WeatherTabChangeListener());
 		// init city
 		cityView = (TextView) findViewById(R.id.city);
@@ -162,6 +165,15 @@ public class WeathermanActivity extends TabActivity {
 
 		@Override
 		public void onTabChanged(String tabId) {
+			// 切换背景色
+			Resources res = getResources();
+			for (int i = 0, size = tabHost.getTabWidget().getChildCount(), current = tabHost.getCurrentTab(); i < size; i++) {
+				final View tab = tabHost.getTabWidget().getChildTabViewAt(i);
+				final TextView title = (TextView) tab.findViewById(android.R.id.title);
+				final int color = i != current ? R.color.main_tab_default : R.color.main_tab_selected;
+				title.setTextColor(res.getColor(color));
+			}
+			// 统计各个Tab点击情况
 			String tabName = null;
 			if (tabId == null || tabId.length() == 0) {
 				tabName = "unknown";
@@ -176,10 +188,8 @@ public class WeathermanActivity extends TabActivity {
 			} else {
 				tabName = "unknown";
 			}
-			// 统计各个Tab点击情况
 			StatService.onEvent(WeathermanActivity.this, "tabs", tabName, 1);
 		}
-
 	}
 
 	class CityPromptClickListener implements OnClickListener {
@@ -244,7 +254,8 @@ public class WeathermanActivity extends TabActivity {
 				resetCity(c1, c2, c3);
 				this.stopLocation(); // 停止定时定位
 			} else {
-				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.location_failed));
+				ToastService
+						.toastLong(getApplicationContext(), getResources().getString(R.string.city_location_failed));
 				if (count > maxLocationTimes) {
 					this.stopLocation();
 				}

@@ -159,7 +159,7 @@ public class AQIActivity extends Activity {
 				TextView view = (TextView) findViewById(R.id.updateTime);
 				String time = aqi.getTime();
 				if (time != null && time.length() > 0) {
-					view.setText(time + "更新");
+					view.setText("AQI指标，" + time + "更新");
 				} else {
 					view.setText("--");
 				}
@@ -174,6 +174,9 @@ public class AQIActivity extends Activity {
 				} else {
 					view.setText("--");
 				}
+			} else {
+				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.AQI_request_failed));
+				Log.e(tag, "can't get AQI");
 			}
 			// dataSet
 			XYMultipleSeriesDataset dataSet = new XYMultipleSeriesDataset();

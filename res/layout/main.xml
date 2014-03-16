@@ -10,60 +10,26 @@
         android:orientation="vertical"
         android:padding="0dp" >
 
-        <TabWidget
-            android:id="@android:id/tabs"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="0dp" />
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal"
-            android:padding="3dp" >
-
-            <TextView
-                android:id="@+id/city"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#99CC33"
-                android:textSize="28sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/cityPrompt"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:layout_toRightOf="@+id/city"
-                android:contentDescription="@string/city_prompt"
-                android:src="@drawable/addr_icon" />
-
-            <TextView
-                android:id="@+id/cityHint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/cityPrompt"
-                android:text="@string/city_hint"
-                android:textColor="#708090"
-                android:textSize="12sp" />
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:max="100" />
-        </RelativeLayout>
-
         <FrameLayout
             android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_marginTop="3dp"
+            android:layout_weight="1"
+            android:padding="0dp" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#F5F5F5" />
+
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="35dp"
+            android:layout_marginBottom="0dp"
+            android:layout_weight="0"
+            android:background="@android:color/white"
             android:padding="0dp" />
     </LinearLayout>
 

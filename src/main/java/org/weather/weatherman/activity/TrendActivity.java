@@ -132,7 +132,7 @@ public class TrendActivity extends Activity {
 			if (forecast != null) {
 				// update time
 				TextView uptimeView = (TextView) findViewById(R.id.updateTime);
-				uptimeView.setText(forecast.getTime() + "更新");
+				uptimeView.setText("气温趋势，" + forecast.getTime() + "更新");
 				for (int i = 0; i < forecast.getForecastSize(); i++) {
 					double x = i;
 					// date

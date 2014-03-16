@@ -61,9 +61,10 @@ public class RealtimeActivity extends Activity {
 	public void refreshData() {
 		String city = (app.getCity() != null ? app.getCity().getId() : null);
 		new RealtimeTask().execute(city);
+		new AQITask().execute(city);
 	}
 
-	class RealtimeTask extends AsyncTask<String, Integer, Boolean> {
+	class RealtimeTask extends AsyncTask<String, Integer, Weather.RealtimeWeather> {
 
 		@Override
 		protected void onPreExecute() {
@@ -80,30 +81,22 @@ public class RealtimeActivity extends Activity {
 			// humidity
 			view = (TextView) findViewById(R.id.humidity);
 			view.setText("--");
-			// AQI
-			view = (TextView) findViewById(R.id.AQI);
-			view.setText("--");
 			// living index
 			TableLayout layout = (TableLayout) view.getParent().getParent();
 			layout.removeViews(5, layout.getChildCount() - 5);
 		}
 
-		private Weather.RealtimeWeather realtime;
-		private Weather.AirQualityIndex aqi;
-
 		@Override
-		protected Boolean doInBackground(String... params) {
+		protected Weather.RealtimeWeather doInBackground(String... params) {
 			onProgressUpdate(0);
 			String city = (params != null && params.length > 0 ? params[0] : null);
 			if (city == null || city.length() == 0) {
-				return false;
+				return null;
 			}
 			onProgressUpdate(20);
-			realtime = weatherService.findRealtimeWeather(city);
-			onProgressUpdate(40);
-			aqi = weatherService.findAirQualityIndex(city);
+			Weather.RealtimeWeather realtime = weatherService.findRealtimeWeather(city);
 			onProgressUpdate(60);
-			return true;
+			return realtime;
 		}
 
 		@Override
@@ -121,15 +114,14 @@ public class RealtimeActivity extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(Boolean result) {
+		protected void onPostExecute(Weather.RealtimeWeather realtime) {
 			this.onPreExecute();
-			super.onPostExecute(result);
+			super.onPostExecute(realtime);
 			onProgressUpdate(80);
-			boolean isOk = true;
 			if (realtime != null) {
 				// updateTime
 				TextView view = (TextView) findViewById(R.id.updateTime);
-				view.setText(realtime.getTime() + "更新");
+				view.setText("天气实况，" + realtime.getTime() + "更新");
 				// temperature
 				view = (TextView) findViewById(R.id.temperatue);
 				view.setText(realtime.getTemperature());
@@ -152,10 +144,35 @@ public class RealtimeActivity extends Activity {
 					layout.addView(row);
 				}
 			} else {
-				isOk = false;
+				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
 				Log.e(tag, "can't get realtime weather");
 			}
-			// aqi
+			onProgressUpdate(100);
+		}
+	}
+
+	class AQITask extends AsyncTask<String, Integer, Weather.AirQualityIndex> {
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			TextView view = (TextView) findViewById(R.id.AQI);
+			view.setText("--");
+		}
+
+		@Override
+		protected Weather.AirQualityIndex doInBackground(String... params) {
+			String city = (params != null && params.length > 0 ? params[0] : null);
+			if (city == null || city.length() == 0) {
+				return null;
+			}
+			return weatherService.findAirQualityIndex(city);
+		}
+
+		@Override
+		protected void onPostExecute(Weather.AirQualityIndex aqi) {
+			this.onPreExecute();
+			super.onPostExecute(aqi);
 			if (aqi != null) {
 				TextView view = (TextView) findViewById(R.id.AQI);
 				int value = aqi.getCurrentAQI();
@@ -168,13 +185,9 @@ public class RealtimeActivity extends Activity {
 					view.setText("--");
 				}
 			} else {
-				// isOk = false;
+				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.AQI_request_failed));
 				Log.e(tag, "can't get AQI");
 			}
-			if (!isOk) {
-				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
-			}
-			onProgressUpdate(100);
 		}
 	}
 
