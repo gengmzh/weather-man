@@ -47,7 +47,7 @@
     <string name="city_prompt">请选择所在城市</string>
     <string name="city_save">保存</string>
     <string name="city_cancel">取消</string>
-    <string name="city_location_failed">自动定位当前地址失败，请手动切换城市</string>
+    <string name="city_location_failed">自动定位失败，请手动切换城市</string>
     
     <!-- setting -->
     <string name="setting">设置</string>
