@@ -15,8 +15,7 @@ import cn.seddat.weatherman.content.Weather;
  */
 public class WeathermanApplication extends Application {
 
-	public static final String DOMOB_PUBLISHER_ID = "56OJz+douM3frcHll+";
-
+	// public static final String DOMOB_PUBLISHER_ID = "56OJz+douM3frcHll+";
 	private City city;
 
 	@Override
