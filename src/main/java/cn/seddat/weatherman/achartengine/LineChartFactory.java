@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.weather.weatherman.achartengine;
+package cn.seddat.weatherman.achartengine;
 
 import org.achartengine.GraphicalView;
 import org.achartengine.chart.XYChart;

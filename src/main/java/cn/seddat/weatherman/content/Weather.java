@@ -1,12 +1,11 @@
-package org.weather.weatherman.content;
+package cn.seddat.weatherman.content;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.weather.weatherman.R;
-
 import android.provider.BaseColumns;
+import cn.seddat.weatherman.R;
 
 public final class Weather {
 

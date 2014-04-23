@@ -1,4 +1,4 @@
-package org.weather.weatherman.content;
+package cn.seddat.weatherman.content;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,10 +8,10 @@ import android.provider.BaseColumns;
 
 public class DatabaseSupport extends SQLiteOpenHelper {
 
-	public static final String DBNAME = "org.weather.weatherman.db";
-	public static final int DBVERSION = 183;
+	public static final String DBNAME = "cn.seddat.weatherman.db";
+	public static final int DBVERSION = 200;
 
-	public static final String AUTHORITY = "org.weather.weatherman.provider";
+	public static final String AUTHORITY = "cn.seddat.weatherman.provider";
 	public static final String PATH_CONTENT = "content", PATH_CITY = "city";
 
 	/**

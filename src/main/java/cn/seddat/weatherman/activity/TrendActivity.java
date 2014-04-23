@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.weather.weatherman.activity;
+package cn.seddat.weatherman.activity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,12 +11,6 @@ import org.achartengine.chart.PointStyle;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
-import org.weather.weatherman.R;
-import org.weather.weatherman.WeatherApplication;
-import org.weather.weatherman.achartengine.LineChartFactory;
-import org.weather.weatherman.achartengine.MyXYSeries;
-import org.weather.weatherman.content.Weather;
-import org.weather.weatherman.content.WeatherService;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -29,6 +23,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import cn.seddat.weatherman.R;
+import cn.seddat.weatherman.WeathermanApplication;
+import cn.seddat.weatherman.achartengine.LineChartFactory;
+import cn.seddat.weatherman.achartengine.MyXYSeries;
+import cn.seddat.weatherman.content.Weather;
+import cn.seddat.weatherman.content.WeatherService;
 
 import com.baidu.mobstat.StatService;
 
@@ -40,7 +40,7 @@ public class TrendActivity extends Activity {
 
 	private static final String tag = TrendTask.class.getSimpleName();
 
-	private WeatherApplication app;
+	private WeathermanApplication app;
 	private WeatherService weatherService;
 
 	private LinearLayout layout;
@@ -50,7 +50,7 @@ public class TrendActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.trend);
-		app = (WeatherApplication) getApplication();
+		app = (WeathermanApplication) getApplication();
 		weatherService = new WeatherService(this);
 		layout = (LinearLayout) findViewById(R.id.trendContainer);
 		res = getResources();

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.weather.weatherman;
+package cn.seddat.weatherman;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

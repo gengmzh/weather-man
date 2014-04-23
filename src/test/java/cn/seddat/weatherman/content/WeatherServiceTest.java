@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.weather.weatherman.content;
+package cn.seddat.weatherman.content;
 
 import junit.framework.Assert;
 import android.test.AndroidTestCase;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.weather.weatherman.content;
+package cn.seddat.weatherman.content;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

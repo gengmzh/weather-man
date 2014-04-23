@@ -1,4 +1,4 @@
-package org.weather.weatherman.content;
+package cn.seddat.weatherman.content;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -78,7 +78,7 @@ public class WeatherContentProvider extends ContentProvider {
 		BufferedReader reader = null;
 		try {
 			InputStream ins = SettingService.class.getClassLoader().getResourceAsStream(
-					"org/weather/weatherman/content/city.properties");
+					"cn/seddat/weatherman/content/city.properties");
 			reader = new BufferedReader(new InputStreamReader(ins));
 			City c1 = null, c2 = null;
 			String line = null;

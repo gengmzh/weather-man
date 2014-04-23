@@ -1,4 +1,4 @@
-package org.weather.weatherman.activity;
+package cn.seddat.weatherman.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

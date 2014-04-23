@@ -1,20 +1,19 @@
 /**
  * 
  */
-package org.weather.weatherman;
-
-import org.weather.weatherman.content.SettingService;
-import org.weather.weatherman.content.Weather;
+package cn.seddat.weatherman;
 
 import android.app.Application;
 import cn.seddat.weatherman.api.city.City;
+import cn.seddat.weatherman.content.SettingService;
+import cn.seddat.weatherman.content.Weather;
 
 /**
  * @since 2012-5-18
  * @author gmz
  * 
  */
-public class WeatherApplication extends Application {
+public class WeathermanApplication extends Application {
 
 	public static final String DOMOB_PUBLISHER_ID = "56OJz+douM3frcHll+";
 

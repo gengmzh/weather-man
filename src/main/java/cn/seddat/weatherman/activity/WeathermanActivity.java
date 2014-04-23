@@ -1,10 +1,6 @@
-package org.weather.weatherman.activity;
+package cn.seddat.weatherman.activity;
 
 import java.util.List;
-
-import org.weather.weatherman.R;
-import org.weather.weatherman.WeatherApplication;
-import org.weather.weatherman.content.SettingService;
 
 import android.app.Activity;
 import android.app.TabActivity;
@@ -25,7 +21,10 @@ import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.seddat.weatherman.R;
+import cn.seddat.weatherman.WeathermanApplication;
 import cn.seddat.weatherman.api.city.City;
+import cn.seddat.weatherman.content.SettingService;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -36,7 +35,7 @@ import com.baidu.mobstat.StatService;
 public class WeathermanActivity extends TabActivity {
 
 	private static final String tag = WeathermanActivity.class.getSimpleName();
-	private WeatherApplication app;
+	private WeathermanApplication app;
 	private String appName;
 
 	private SettingService settingService;
@@ -52,7 +51,7 @@ public class WeathermanActivity extends TabActivity {
 		this.setContentView(R.layout.main);
 		this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.main_title);
 		// title
-		app = (WeatherApplication) getApplication();
+		app = (WeathermanApplication) getApplication();
 		appName = getApplicationInfo().loadLabel(getPackageManager()).toString();
 		settingService = new SettingService(this);
 		// 百度移动统计

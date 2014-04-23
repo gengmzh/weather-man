@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.weather.weatherman.activity;
+package cn.seddat.weatherman.activity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,13 +10,6 @@ import org.achartengine.GraphicalView;
 import org.achartengine.chart.PointStyle;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
-import org.weather.weatherman.R;
-import org.weather.weatherman.WeatherApplication;
-import org.weather.weatherman.achartengine.LineChartFactory;
-import org.weather.weatherman.achartengine.MyXYSeries;
-import org.weather.weatherman.achartengine.MyXYSeriesRenderer;
-import org.weather.weatherman.content.Weather;
-import org.weather.weatherman.content.WeatherService;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -30,6 +23,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import cn.seddat.weatherman.R;
+import cn.seddat.weatherman.WeathermanApplication;
+import cn.seddat.weatherman.achartengine.LineChartFactory;
+import cn.seddat.weatherman.achartengine.MyXYSeries;
+import cn.seddat.weatherman.achartengine.MyXYSeriesRenderer;
+import cn.seddat.weatherman.content.Weather;
+import cn.seddat.weatherman.content.WeatherService;
 
 import com.baidu.mobstat.StatService;
 
@@ -41,7 +41,7 @@ public class AQIActivity extends Activity {
 
 	private static final String tag = AQITask.class.getSimpleName();
 
-	private WeatherApplication app;
+	private WeathermanApplication app;
 	private WeatherService weatherService;
 
 	private LinearLayout container;
@@ -52,7 +52,7 @@ public class AQIActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.aqi);
-		app = (WeatherApplication) getApplication();
+		app = (WeathermanApplication) getApplication();
 		weatherService = new WeatherService(this);
 		container = (LinearLayout) findViewById(R.id.aqiContainer);
 		resources = getResources();

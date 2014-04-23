@@ -1,9 +1,4 @@
-package org.weather.weatherman.activity;
-
-import org.weather.weatherman.R;
-import org.weather.weatherman.WeatherApplication;
-import org.weather.weatherman.content.Weather;
-import org.weather.weatherman.content.WeatherService;
+package cn.seddat.weatherman.activity;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -14,6 +9,10 @@ import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import cn.seddat.weatherman.R;
+import cn.seddat.weatherman.WeathermanApplication;
+import cn.seddat.weatherman.content.Weather;
+import cn.seddat.weatherman.content.WeatherService;
 
 import com.baidu.mobstat.StatService;
 
@@ -26,14 +25,14 @@ public class ForecastActivity extends Activity {
 
 	private static final String tag = ForecastTask.class.getSimpleName();
 
-	private WeatherApplication app;
+	private WeathermanApplication app;
 	private WeatherService weatherService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.forecast);
-		app = (WeatherApplication) getApplication();
+		app = (WeathermanApplication) getApplication();
 		weatherService = new WeatherService(this);
 	}
 

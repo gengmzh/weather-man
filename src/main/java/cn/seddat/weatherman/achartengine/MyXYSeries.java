@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.weather.weatherman.achartengine;
+package cn.seddat.weatherman.achartengine;
 
 import java.util.HashMap;
 import java.util.Map;

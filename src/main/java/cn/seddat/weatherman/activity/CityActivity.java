@@ -1,12 +1,9 @@
 /**
  * 
  */
-package org.weather.weatherman.activity;
+package cn.seddat.weatherman.activity;
 
 import java.util.List;
-
-import org.weather.weatherman.R;
-import org.weather.weatherman.content.SettingService;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,7 +15,9 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import cn.seddat.weatherman.R;
 import cn.seddat.weatherman.api.city.City;
+import cn.seddat.weatherman.content.SettingService;
 
 import com.baidu.mobstat.StatService;
 
