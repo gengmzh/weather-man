@@ -152,7 +152,7 @@ public class TrendActivity extends Activity {
 					}
 				}
 			} else {
-				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
+				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.fc_request_failed));
 				Log.e(tag, "can't get forecast weather");
 			}
 			dataSet.addSeries(daySeries);

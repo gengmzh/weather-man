@@ -200,7 +200,7 @@ public class AQIActivity extends Activity {
 					aqiSeries.add(x, y);
 				}
 			} else {
-				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
+				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.AQI_request_failed));
 				Log.e(tag, "can't get AQI");
 			}
 			dataSet.addSeries(aqiSeries);

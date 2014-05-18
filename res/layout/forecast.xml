@@ -2,32 +2,71 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:textSize="20sp" >
+
+    <TextView
+        android:id="@+id/updateTime"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="3dp" />
+
+    <TableLayout
+        android:id="@+id/rt_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/updateTime"
+        android:layout_margin="3dp"
+        android:shrinkColumns="1"
+        android:stretchColumns="1" >
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="当前实况：" />
+
+            <TextView
+                android:id="@+id/rt_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="空气质量：" />
+
+            <TextView
+                android:id="@+id/rt_aqi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+    </TableLayout>
+
+    <GridView
+        android:id="@+id/fc_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rt_container"
+        android:horizontalSpacing="3dp"
+        android:numColumns="3"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="vertical"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="3dp" >
+    </GridView>
 
     <RelativeLayout
-        android:id="@+id/adContainver"
+        android:id="@+id/adView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/adContainver"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/updateTime"
-            android:layout_marginBottom="5dp" />
-
-        <GridView
-            android:id="@+id/forecast_grid"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:horizontalSpacing="5dp"
-            android:numColumns="3"
-            android:verticalSpacing="5dp" >
-        </GridView>
-    </LinearLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/fc_container"
+        android:layout_margin="3dp" />
 
 </RelativeLayout>

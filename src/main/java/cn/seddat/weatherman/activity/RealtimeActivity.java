@@ -29,13 +29,6 @@ public class RealtimeActivity extends Activity {
 		setContentView(R.layout.realtime);
 		app = (WeathermanApplication) getApplication();
 		weatherService = new WeatherService(this);
-		// domob
-		// RelativeLayout adContainer = (RelativeLayout)
-		// findViewById(R.id.adContainver);
-		// DomobAdView adView = new DomobAdView(this,
-		// WeatherApplication.DOMOB_PUBLISHER_ID,
-		// DomobAdView.INLINE_SIZE_320X50);
-		// adContainer.addView(adView);
 	}
 
 	@Override
@@ -60,7 +53,6 @@ public class RealtimeActivity extends Activity {
 	public void refreshData() {
 		String city = (app.getCity() != null ? app.getCity().getId() : null);
 		new RealtimeTask().execute(city);
-		new AQITask().execute(city);
 	}
 
 	class RealtimeTask extends AsyncTask<String, Integer, Weather.RealtimeWeather> {
@@ -71,18 +63,9 @@ public class RealtimeActivity extends Activity {
 			// updateTime
 			TextView view = (TextView) findViewById(R.id.updateTime);
 			view.setText("--");
-			// temperature
-			view = (TextView) findViewById(R.id.temperatue);
-			view.setText("--");
-			// wind
-			view = (TextView) findViewById(R.id.wind);
-			view.setText("--");
-			// humidity
-			view = (TextView) findViewById(R.id.humidity);
-			view.setText("--");
-			// living index
-			TableLayout layout = (TableLayout) view.getParent().getParent();
-			layout.removeViews(5, layout.getChildCount() - 5);
+			// index
+			TableLayout table = (TableLayout) findViewById(R.id.rt_index);
+			table.removeAllViews();
 		}
 
 		@Override
@@ -120,73 +103,24 @@ public class RealtimeActivity extends Activity {
 			if (realtime != null) {
 				// updateTime
 				TextView view = (TextView) findViewById(R.id.updateTime);
-				view.setText("天气实况，" + realtime.getTime() + "更新");
-				// temperature
-				view = (TextView) findViewById(R.id.temperatue);
-				view.setText(realtime.getTemperature());
-				// wind
-				view = (TextView) findViewById(R.id.wind);
-				view.setText(realtime.getWindDirection() + "，" + realtime.getWindForce());
-				// humidity
-				view = (TextView) findViewById(R.id.humidity);
-				view.setText("湿度" + realtime.getHumidity());
-				// living index
-				TableLayout layout = (TableLayout) view.getParent().getParent();
+				view.setText("生活指数，" + realtime.getTime() + "更新");
+				// index
+				TableLayout table = (TableLayout) findViewById(R.id.rt_index);
 				for (int i = 0; i < realtime.getIndexSize(); i++) {
-					TableRow row = new TableRow(layout.getContext());
-					view = new TextView(layout.getContext());
+					TableRow row = new TableRow(table.getContext());
+					view = new TextView(table.getContext());
 					view.setText(realtime.getIndexName(i) + "：");
 					row.addView(view);
-					view = new TextView(layout.getContext());
+					view = new TextView(table.getContext());
 					view.setText(realtime.getIndexValue(i) + "。" + realtime.getIndexDesc(i));
 					row.addView(view);
-					layout.addView(row);
+					table.addView(row);
 				}
 			} else {
-				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.connect_failed));
+				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.rt_request_failed));
 				Log.e(tag, "can't get realtime weather");
 			}
 			onProgressUpdate(100);
-		}
-	}
-
-	class AQITask extends AsyncTask<String, Integer, Weather.AirQualityIndex> {
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			TextView view = (TextView) findViewById(R.id.AQI);
-			view.setText("--");
-		}
-
-		@Override
-		protected Weather.AirQualityIndex doInBackground(String... params) {
-			String city = (params != null && params.length > 0 ? params[0] : null);
-			if (city == null || city.length() == 0) {
-				return null;
-			}
-			return weatherService.findAirQualityIndex(city);
-		}
-
-		@Override
-		protected void onPostExecute(Weather.AirQualityIndex aqi) {
-			this.onPreExecute();
-			super.onPostExecute(aqi);
-			if (aqi != null) {
-				TextView view = (TextView) findViewById(R.id.AQI);
-				int value = aqi.getCurrentAQI();
-				if (value >= 0) {
-					String text = "指数" + value + "，" + Weather.AirQualityIndex.getAQITitle(value);
-					view.setText(text);
-					int color = getResources().getColor(Weather.AirQualityIndex.getAQIColor(value));
-					view.setTextColor(color);
-				} else {
-					view.setText("--");
-				}
-			} else {
-				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.AQI_request_failed));
-				Log.e(tag, "can't get AQI");
-			}
 		}
 	}
 

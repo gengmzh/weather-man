@@ -2,74 +2,40 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:textSize="20sp" >
 
-    <RelativeLayout
-        android:id="@+id/adContainver"
+    <TextView
+        android:id="@+id/updateTime"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentTop="true"
+        android:layout_margin="3dp" />
 
     <ScrollView
+        android:id="@+id/rt_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@id/adContainver"
+        android:layout_below="@id/updateTime"
+        android:layout_margin="3dp"
         android:fadingEdge="vertical"
         android:scrollbars="vertical" >
 
         <TableLayout
+            android:id="@+id/rt_index"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="3dp"
             android:shrinkColumns="1"
-            android:stretchColumns="*"
-            android:textSize="20sp" >
-
-            <TableRow>
-
-                <TextView
-                    android:id="@+id/updateTime"
-                    android:layout_marginBottom="5dp"
-                    android:layout_span="2" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    android:id="@+id/temperatue"
-                    android:layout_span="2"
-                    android:textColor="#87CEFA" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    android:id="@+id/wind"
-                    android:layout_span="2"
-                    android:textColor="#8FBC8F" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    android:id="@+id/humidity"
-                    android:layout_marginBottom="5dp"
-                    android:layout_span="2"
-                    android:textColor="#5F9EA0" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView android:text="空气质量：" />
-
-                <TextView
-                    android:id="@+id/AQI"
-                    android:textColor="@color/AQI_perfect" />
-            </TableRow>
-
-            <!-- living index -->
-
-        </TableLayout>
+            android:stretchColumns="*" />
     </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/adView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/rt_container"
+        android:layout_margin="3dp" />
 
 </RelativeLayout>
