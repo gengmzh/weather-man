@@ -197,6 +197,7 @@ public final class Weather {
 			names.put("yh", "约会指数");
 			names.put("ls", "晾晒指数");
 			names.put("fs", "防晒指数");
+			names.put("gl", "太阳镜");
 			return names.containsKey(key) ? names.get(key) : key;
 		}
 
@@ -291,7 +292,7 @@ public final class Weather {
 		}
 
 		/**
-		 * 获取预报信息的时间，返回“2014.02.24 白天/夜间”格式
+		 * 获取预报信息的时间，返回“2014.02.24”格式
 		 * 
 		 * @author gengmaozhang01
 		 * @since 2014-2-24 下午11:25:46
@@ -300,7 +301,7 @@ public final class Weather {
 			List<Map<String, String>> forecast = this.getForecast();
 			if (forecast != null && index < forecast.size()) {
 				Map<String, String> weather = forecast.get(index);
-				return weather.get("time") + " " + weather.get("half");
+				return weather.get("time");
 			}
 			return null;
 		}

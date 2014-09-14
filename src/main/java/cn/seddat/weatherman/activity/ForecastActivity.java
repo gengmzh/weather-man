@@ -21,8 +21,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import cn.domob.android.ads.DomobAdEventListener;
+import cn.domob.android.ads.DomobAdView;
+import cn.domob.android.ads.DomobAdManager.ErrorCode;
 import cn.seddat.weatherman.R;
 import cn.seddat.weatherman.WeathermanApplication;
 import cn.seddat.weatherman.content.Weather;
@@ -65,6 +69,61 @@ public class ForecastActivity extends Activity {
 				view.setBackgroundColor(colorSelected);
 			}
 		});
+		// ad
+		RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.ad_container);
+		DomobAdView adView = new DomobAdView(this, WeathermanApplication.DOMOB_PUBLISHER_ID,
+				WeathermanApplication.DOMOB_PPID_MAIN, DomobAdView.INLINE_SIZE_FLEXIBLE, true);
+		adView.setAdEventListener(new MainAdEventListener());
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
+		params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		adView.setLayoutParams(params);
+		adContainer.addView(adView);
+	}
+
+	class MainAdEventListener implements DomobAdEventListener {
+
+		@Override
+		public void onDomobAdReturned(DomobAdView arg0) {// 请求广告成功返回
+			StatService.onEvent(ForecastActivity.this, "ad", "returned", 1);
+			Log.i(tag, "ad returned");
+		}
+
+		@Override
+		public void onDomobAdFailed(DomobAdView arg0, ErrorCode arg1) { // 请求广告失败
+			StatService.onEvent(ForecastActivity.this, "ad", "failed", 1);
+			Log.i(tag, "ad failed");
+		}
+
+		@Override
+		public void onDomobAdOverlayPresented(DomobAdView arg0) {// Loading Page成功
+			StatService.onEvent(ForecastActivity.this, "ad", "overlayPresented", 1);
+			Log.i(tag, "ad overlay presented");
+		}
+
+		@Override
+		public void onDomobAdOverlayDismissed(DomobAdView arg0) {// Loading Page关闭
+			StatService.onEvent(ForecastActivity.this, "ad", "overlayDismissed", 1);
+			Log.i(tag, "ad overlay dismissed");
+		}
+
+		@Override
+		public void onDomobAdClicked(DomobAdView arg0) {
+			StatService.onEvent(ForecastActivity.this, "ad", "clicked", 1);
+			Log.i(tag, "ad clicked");
+		}
+
+		@Override
+		public void onDomobLeaveApplication(DomobAdView arg0) {
+			StatService.onEvent(ForecastActivity.this, "ad", "leaveApplication", 1);
+			Log.i(tag, "leave application");
+		}
+
+		@Override
+		public Context onDomobAdRequiresCurrentContext() {
+			return ForecastActivity.this;
+		}
+
 	}
 
 	@Override
@@ -224,12 +283,12 @@ public class ForecastActivity extends Activity {
 		@Override
 		protected Weather.ForecastWeather doInBackground(String... params) {
 			onProgressUpdate(0);
-			String city = (params != null && params.length > 0 ? params[0] : null);
-			if (city == null || city.length() == 0) {
+			String citycode = (params != null && params.length > 0 ? params[0] : null);
+			if (citycode == null || citycode.length() == 0) {
 				return null;
 			}
 			onProgressUpdate(20);
-			Weather.ForecastWeather forecast = weatherService.findForecastWeather(city);
+			Weather.ForecastWeather forecast = weatherService.findForecastWeather(citycode);
 			onProgressUpdate(60);
 			return forecast;
 		}
@@ -258,20 +317,22 @@ public class ForecastActivity extends Activity {
 				ForecastActivity.this.setUpdateTime(forecast.getTime());
 				// add weather
 				List<ForecastData> datas = new ArrayList<ForecastData>();
-				ForecastData item = null;
 				for (int i = 0; i < forecast.getForecastSize(); i++) {
+					ForecastData item = new ForecastData();
+					datas.add(item);
+					// 日期
 					String date = forecast.getForecastTime(i);
-					if (item != null && item.isSameDay(date)) {
-						item.setTemperature(item.getTemperature(), forecast.getForecastTemperature(i));
-						item.setWeather(item.getWeather(), forecast.getForecastWeather(i));
-						// item.setWind(wind, force);
-					} else {
-						item = new ForecastData();
-						item.setDate(date).setTemperature(forecast.getForecastTemperature(i), null)
-								.setWeather(forecast.getForecastWeather(i), null)
-								.setWind(forecast.getForecastWind(i), forecast.getForecastWindForce(i));
-						datas.add(item);
+					item.setDate(date);
+					// 温度
+					String temp = forecast.getForecastTemperature(i);
+					if (temp != null && temp.length() > 0) {
+						String[] temps = temp.split("~");
+						item.setTemperature(temps[0], temps.length > 1 ? temps[1] : null);
 					}
+					// 天气
+					item.setWeather(forecast.getForecastWeather(i), null);
+					// 风力、风向
+					item.setWind(forecast.getForecastWind(i), forecast.getForecastWindForce(i));
 				}
 				ForecastAdapter adapter = new ForecastAdapter(ForecastActivity.this, datas, R.layout.forecast_item,
 						new String[] { ForecastData.KEY_DATE, ForecastData.KEY_TEMPERATURE, ForecastData.KEY_WEATHER,
