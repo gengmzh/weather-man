@@ -20,53 +20,54 @@
         android:layout_margin="3dp"
         android:shrinkColumns="1"
         android:stretchColumns="1" >
-
         <TableRow>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="当前实况：" />
-
-            <TextView
-                android:id="@+id/rt_weather"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="空气质量：" />
-
+                android:text="@string/rt_aqi" />
             <TextView
                 android:id="@+id/rt_aqi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/rt_weather" />
+            <TextView
+                android:id="@+id/rt_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fc_today" />
+            <TextView
+                android:id="@+id/fc_today"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
     </TableLayout>
 
-    <GridView
+    <TableLayout
         android:id="@+id/fc_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/rt_container"
-        android:horizontalSpacing="3dp"
-        android:numColumns="3"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
-        android:scrollbars="vertical"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="3dp" >
-    </GridView>
-	
+        android:layout_margin="2dp"
+        android:shrinkColumns="*"
+        android:stretchColumns="*" />
+
     <RelativeLayout
         android:id="@+id/ad_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_below="@id/fc_container"
-        android:layout_margin="3dp" />
+        android:layout_margin="3dp"
+        android:gravity="bottom" />
 
 </RelativeLayout>

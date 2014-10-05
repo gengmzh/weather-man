@@ -1,32 +1,26 @@
 package cn.seddat.weatherman.activity;
 
-import java.lang.reflect.Field;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import cn.domob.android.ads.DomobAdEventListener;
-import cn.domob.android.ads.DomobAdView;
 import cn.domob.android.ads.DomobAdManager.ErrorCode;
+import cn.domob.android.ads.DomobAdView;
 import cn.seddat.weatherman.R;
 import cn.seddat.weatherman.WeathermanApplication;
 import cn.seddat.weatherman.content.Weather;
@@ -45,7 +39,6 @@ public class ForecastActivity extends Activity {
 
 	private WeathermanApplication app;
 	private WeatherService weatherService;
-	private GridView gridView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,22 +46,6 @@ public class ForecastActivity extends Activity {
 		setContentView(R.layout.forecast);
 		app = (WeathermanApplication) getApplication();
 		weatherService = new WeatherService(this);
-		// grid
-		gridView = (GridView) findViewById(R.id.fc_container);
-		gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			private int colorDefault = getResources().getColor(R.color.fc_grid_item_default);
-			private int colorSelected = getResources().getColor(R.color.fc_grid_item_selected);
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				for (int i = 0; i < parent.getChildCount(); i++) {
-					if (i != position) {
-						parent.getChildAt(i).setBackgroundColor(colorDefault);
-					}
-				}
-				view.setBackgroundColor(colorSelected);
-			}
-		});
 		// ad
 		RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.ad_container);
 		DomobAdView adView = new DomobAdView(this, WeathermanApplication.DOMOB_PUBLISHER_ID,
@@ -268,16 +245,15 @@ public class ForecastActivity extends Activity {
 
 	class ForecastTask extends AsyncTask<String, Integer, Weather.ForecastWeather> {
 
-		public ForecastTask() {
-		}
+		private final TextView fc_today = (TextView) findViewById(R.id.fc_today);
+		private final TableLayout fc_container = (TableLayout) findViewById(R.id.fc_container);
+		private final LayoutInflater inflater = LayoutInflater.from(ForecastActivity.this);
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			// clear
-			if (gridView.getChildCount() > 0) {
-				gridView.removeViews(0, gridView.getChildCount());
-			}
+			fc_today.setText("--");
+			fc_container.removeAllViews();
 		}
 
 		@Override
@@ -312,202 +288,71 @@ public class ForecastActivity extends Activity {
 			this.onPreExecute();
 			super.onPostExecute(forecast);
 			onProgressUpdate(80);
-			if (forecast != null) {
+			if (forecast != null && forecast.getForecastSize() > 6) {
 				// update time
 				ForecastActivity.this.setUpdateTime(forecast.getTime());
-				// add weather
-				List<ForecastData> datas = new ArrayList<ForecastData>();
-				for (int i = 0; i < forecast.getForecastSize(); i++) {
-					ForecastData item = new ForecastData();
-					datas.add(item);
-					// 日期
-					String date = forecast.getForecastTime(i);
-					item.setDate(date);
-					// 温度
-					String temp = forecast.getForecastTemperature(i);
-					if (temp != null && temp.length() > 0) {
-						String[] temps = temp.split("~");
-						item.setTemperature(temps[0], temps.length > 1 ? temps[1] : null);
-					}
-					// 天气
-					item.setWeather(forecast.getForecastWeather(i), null);
-					// 风力、风向
-					item.setWind(forecast.getForecastWind(i), forecast.getForecastWindForce(i));
-				}
-				ForecastAdapter adapter = new ForecastAdapter(ForecastActivity.this, datas, R.layout.forecast_item,
-						new String[] { ForecastData.KEY_DATE, ForecastData.KEY_TEMPERATURE, ForecastData.KEY_WEATHER,
-								ForecastData.KEY_WIND }, new int[] { R.id.fc_date, R.id.fc_temperature,
-								R.id.fc_weather, R.id.fc_wind });
-				gridView.setAdapter(adapter);
+				// today weather
+				fc_today.setText(forecast.getForecastWeather(0) + "，" + forecast.getForecastTemperature(0) + "，"
+						+ forecast.getForecastWind(0) + "，" + forecast.getForecastWindForce(0));
+				// forecast weather
+				TableRow row = new TableRow(ForecastActivity.this);
+				this.addForecast(row, forecast, 1);
+				this.addForecast(row, forecast, 2);
+				this.addForecast(row, forecast, 3);
+				fc_container.addView(row);
+				row = new TableRow(ForecastActivity.this);
+				this.addForecast(row, forecast, 4);
+				this.addForecast(row, forecast, 5);
+				this.addForecast(row, forecast, 6);
+				fc_container.addView(row);
 			} else {
 				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.fc_request_failed));
 				Log.e(tag, "can't get forecast weather");
 			}
 			onProgressUpdate(100);
 		}
-	}
 
-	class ForecastData extends HashMap<String, String> {
-
-		private static final long serialVersionUID = -7768044685142672986L;
-		static final String KEY_DATE = "fc_date", KEY_TEMPERATURE = "fc_temperature", KEY_WEATHER = "fc_weather",
-				KEY_WIND = "fc_wind";
-
-		public ForecastData() {
-		}
-
-		private String date;
-
-		public String getDate() {
-			return get(KEY_DATE);
-		}
-
-		public ForecastData setDate(String date) {
-			String d = date.substring(5, 10);
-			Calendar cal = Calendar.getInstance();
+		private void addForecast(TableRow row, Weather.ForecastWeather forecast, int index) {
+			LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.forecast_item, row, false);
+			row.addView(layout);
+			// date
+			String date = forecast.getForecastTime(index);
 			try {
+				Calendar cal = Calendar.getInstance();
 				DateFormat format = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
 				cal.setTime(format.parse(date.substring(0, 10)));
 				int week = cal.get(Calendar.DAY_OF_WEEK);
+				date = date.substring(5, 10);
 				if (week == Calendar.MONDAY) {
-					d += "(一)";
+					date += "(一)";
 				} else if (week == Calendar.TUESDAY) {
-					d += "(二)";
+					date += "(二)";
 				} else if (week == Calendar.WEDNESDAY) {
-					d += "(三)";
+					date += "(三)";
 				} else if (week == Calendar.THURSDAY) {
-					d += "(四)";
+					date += "(四)";
 				} else if (week == Calendar.FRIDAY) {
-					d += "(五)";
+					date += "(五)";
 				} else if (week == Calendar.SATURDAY) {
-					d += "(六)";
+					date += "(六)";
 				} else if (week == Calendar.SUNDAY) {
-					d += "(日)";
+					date += "(日)";
 				}
-			} catch (ParseException e) {
+			} catch (Exception e) {
 				Log.e(tag, "parse date failed", e);
 			}
-			put(KEY_DATE, d);
-			this.date = date;
-			return this;
+			TextView view = (TextView) layout.findViewById(R.id.fc_date);
+			view.setText(date);
+			// temperature
+			view = (TextView) layout.findViewById(R.id.fc_temperature);
+			view.setText(forecast.getForecastTemperature(index));
+			// weather
+			view = (TextView) layout.findViewById(R.id.fc_weather);
+			view.setText(forecast.getForecastWeather(index));
+			// wind
+			view = (TextView) layout.findViewById(R.id.fc_wind);
+			view.setText(forecast.getForecastWind(index) + "，" + forecast.getForecastWindForce(index));
 		}
-
-		public boolean isSameDay(String date) {
-			if (this.date != null && date != null) {
-				return this.date.substring(0, 10).equals(date.substring(0, 10));
-			}
-			return false;
-		}
-
-		public String getTemperature() {
-			return get(KEY_TEMPERATURE);
-		}
-
-		public ForecastData setTemperature(String low, String high) {
-			String t = null;
-			if (low != null && low.length() > 0) {
-				t = low;
-				if (high != null && high.length() > 0) {
-					t = t.replace("℃", "") + " ~ " + high;
-				}
-			} else {
-				t = (high != null ? high : "");
-			}
-			put(KEY_TEMPERATURE, t);
-			return this;
-		}
-
-		public String getWeather() {
-			return get(KEY_WEATHER);
-		}
-
-		public ForecastData setWeather(String low, String high) {
-			String w = null;
-			if (low != null && low.length() > 0) {
-				if (high != null && high.length() > 0) {
-					if (low.equals(high)) {
-						w = low;
-					} else if (!low.contains("转") && !high.contains("转")) {
-						w = low + "转" + high;
-					} else {
-						w = low + "，夜间" + high;
-					}
-				} else {
-					w = low;
-				}
-			} else {
-				w = (high != null ? high : "");
-			}
-			put(KEY_WEATHER, w);
-			return this;
-		}
-
-		public String getWind() {
-			return get(KEY_WIND);
-		}
-
-		public ForecastData setWind(String wind, String force) {
-			String w = null;
-			if (wind != null && wind.length() > 0) {
-				if (!"无持续风向".equals(wind)) {
-					w = wind;
-				}
-			}
-			if (force != null && force.length() > 0) {
-				w = (w != null && w.length() > 0 ? w + "，" : "") + force;
-			}
-			put(KEY_WIND, w);
-			return this;
-		}
-
-	}
-
-	class ForecastAdapter extends SimpleAdapter {
-
-		public ForecastAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from,
-				int[] to) {
-			super(context, data, resource, from, to);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = super.getView(position, convertView, parent);
-			// height
-			GridView grid = (GridView) parent;
-			int number = this.getNumColumns(grid, 3);
-			if (number <= 0 || (position + 1) % number != 0) {
-				return view;
-			}
-			List<View> views = new ArrayList<View>();
-			views.add(view);
-			int maxHeight = view.getHeight();
-			for (int i = 1; i < number; i++) {
-				View v = grid.getChildAt(position - i);
-				maxHeight = Math.max(maxHeight, v.getHeight());
-				views.add(v);
-			}
-			for (View v : views) {
-				if (v.getHeight() < maxHeight) {
-					ViewGroup.LayoutParams params = v.getLayoutParams();
-					params.height = maxHeight;
-					v.setLayoutParams(params);
-				}
-			}
-			return view;
-		}
-
-		private int getNumColumns(GridView gridView, int defaultNumber) {
-			try {
-				Field field = GridView.class.getDeclaredField("mNumColumns");
-				field.setAccessible(true);
-				Object count = field.get(gridView);
-				return Integer.parseInt(count.toString());
-			} catch (Exception ex) {
-				Log.e(tag, "get numColumns failed", ex);
-				return defaultNumber;
-			}
-		}
-
 	}
 
 	@Override

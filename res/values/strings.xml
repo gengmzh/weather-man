@@ -19,10 +19,13 @@
     <color name="fc_grid_item_default">#87CEEB</color>
     <color name="fc_grid_item_selected">#4682B4</color>
     <string name="fc_request_failed">获取天气预报失败，请切换菜单重试</string>
+    <string name="fc_today">今日预报：</string>
     
     <!-- realtime -->
     <string name="realtime">指数</string>
     <string name="rt_request_failed">获取生活指数失败，请切换菜单重试</string>
+    <string name="rt_aqi">空气质量：</string>
+    <string name="rt_weather">当前实况：</string>
     
     <!-- trend -->
     <string name="trend">趋势</string>
