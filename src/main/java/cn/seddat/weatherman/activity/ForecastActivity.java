@@ -39,6 +39,7 @@ public class ForecastActivity extends Activity {
 
 	private WeathermanApplication app;
 	private WeatherService weatherService;
+	private DomobAdView adView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +49,8 @@ public class ForecastActivity extends Activity {
 		weatherService = new WeatherService(this);
 		// ad
 		RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.ad_container);
-		DomobAdView adView = new DomobAdView(this, WeathermanApplication.DOMOB_PUBLISHER_ID,
-				WeathermanApplication.DOMOB_PPID_MAIN, DomobAdView.INLINE_SIZE_FLEXIBLE, true);
+		adView = new DomobAdView(this, WeathermanApplication.DOMOB_PUBLISHER_ID, WeathermanApplication.DOMOB_PPID_MAIN,
+				DomobAdView.INLINE_SIZE_FLEXIBLE, true);
 		adView.setAdEventListener(new MainAdEventListener());
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
 				RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -115,6 +116,9 @@ public class ForecastActivity extends Activity {
 		progressBar.setVisibility(View.VISIBLE);
 		this.setUpdateTime("--");
 		this.refreshData();
+		if (this.adView != null) {
+			this.adView.requestRefreshAd();
+		}
 		// stats
 		StatService.onResume(this);
 	}
