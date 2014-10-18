@@ -59,10 +59,10 @@ public class WeathermanActivity extends TabActivity {
 		StatService.setLogSenderDelayed(3);// 启动后延迟3s发送统计日志
 		// tab widget
 		tabHost = getTabHost();
-		final String[] tags = new String[] { "forecast", "realtime", /* "trend", */"aqi" };
-		final int[] labels = new int[] { R.string.forecast, R.string.realtime, /* R.string.trend, */R.string.AQI_title };
-		final Class<?>[] tagets = new Class<?>[] { ForecastActivity.class, RealtimeActivity.class,
-		/* TrendActivity.class, */AQIActivity.class };
+		final String[] tags = new String[] { "forecast", /* "trend", */"aqi", "realtime" };
+		final int[] labels = new int[] { R.string.forecast, /* R.string.trend, */R.string.AQI_title, R.string.realtime };
+		final Class<?>[] tagets = new Class<?>[] { ForecastActivity.class, /* TrendActivity.class, */
+				AQIActivity.class, RealtimeActivity.class };
 		final Resources res = getResources();
 		final LayoutInflater inflater = LayoutInflater.from(this);
 		final int defaultTab = 0;
