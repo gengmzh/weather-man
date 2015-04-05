@@ -1,11 +1,15 @@
+
+# mtj
 mvn install:install-file -DgroupId=com.baidu.mobstat -DartifactId=mobstat-android-sdk -Dversion=3.4 -Dpackaging=jar -Dfile=android_api_3_4.jar -DgeneratePom=true
 
 # domob
 mvn install:install-file -DgroupId=cn.domob -DartifactId=domob-android-sdk -Dversion=4.0.0 -Dpackaging=jar -DgeneratePom=true -Dfile=domob_android_sdk-4.0.0.jar -DgeneratePom=true
 
+# achartengine
 mvn install:install-file -DgroupId=com.google.code -DartifactId=achartengine -Dversion=1.0.0 -Dpackaging=jar -DgeneratePom=true -Dfile=achartengine-1.0.0.jar -DgeneratePom=true
 
-mvn install:install-file -DgroupId=com.baidu.location -DartifactId=liblocSDK4 -Dversion=4 -Dfile=liblocSDK4.so -Dpackaging=so -DgeneratePom=true -Dclassifier=armeabi
+# map
+# mvn install:install-file -DgroupId=com.baidu.location -DartifactId=liblocSDK4 -Dversion=4 -Dfile=liblocSDK4.so -Dpackaging=so -DgeneratePom=true -Dclassifier=armeabi
 mvn install:install-file -DgroupId=com.baidu.location -DartifactId=locSDK -Dversion=4.0 -Dfile=locSDK_4.0.jar -Dpackaging=jar -DgeneratePom=true
 
 
