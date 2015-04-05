@@ -59,10 +59,11 @@ public class WeathermanActivity extends TabActivity {
 		StatService.setLogSenderDelayed(3);// 启动后延迟3s发送统计日志
 		// tab widget
 		tabHost = getTabHost();
-		final String[] tags = new String[] { "forecast", /* "trend", */"aqi", "realtime" };
-		final int[] labels = new int[] { R.string.forecast, /* R.string.trend, */R.string.AQI_title, R.string.realtime };
+		final String[] tags = new String[] { "forecast", /* "trend", */"aqi"/* , "realtime" */};
+		final int[] labels = new int[] { R.string.fc_title, /* R.string.trend, */R.string.AQI_title
+		/* , R.string.realtime */};
 		final Class<?>[] tagets = new Class<?>[] { ForecastActivity.class, /* TrendActivity.class, */
-				AQIActivity.class, RealtimeActivity.class };
+		AQIActivity.class /* , RealtimeActivity.class */};
 		final Resources res = getResources();
 		final LayoutInflater inflater = LayoutInflater.from(this);
 		final int defaultTab = 0;
@@ -177,7 +178,7 @@ public class WeathermanActivity extends TabActivity {
 			if (tabId == null || tabId.length() == 0) {
 				tabName = "unknown";
 			} else if ("forecast".equalsIgnoreCase(tabId)) {
-				tabName = getResources().getString(R.string.forecast);
+				tabName = getResources().getString(R.string.fc_title);
 			} else if ("realtime".equalsIgnoreCase(tabId)) {
 				tabName = getResources().getString(R.string.realtime);
 			} else if ("trend".equalsIgnoreCase(tabId)) {

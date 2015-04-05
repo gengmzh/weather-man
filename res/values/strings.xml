@@ -15,11 +15,13 @@
     <color name="main_tab_selected">#4682B4</color>
     
     <!-- forecast -->
-    <string name="forecast">预报</string>
+    <string name="fc_title">天气预报</string>
     <color name="fc_grid_item_default">#87CEEB</color>
     <color name="fc_grid_item_selected">#4682B4</color>
     <string name="fc_request_failed">获取天气预报失败，请切换菜单重试</string>
     <string name="fc_today">今日预报：</string>
+    <string name="fc_future_forecast">未来六天预报</string>
+    <string name="fc_current_index">当前生活指数</string>
     
     <!-- realtime -->
     <string name="realtime">指数</string>
@@ -35,7 +37,7 @@
     <string name="trend_x_title">日期</string>
 	
     <!-- AQI -->
-    <string name="AQI_title">AQI</string>
+    <string name="AQI_title">空气质量</string>
     <color name="AQI_perfect">#07FD04</color>
     <color name="AQI_fine">#FFD700</color><!-- #FFFF00 -->
     <color name="AQI_smell_little">#FF7805</color>

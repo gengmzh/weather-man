@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,13 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import cn.domob.android.ads.DomobAdEventListener;
-import cn.domob.android.ads.DomobAdManager.ErrorCode;
-import cn.domob.android.ads.DomobAdView;
 import cn.seddat.weatherman.R;
 import cn.seddat.weatherman.WeathermanApplication;
 import cn.seddat.weatherman.content.Weather;
@@ -39,7 +34,8 @@ public class ForecastActivity extends Activity {
 
 	private WeathermanApplication app;
 	private WeatherService weatherService;
-	private DomobAdView adView;
+
+	// private DomobAdView adView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,61 +44,38 @@ public class ForecastActivity extends Activity {
 		app = (WeathermanApplication) getApplication();
 		weatherService = new WeatherService(this);
 		// ad
-		RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.ad_container);
-		adView = new DomobAdView(this, WeathermanApplication.DOMOB_PUBLISHER_ID, WeathermanApplication.DOMOB_PPID_MAIN,
-				DomobAdView.INLINE_SIZE_FLEXIBLE, true);
-		adView.setAdEventListener(new MainAdEventListener());
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-		adView.setLayoutParams(params);
-		adContainer.addView(adView);
+		/**
+		 * RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.ad_container); adView = new DomobAdView(this,
+		 * WeathermanApplication.DOMOB_PUBLISHER_ID, WeathermanApplication.DOMOB_PPID_MAIN,
+		 * DomobAdView.INLINE_SIZE_FLEXIBLE, true); adView.setAdEventListener(new MainAdEventListener());
+		 * RelativeLayout.LayoutParams params = new
+		 * RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+		 * RelativeLayout.LayoutParams.WRAP_CONTENT); params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		 * adView.setLayoutParams(params); adContainer.addView(adView);
+		 */
 	}
 
-	class MainAdEventListener implements DomobAdEventListener {
-
-		@Override
-		public void onDomobAdReturned(DomobAdView arg0) {// 请求广告成功返回
-			StatService.onEvent(ForecastActivity.this, "ad", "returned", 1);
-			Log.i(tag, "ad returned");
-		}
-
-		@Override
-		public void onDomobAdFailed(DomobAdView arg0, ErrorCode arg1) { // 请求广告失败
-			StatService.onEvent(ForecastActivity.this, "ad", "failed", 1);
-			Log.i(tag, "ad failed");
-		}
-
-		@Override
-		public void onDomobAdOverlayPresented(DomobAdView arg0) {// Loading Page成功
-			StatService.onEvent(ForecastActivity.this, "ad", "overlayPresented", 1);
-			Log.i(tag, "ad overlay presented");
-		}
-
-		@Override
-		public void onDomobAdOverlayDismissed(DomobAdView arg0) {// Loading Page关闭
-			StatService.onEvent(ForecastActivity.this, "ad", "overlayDismissed", 1);
-			Log.i(tag, "ad overlay dismissed");
-		}
-
-		@Override
-		public void onDomobAdClicked(DomobAdView arg0) {
-			StatService.onEvent(ForecastActivity.this, "ad", "clicked", 1);
-			Log.i(tag, "ad clicked");
-		}
-
-		@Override
-		public void onDomobLeaveApplication(DomobAdView arg0) {
-			StatService.onEvent(ForecastActivity.this, "ad", "leaveApplication", 1);
-			Log.i(tag, "leave application");
-		}
-
-		@Override
-		public Context onDomobAdRequiresCurrentContext() {
-			return ForecastActivity.this;
-		}
-
-	}
+	/**
+	 * class MainAdEventListener implements DomobAdEventListener {
+	 * 
+	 * @Override public void onDomobAdReturned(DomobAdView arg0) {// 请求广告成功返回 StatService.onEvent(ForecastActivity.this,
+	 *           "ad", "returned", 1); Log.i(tag, "ad returned"); }
+	 * @Override public void onDomobAdFailed(DomobAdView arg0, ErrorCode arg1) { // 请求广告失败
+	 *           StatService.onEvent(ForecastActivity.this, "ad", "failed", 1); Log.i(tag, "ad failed"); }
+	 * @Override public void onDomobAdOverlayPresented(DomobAdView arg0) {// Loading Page成功
+	 *           StatService.onEvent(ForecastActivity.this, "ad", "overlayPresented", 1); Log.i(tag,
+	 *           "ad overlay presented"); }
+	 * @Override public void onDomobAdOverlayDismissed(DomobAdView arg0) {// Loading Page关闭
+	 *           StatService.onEvent(ForecastActivity.this, "ad", "overlayDismissed", 1); Log.i(tag,
+	 *           "ad overlay dismissed"); }
+	 * @Override public void onDomobAdClicked(DomobAdView arg0) { StatService.onEvent(ForecastActivity.this, "ad",
+	 *           "clicked", 1); Log.i(tag, "ad clicked"); }
+	 * @Override public void onDomobLeaveApplication(DomobAdView arg0) { StatService.onEvent(ForecastActivity.this,
+	 *           "ad", "leaveApplication", 1); Log.i(tag, "leave application"); }
+	 * @Override public Context onDomobAdRequiresCurrentContext() { return ForecastActivity.this; }
+	 * 
+	 *           }
+	 */
 
 	@Override
 	protected void onStart() {
@@ -116,9 +89,9 @@ public class ForecastActivity extends Activity {
 		progressBar.setVisibility(View.VISIBLE);
 		this.setUpdateTime("--");
 		this.refreshData();
-		if (this.adView != null) {
-			this.adView.requestRefreshAd();
-		}
+		/*
+		 * if (this.adView != null) { this.adView.requestRefreshAd(); }
+		 */
 		// stats
 		StatService.onResume(this);
 	}
@@ -130,8 +103,8 @@ public class ForecastActivity extends Activity {
 	public void refreshData() {
 		String city = (app.getCity() != null ? app.getCity().getId() : null);
 		new RealtimeTask().execute(city);
-		new AQITask().execute(city);
 		new ForecastTask().execute(city);
+		new AQITask().execute(city);
 	}
 
 	private void setUpdateTime(String time) {
@@ -154,12 +127,16 @@ public class ForecastActivity extends Activity {
 
 	class RealtimeTask extends AsyncTask<String, Integer, Weather.RealtimeWeather> {
 
+		private final TextView weatherView = (TextView) findViewById(R.id.rt_weather);
+		private final TableLayout indexView = (TableLayout) findViewById(R.id.li_today);
+
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
 			// weather
-			TextView view = (TextView) findViewById(R.id.rt_weather);
-			view.setText("--");
+			weatherView.setText("--");
+			// index
+			indexView.removeAllViews();
 		}
 
 		@Override
@@ -191,129 +168,82 @@ public class ForecastActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Weather.RealtimeWeather realtime) {
-			this.onPreExecute();
 			super.onPostExecute(realtime);
-			onProgressUpdate(80);
-			if (realtime != null) {
-				// updateTime
-				ForecastActivity.this.setUpdateTime(realtime.getTime());
-				// weather
-				TextView view = (TextView) findViewById(R.id.rt_weather);
-				view.setText(realtime.getTemperature() + "，" + realtime.getWindDirection() + realtime.getWindForce()
-						+ "，湿度" + realtime.getHumidity());
-			} else {
+			this.onProgressUpdate(80);
+			if (realtime == null) {
 				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.rt_request_failed));
 				Log.e(tag, "can't get realtime weather");
+				return;
 			}
-			onProgressUpdate(100);
-		}
-	}
-
-	class AQITask extends AsyncTask<String, Integer, Weather.AirQualityIndex> {
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			TextView view = (TextView) findViewById(R.id.rt_aqi);
-			view.setText("--");
-		}
-
-		@Override
-		protected Weather.AirQualityIndex doInBackground(String... params) {
-			String city = (params != null && params.length > 0 ? params[0] : null);
-			if (city == null || city.length() == 0) {
-				return null;
-			}
-			return weatherService.findAirQualityIndex(city);
-		}
-
-		@Override
-		protected void onPostExecute(Weather.AirQualityIndex aqi) {
 			this.onPreExecute();
-			super.onPostExecute(aqi);
-			if (aqi != null) {
-				TextView view = (TextView) findViewById(R.id.rt_aqi);
-				int value = aqi.getCurrentAQI();
-				if (value >= 0) {
-					view.setText(value + "，" + Weather.AirQualityIndex.getAQITitle(value));
-					view.setTextColor(getResources().getColor(Weather.AirQualityIndex.getAQIColor(value)));
-				} else {
-					view.setText("--");
-				}
-			} else {
-				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.AQI_request_failed));
-				Log.e(tag, "can't get AQI");
+			// updateTime
+			ForecastActivity.this.setUpdateTime(realtime.getTime());
+			// weather
+			weatherView.setText(realtime.getTemperature() + "，" + realtime.getWindDirection() + realtime.getWindForce()
+					+ "，湿度" + realtime.getHumidity());
+			// index
+			for (int i = 0; i < realtime.getIndexSize(); i++) {
+				TableRow row = new TableRow(indexView.getContext());
+				TextView view = new TextView(indexView.getContext());
+				view.setText(realtime.getIndexName(i) + "：");
+				row.addView(view);
+				view = new TextView(indexView.getContext());
+				view.setText(realtime.getIndexValue(i) + "。" + realtime.getIndexDesc(i));
+				row.addView(view);
+				indexView.addView(row);
 			}
+			this.onProgressUpdate(100);
 		}
 	}
 
 	class ForecastTask extends AsyncTask<String, Integer, Weather.ForecastWeather> {
 
-		private final TextView fc_today = (TextView) findViewById(R.id.fc_today);
-		private final TableLayout fc_container = (TableLayout) findViewById(R.id.fc_container);
+		private final TextView currentForcastView = (TextView) findViewById(R.id.fc_today);
+		private final TableLayout futureForcastView = (TableLayout) findViewById(R.id.fc_future);
 		private final LayoutInflater inflater = LayoutInflater.from(ForecastActivity.this);
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			fc_today.setText("--");
-			fc_container.removeAllViews();
+			currentForcastView.setText("--");
+			futureForcastView.removeAllViews();
 		}
 
 		@Override
 		protected Weather.ForecastWeather doInBackground(String... params) {
-			onProgressUpdate(0);
 			String citycode = (params != null && params.length > 0 ? params[0] : null);
 			if (citycode == null || citycode.length() == 0) {
 				return null;
 			}
-			onProgressUpdate(20);
 			Weather.ForecastWeather forecast = weatherService.findForecastWeather(citycode);
-			onProgressUpdate(60);
 			return forecast;
 		}
 
 		@Override
-		protected void onProgressUpdate(Integer... values) {
-			super.onProgressUpdate(values);
-			int progress = (values != null && values.length > 0 ? values[0] : 0);
-			ProgressBar progressBar = (ProgressBar) getParent().findViewById(R.id.progressBar);
-			if (progressBar != null) {
-				Log.i(tag, progress + "/" + progressBar.getMax());
-				progressBar.setProgress(progress);
-				if (progress >= progressBar.getMax()) {
-					progressBar.setVisibility(View.GONE);
-				}
-			}
-		}
-
-		@Override
 		protected void onPostExecute(Weather.ForecastWeather forecast) {
-			this.onPreExecute();
 			super.onPostExecute(forecast);
-			onProgressUpdate(80);
-			if (forecast != null && forecast.getForecastSize() > 6) {
-				// update time
-				ForecastActivity.this.setUpdateTime(forecast.getTime());
-				// today weather
-				fc_today.setText(forecast.getForecastWeather(0) + "，" + forecast.getForecastTemperature(0) + "，"
-						+ forecast.getForecastWind(0) + "，" + forecast.getForecastWindForce(0));
-				// forecast weather
-				TableRow row = new TableRow(ForecastActivity.this);
-				this.addForecast(row, forecast, 1);
-				this.addForecast(row, forecast, 2);
-				this.addForecast(row, forecast, 3);
-				fc_container.addView(row);
-				row = new TableRow(ForecastActivity.this);
-				this.addForecast(row, forecast, 4);
-				this.addForecast(row, forecast, 5);
-				this.addForecast(row, forecast, 6);
-				fc_container.addView(row);
-			} else {
+			if (forecast == null || forecast.getForecastSize() < 7) {
 				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.fc_request_failed));
 				Log.e(tag, "can't get forecast weather");
+				return;
 			}
-			onProgressUpdate(100);
+			this.onPreExecute();
+			// update time
+			ForecastActivity.this.setUpdateTime(forecast.getTime());
+			// today weather
+			currentForcastView.setText(forecast.getForecastWeather(0) + "，" + forecast.getForecastTemperature(0) + "，"
+					+ forecast.getForecastWind(0) + "，" + forecast.getForecastWindForce(0));
+			// forecast weather
+			TableRow row = new TableRow(ForecastActivity.this);
+			this.addForecast(row, forecast, 1);
+			this.addForecast(row, forecast, 2);
+			this.addForecast(row, forecast, 3);
+			futureForcastView.addView(row);
+			row = new TableRow(ForecastActivity.this);
+			this.addForecast(row, forecast, 4);
+			this.addForecast(row, forecast, 5);
+			this.addForecast(row, forecast, 6);
+			futureForcastView.addView(row);
 		}
 
 		private void addForecast(TableRow row, Weather.ForecastWeather forecast, int index) {
@@ -356,6 +286,44 @@ public class ForecastActivity extends Activity {
 			// wind
 			view = (TextView) layout.findViewById(R.id.fc_wind);
 			view.setText(forecast.getForecastWind(index) + "，" + forecast.getForecastWindForce(index));
+		}
+	}
+
+	class AQITask extends AsyncTask<String, Integer, Weather.AirQualityIndex> {
+
+		private final TextView aqiView = (TextView) findViewById(R.id.rt_aqi);
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			aqiView.setText("--");
+		}
+
+		@Override
+		protected Weather.AirQualityIndex doInBackground(String... params) {
+			String city = (params != null && params.length > 0 ? params[0] : null);
+			if (city == null || city.length() == 0) {
+				return null;
+			}
+			return weatherService.findAirQualityIndex(city);
+		}
+
+		@Override
+		protected void onPostExecute(Weather.AirQualityIndex aqi) {
+			super.onPostExecute(aqi);
+			if (aqi == null) {
+				ToastService.toastLong(getApplicationContext(), getResources().getString(R.string.AQI_request_failed));
+				Log.e(tag, "can't get AQI");
+				return;
+			}
+			this.onPreExecute();
+			int value = aqi.getCurrentAQI();
+			if (value >= 0) {
+				aqiView.setText(value + "，" + Weather.AirQualityIndex.getAQITitle(value));
+				aqiView.setTextColor(getResources().getColor(Weather.AirQualityIndex.getAQIColor(value)));
+			} else {
+				aqiView.setText("--");
+			}
 		}
 	}
 

@@ -1,73 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:fadingEdge="vertical"
+    android:scrollbars="vertical"
     android:textSize="20sp" >
 
-    <TextView
-        android:id="@+id/updateTime"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_margin="3dp" />
-
-    <TableLayout
-        android:id="@+id/rt_container"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/updateTime"
-        android:layout_margin="3dp"
-        android:shrinkColumns="1"
-        android:stretchColumns="1" >
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/rt_aqi" />
-            <TextView
-                android:id="@+id/rt_aqi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/rt_weather" />
-            <TextView
-                android:id="@+id/rt_weather"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fc_today" />
-            <TextView
-                android:id="@+id/fc_today"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </TableRow>
-    </TableLayout>
-
-    <TableLayout
-        android:id="@+id/fc_container"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rt_container"
-        android:layout_margin="2dp"
-        android:shrinkColumns="*"
-        android:stretchColumns="*" />
-
     <RelativeLayout
-        android:id="@+id/ad_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/fc_container"
         android:layout_margin="3dp"
-        android:gravity="bottom" />
+        android:orientation="vertical" >
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/updateTime"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" />
+
+        <TableLayout
+            android:id="@+id/rt_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/updateTime"
+            android:layout_marginTop="6dp"
+            android:shrinkColumns="1"
+            android:stretchColumns="1" >
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rt_aqi" />
+
+                <TextView
+                    android:id="@+id/rt_aqi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rt_weather" />
+
+                <TextView
+                    android:id="@+id/rt_weather"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fc_today" />
+
+                <TextView
+                    android:id="@+id/fc_today"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+        </TableLayout>
+
+        <LinearLayout
+            android:id="@+id/fc_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rt_container"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/fc_future_forecast" />
+
+            <TableLayout
+                android:id="@+id/fc_future"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:shrinkColumns="*"
+                android:stretchColumns="*" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/li_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fc_container"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/fc_current_index" />
+
+            <TableLayout
+                android:id="@+id/li_today"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:shrinkColumns="1"
+                android:stretchColumns="*" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/ad_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/li_container"
+            android:gravity="bottom" />
+    </RelativeLayout>
+
+</ScrollView>
